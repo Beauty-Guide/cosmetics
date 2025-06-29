@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users-roles-schema
+      author: yourname
+
+      changes:
+
+        # --- Таблица ключевых ингредиентов ---
+        - createTable:
+            tableName: key_ingredient
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+        # --- Связь косметики и ключевых ингредиентов ---
+        - createTable:
+            tableName: cosmetic_key_ingredient
+            columns:
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ingredient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+            primaryKeys:
+              - constraintName: pk_cosmetic_ingredient
+                columnNames: "cosmetic_id,ingredient_id"
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_key_ingredient
+            baseColumnNames: cosmetic_id
+            constraintName: fk_cosmetic_ingredient_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_key_ingredient
+            baseColumnNames: ingredient_id
+            constraintName: fk_cosmetic_ingredient_ingredient
+            referencedTableName: key_ingredient
+            referencedColumnNames: id

@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-cosmetic-action-schema
+      author: yourname
+
+      changes:
+        # --- Таблица: действие косметики (например: HYDRATION, REPAIR) ---
+        - createTable:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+                    unique: true

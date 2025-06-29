@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-insert-cosmetic-action
+      author: yourname
+
+      changes:
+        # --- Действия косметики ---
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Увлажнение
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Восстановление
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Успокаивающее
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Себорегуляция
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Осветление
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Противоспалительное
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Отшулушивание
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Повышение упругости
+        - insert:
+            tableName: cosmetic_action
+            columns:
+              - column:
+                  name: name
+                  value: Очищение

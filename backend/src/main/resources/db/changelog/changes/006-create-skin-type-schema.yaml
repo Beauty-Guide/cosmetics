@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users-roles-schema
+      author: yourname
+
+      changes:
+        # --- Таблица: тип кожи (например: NORMAL, OILY) ---
+        - createTable:
+            tableName: skin_type
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+                    unique: true

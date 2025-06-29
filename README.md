@@ -1,1 +1,1 @@
-# cosmetics
+# cowboo-admin-panel

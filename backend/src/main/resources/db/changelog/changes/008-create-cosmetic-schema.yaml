@@ -1,0 +1,102 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users-roles-schema
+      author: yourname
+
+      changes:
+        # --- Таблица косметики ---
+        - createTable:
+            tableName: cosmetic
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: brand_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: compatibility
+                  type: TEXT
+              - column:
+                  name: usage_recommendations
+                  type: TEXT
+              - column:
+                  name: application_method
+                  type: TEXT
+
+        # --- Связь косметики и действий ---
+        - createTable:
+            tableName: cosmetic_cosmetic_action
+            columns:
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: action_id
+                  type: INT
+                  constraints:
+                    nullable: false
+            primaryKeys:
+              - constraintName: pk_cosmetic_action
+                columnNames: "cosmetic_id,action_id"
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_cosmetic_action
+            baseColumnNames: cosmetic_id
+            constraintName: fk_cosmetic_action_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_cosmetic_action
+            baseColumnNames: action_id
+            constraintName: fk_cosmetic_action_action
+            referencedTableName: cosmetic_action
+            referencedColumnNames: id
+
+        # --- Связь косметики и типов кожи ---
+        - createTable:
+            tableName: cosmetic_skin_type
+            columns:
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: skin_type_id
+                  type: INT
+                  constraints:
+                    nullable: false
+            primaryKeys:
+              - constraintName: pk_cosmetic_skin_type
+                columnNames: "cosmetic_id,skin_type_id"
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_skin_type
+            baseColumnNames: cosmetic_id
+            constraintName: fk_cosmetic_skin_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_skin_type
+            baseColumnNames: skin_type_id
+            constraintName: fk_cosmetic_skin_skin_type
+            referencedTableName: skin_type
+            referencedColumnNames: id

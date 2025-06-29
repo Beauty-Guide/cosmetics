@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-insert-initial-data
+      author: yourname
+      changes:
+        # --- Типы кожи ---
+        - insert:
+            tableName: skin_type
+            columns:
+              - column:
+                  name: name
+                  value: Нормальный
+        - insert:
+            tableName: skin_type
+            columns:
+              - column:
+                  name: name
+                  value: Жирный
+        - insert:
+            tableName: skin_type
+            columns:
+              - column:
+                  name: name
+                  value: Сухой
+        - insert:
+            tableName: skin_type
+            columns:
+              - column:
+                  name: name
+                  value: Чувствительный
+        - insert:
+            tableName: skin_type
+            columns:
+              - column:
+                  name: name
+                  value: Комбинированный
+        - insert:
+            tableName: skin_type
+            columns:
+              - column:
+                  name: name
+                  value: Возрастной
+

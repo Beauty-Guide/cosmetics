@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/001-create-users-roles-schema.yaml
+  - include:
+      file: db/changelog/changes/002-insert-roles.yaml
+  - include:
+      file: db/changelog/changes/003-insert-users.yaml
+  - include:
+      file: db/changelog/changes/004-create-cosmetic-action-schema.yaml
+  - include:
+      file: db/changelog/changes/005-insert-cosmetic-action.yaml
+  - include:
+      file: db/changelog/changes/006-create-skin-type-schema.yaml
+  - include:
+      file: db/changelog/changes/007-insert-skin-type.yaml
+  - include:
+      file: db/changelog/changes/008-create-cosmetic-schema.yaml
+  - include:
+      file: db/changelog/changes/009-create-brand-schema.yaml
+  - include:
+      file: db/changelog/changes/010-create-cosmetic-image-schema.yaml
+  - include:
+      file: db/changelog/changes/011-create-key-ingredient-schema.yaml
+  - include:
+      file: db/changelog/changes/012-create-catalog-schema.yaml

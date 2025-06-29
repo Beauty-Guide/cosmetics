@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users-roles-schema
+      author: yourname
+
+      changes:
+
+        # --- Таблица изображений косметики ---
+        - createTable:
+            tableName: cosmetic_image
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_image
+            baseColumnNames: cosmetic_id
+            constraintName: fk_cosmetic_image_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id
+
+        # --- Внешний ключ бренда в косметике ---
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic
+            baseColumnNames: brand_id
+            constraintName: fk_cosmetic_brand
+            referencedTableName: brand
+            referencedColumnNames: id
