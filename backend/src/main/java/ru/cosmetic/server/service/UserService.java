@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.repo.UserRepository;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -33,5 +35,17 @@ public class UserService implements UserDetailsService {
                 user.getPassword(),
                 user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList())
         );
+    }
+
+    public User createUser(User user) {
+        String username = user.getUsername();
+        User findUser = findByUsername(username).orElse(null);
+        if (findUser == null) {
+            if (user.getUsername().equals("admin")) {
+                user.setRoles(Collections.singleton(roleService.getAdminRole()));
+            }
+            user = userRepository.save(user);
+        }
+        return user;
     }
 }

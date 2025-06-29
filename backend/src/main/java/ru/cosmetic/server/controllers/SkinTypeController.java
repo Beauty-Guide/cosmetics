@@ -12,7 +12,7 @@ import ru.cosmetic.server.service.SkinTypeService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Администрация", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@Tag(name = "Типы кожи", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/skin-type")
 //@PreAuthorize("hasRole('ADMIN')")
 public class SkinTypeController {

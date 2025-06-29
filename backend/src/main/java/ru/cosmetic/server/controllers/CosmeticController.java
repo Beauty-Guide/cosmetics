@@ -13,14 +13,12 @@ import ru.cosmetic.server.service.CosmeticService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Администрация", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@Tag(name = "Косметика", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/cosmetic")
 //@PreAuthorize("hasRole('ADMIN')")
 public class CosmeticController {
 
     private final CosmeticService cosmeticService;
-    private final CatalogService catalogService;
-
 
     @PostMapping("/addCosmetic")
     @Operation(summary = "Добавление косметики")
@@ -32,27 +30,4 @@ public class CosmeticController {
             return new ResponseEntity<>("Косметика не добавлена", HttpStatus.BAD_REQUEST);
         }
     }
-
-    @PostMapping("/addCatalog")
-    @Operation(summary = "Добавление каталога")
-    public ResponseEntity<?> addCatalog(@RequestBody CatalogDto catalog) {
-        try {
-            catalogService.save(catalog);
-            return new ResponseEntity<>("Типа кожи добавлен", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Типа кожи не добавлен", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/getAllCatalogs")
-    @Operation(summary = "Получение всех каталогов")
-    public ResponseEntity<?> getAllCatalogs() {
-        try {
-            return ResponseEntity.ok(catalogService.findAll());
-        } catch (Exception e) {
-            return new ResponseEntity<>("Типа кожи не добавлен", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
 }

@@ -1,31 +1,29 @@
-
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Cosmetic from './pages/Cosmetic';
 import Action from './pages/Action';
 import CatalogForm from './pages/CatalogForm';
 import SkinType from './pages/SkinType';
-
-// function App() {
-//   return (
-//       <div className="App">
-//         <h1>React + Spring Boot Админка</h1>
-//         <AdminPanel />
-//       </div>
-//   );
-// }
-
+import Login from './pages/Login';
+import Home from './pages/Home';
+import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
     return (
         <Router>
-            <Navbar />
+            <Navbar/>
             <Routes>
-                <Route path="/" element={<Cosmetic />} />
-                <Route path="/catalog" element={<CatalogForm />} />
-                <Route path="/action" element={<Action />} />
-                <Route path="/skinType" element={<SkinType />} />
+                {/* Публичные маршруты */}
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/" element={<Home/>}/>
+
+                {/* Защищённые маршруты под /admin */}
+                <Route path="/admin" element={<PrivateRoute><Cosmetic/></PrivateRoute>}></Route>
+                <Route path="/admin/catalog" element={<PrivateRoute><CatalogForm/></PrivateRoute>}></Route>
+                <Route path="/admin/action" element={<PrivateRoute><Action/></PrivateRoute>}></Route>
+                <Route path="/admin/skinType" element={<PrivateRoute><SkinType/></PrivateRoute>}></Route>
+
             </Routes>
         </Router>
     );

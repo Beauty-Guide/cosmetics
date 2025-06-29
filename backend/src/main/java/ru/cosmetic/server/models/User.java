@@ -24,18 +24,6 @@ public class User {
     @Column(name = "password")
     private String password;
 
-//    @Column(name = "name")
-//    private String name;
-//
-//    @Column(name = "surname")
-//    private String surname;
-//
-//    @Column(name = "patronymic")
-//    private String patronymic;
-
-    @Column(name = "email")
-    private String email;
-
     @ManyToMany
     @JoinTable(
             name = "users_roles",

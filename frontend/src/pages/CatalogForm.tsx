@@ -1,6 +1,7 @@
 import React, {JSX, useEffect, useState} from 'react';
 
-import {addCatalog, Catalog, getAllCatalogs} from '../services/adminApi';
+import {addCatalog, Catalog, getAllCatalogs, } from '../services/adminApi';
+import CatalogTree from "../components/CatalogTree";
 
 
 const AddCatalogForm: React.FC = () => {
@@ -127,6 +128,9 @@ const AddCatalogForm: React.FC = () => {
 
             {message && <div className="alert alert-success">{message}</div>}
             {error && <div className="alert alert-danger">{error}</div>}
+
+            {/*{(CatalogTree())}*/}
+            <CatalogTree />
 
             {/*<div style={{ marginTop: '2rem' }}>*/}
             {/*    <h4>Текущая структура каталогов:</h4>*/}

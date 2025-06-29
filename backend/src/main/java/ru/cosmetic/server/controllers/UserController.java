@@ -18,11 +18,10 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Пользовательские", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@Tag(name = "Пользовательские", description = "Доступны всем")
 @RequestMapping("/api")
-public class MainController {
+public class UserController {
 
-    private final SkinTypeService skinTypeService;
     private final CosmeticService cosmeticService;
 
     @GetMapping("/find-all-by-skin-type")

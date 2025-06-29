@@ -1,6 +1,7 @@
 package ru.cosmetic.server.controllers;
 
 import ru.cosmetic.server.dtos.JwtRequest;
+import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +24,10 @@ public class AuthController {
         return authService.createAuthToken(authRequest);
     }
 
-
+    @Operation(summary = "Регистрация нового пользователя")
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        return authService.register(user);
+    }
 
 }

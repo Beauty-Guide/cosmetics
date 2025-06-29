@@ -8,23 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.exceptions.AppError;
 import ru.cosmetic.server.models.CosmeticAction;
-import ru.cosmetic.server.service.CatalogService;
 import ru.cosmetic.server.service.CosmeticActionService;
-import ru.cosmetic.server.service.CosmeticService;
-import ru.cosmetic.server.service.SkinTypeService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Администрация", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@Tag(name = "Действия косметики", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/cosmetic-action")
 //@PreAuthorize("hasRole('ADMIN')")
 public class CosmeticActionController {
 
-    private final SkinTypeService skinTypeService;
     private final CosmeticActionService cosmeticActionService;
-    private final CosmeticService cosmeticService;
-    private final CatalogService catalogService;
-
 
     @PostMapping("/addCosmeticAction")
     @Operation(summary = "Добавление действия косметики")

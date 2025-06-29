@@ -12,7 +12,7 @@ import ru.cosmetic.server.service.BrandService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Бренды>", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@Tag(name = "Бренды", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/brand")
 //@PreAuthorize("hasRole('ADMIN')")
 public class BrandController {
