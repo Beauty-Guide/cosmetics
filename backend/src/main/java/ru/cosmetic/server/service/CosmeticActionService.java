@@ -26,7 +26,11 @@ public class CosmeticActionService {
     }
 
     public CosmeticAction findById(Long id) {
-        return cosmeticActionRepo.findById(id).get();
+        return cosmeticActionRepo.findById(id).orElse(null);
+    }
+
+    public List<CosmeticAction> findAllById(List<Long> ids) {
+        return cosmeticActionRepo.findAllById(ids);
     }
 
     public List<CosmeticAction> findAll() {

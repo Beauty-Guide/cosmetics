@@ -7,7 +7,7 @@ databaseChangeLog:
 
         # --- Таблица ключевых ингредиентов ---
         - createTable:
-            tableName: key_ingredient
+            tableName: ingredient
             columns:
               - column:
                   name: id
@@ -24,7 +24,7 @@ databaseChangeLog:
 
         # --- Связь косметики и ключевых ингредиентов ---
         - createTable:
-            tableName: cosmetic_key_ingredient
+            tableName: cosmetic_ingredient
             columns:
               - column:
                   name: cosmetic_id
@@ -41,15 +41,15 @@ databaseChangeLog:
                 columnNames: "cosmetic_id,ingredient_id"
 
         - addForeignKeyConstraint:
-            baseTableName: cosmetic_key_ingredient
+            baseTableName: cosmetic_ingredient
             baseColumnNames: cosmetic_id
             constraintName: fk_cosmetic_ingredient_cosmetic
             referencedTableName: cosmetic
             referencedColumnNames: id
 
         - addForeignKeyConstraint:
-            baseTableName: cosmetic_key_ingredient
+            baseTableName: cosmetic_ingredient
             baseColumnNames: ingredient_id
             constraintName: fk_cosmetic_ingredient_ingredient
-            referencedTableName: key_ingredient
+            referencedTableName: ingredient
             referencedColumnNames: id

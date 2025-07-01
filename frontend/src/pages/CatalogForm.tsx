@@ -1,8 +1,8 @@
 import React, {JSX, useEffect, useState} from 'react';
 
-import {addCatalog, Catalog, getAllCatalogs, } from '../services/adminApi';
+import {addCatalog, getAllCatalogs,} from '../services/adminCatalogApi';
+import {Catalog} from '../model/types';
 import CatalogTree from "../components/CatalogTree";
-
 
 const AddCatalogForm: React.FC = () => {
     const [name, setName] = useState<string>('');
@@ -129,17 +129,7 @@ const AddCatalogForm: React.FC = () => {
             {message && <div className="alert alert-success">{message}</div>}
             {error && <div className="alert alert-danger">{error}</div>}
 
-            {/*{(CatalogTree())}*/}
-            <CatalogTree />
-
-            {/*<div style={{ marginTop: '2rem' }}>*/}
-            {/*    <h4>Текущая структура каталогов:</h4>*/}
-            {/*    {catalogs.length > 0 ? (*/}
-            {/*        <TreeDemo catalogs={catalogs} />*/}
-            {/*    ) : (*/}
-            {/*        <p>Каталоги не найдены</p>*/}
-            {/*    )}*/}
-            {/*</div>*/}
+            <CatalogTree/>
         </div>
     );
 };

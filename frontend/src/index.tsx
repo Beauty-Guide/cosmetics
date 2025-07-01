@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import '../src/components/AdminPanel.css';
+import './css/AdminPanel.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 

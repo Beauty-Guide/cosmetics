@@ -55,7 +55,8 @@ const CatalogTree: React.FC = () => {
             data.forEach(item => {
                 treeItems[item.id.toString()] = {
                     index: item.id.toString(),
-                    isLeaf: item.cosmetics.length === 0,
+                    // isLeaf: item.cosmetics.length === 0, TODO
+                    isLeaf: true,
                     children: [],
                     data: {label: item.name},
                 };

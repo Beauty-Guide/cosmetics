@@ -29,6 +29,10 @@ public class SkinTypeService {
         return skinTypeRepo.findById(id).orElse(null);
     }
 
+    public List<SkinType> findAllById(List<Long> skinTypeIds) {
+        return skinTypeRepo.findAllById(skinTypeIds);
+    }
+
     public List<SkinType> findAll() {
         return skinTypeRepo.findAll();
     }

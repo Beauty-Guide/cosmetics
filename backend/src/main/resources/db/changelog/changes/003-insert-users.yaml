@@ -13,7 +13,7 @@ databaseChangeLog:
                   value: user
               - column:
                   name: password
-                  value: '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i'
+                  value: '$2a$10$CaGfkaeMUjmltsrqezrKd.cmryZLs2.db2CeVD66VLh.7J4Wdm5MG'
               - column:
                   name: email
                   value: user@gmail.com
@@ -26,7 +26,7 @@ databaseChangeLog:
                   value: admin
               - column:
                   name: password
-                  value: '$2a$04$SC6TbrjYEXDA9.udZAtyCeVvRiI5wZHbXtZQnGz7sBd8ZxH.NmLcK'
+                  value: '$2a$10$CaGfkaeMUjmltsrqezrKd.cmryZLs2.db2CeVD66VLh.7J4Wdm5MG'
               - column:
                   name: email
                   value: admin@gmail.com

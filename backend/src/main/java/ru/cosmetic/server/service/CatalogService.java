@@ -3,6 +3,7 @@ package ru.cosmetic.server.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.cosmetic.server.dtos.CatalogDto;
+import ru.cosmetic.server.models.Brand;
 import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.repo.CatalogRepo;
 
@@ -33,6 +34,10 @@ public class CatalogService {
         }
         catalogRepo.deleteById(id);
         return true;
+    }
+
+    public Catalog findById(Long id) {
+        return catalogRepo.findById(id).orElse(null);
     }
 
     public List<Catalog> findAll() {

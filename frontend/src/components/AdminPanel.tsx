@@ -1,9 +1,9 @@
 // src/components/AdminPanel.tsx
 import React from 'react';
-import CosmeticForm from '../pages/Cosmetic';
-import SkinTypeForm from '../pages/SkinType';
-import ActionForm from '../pages/Action';
-import './AdminPanel.css'; // Подключаем стили
+import CosmeticForm from '../pages/CosmetiForm';
+import SkinTypeForm from '../pages/SkinTypeForm';
+import ActionForm from '../pages/ActionForm';
+import '../css/AdminPanel.css'; // Подключаем стили
 
 const AdminPanel: React.FC = () => {
     return (

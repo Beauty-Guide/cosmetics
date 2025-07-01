@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { JwtRequest, JwtResponse } from '../types/auth';
 
-const Login: React.FC = () => {
+const LoginForm: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
@@ -74,4 +74,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default LoginForm;

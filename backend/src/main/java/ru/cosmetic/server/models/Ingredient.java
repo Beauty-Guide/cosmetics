@@ -1,5 +1,6 @@
 package ru.cosmetic.server.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -7,8 +8,8 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "key_ingredient")
-public class KeyIngredient {
+@Table(name = "ingredient")
+public class Ingredient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,4 @@ public class KeyIngredient {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "keyIngredients")
-    private List<Cosmetic> cosmetics;
 }

@@ -2,6 +2,7 @@ package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.models.CosmeticAction;
 import ru.cosmetic.server.models.SkinType;
@@ -13,10 +14,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CosmeticService {
 
-    private final CosmeticRepo cosmeticRepo;
 
-    public void save(Cosmetic cosmetic) {
-        cosmeticRepo.save(cosmetic);
+    private final CosmeticRepo cosmeticRepo;
+    private final MinioService minioService;
+    private final CosmeticImageService cosmeticImageService;
+
+    public Cosmetic save(Cosmetic cosmetic) {
+        return cosmeticRepo.save(cosmetic);
+    }
+
+    public Cosmetic findById(Long id) {
+        return cosmeticRepo.findById(id).orElse(null);
     }
 
     public List<Cosmetic> getAllCosmetics() {

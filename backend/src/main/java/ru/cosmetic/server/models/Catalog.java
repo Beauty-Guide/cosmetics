@@ -1,5 +1,6 @@
 package ru.cosmetic.server.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,11 +24,4 @@ public class Catalog {
     @JoinColumn(name = "parent_id")
     private Catalog parent;
 
-//    // Дочерние каталоги
-//    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Catalog> children;
-
-    // Связь с косметикой
-    @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL)
-    private List<Cosmetic> cosmetics;
 }

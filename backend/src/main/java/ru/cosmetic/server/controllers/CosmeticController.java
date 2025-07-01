@@ -6,10 +6,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.cosmetic.server.dtos.CatalogDto;
+import ru.cosmetic.server.dtos.CosmeticDto;
 import ru.cosmetic.server.models.Cosmetic;
-import ru.cosmetic.server.service.CatalogService;
-import ru.cosmetic.server.service.CosmeticService;
+import ru.cosmetic.server.repo.CosmeticRepo;
+import ru.cosmetic.server.service.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,15 +25,66 @@ import ru.cosmetic.server.service.CosmeticService;
 public class CosmeticController {
 
     private final CosmeticService cosmeticService;
+    private final CosmeticActionService cosmeticActionService;
+    private final BrandService brandService;
+    private final CatalogService catalogService;
+    private final IngredientService ingredientService;
+    private final SkinTypeService skinTypeService;
 
     @PostMapping("/addCosmetic")
-    @Operation(summary = "Добавление косметики")
-    public ResponseEntity<?> addCosmetic(@RequestBody Cosmetic cosmetic) {
+    @Operation(summary = "Добавление косметики без изображений")
+    public ResponseEntity<?> addCosmetic(@RequestBody CosmeticDto cosmeticDto) {
         try {
-            cosmeticService.save(cosmetic);
-            return new ResponseEntity<>("Косметика добавлена", HttpStatus.OK);
+            Cosmetic cosmetic = new Cosmetic();
+            cosmetic.setName(cosmeticDto.getName());
+            cosmetic.setDescription(cosmeticDto.getDescription());
+            cosmetic.setCompatibility(cosmeticDto.getCompatibility());
+            cosmetic.setUsageRecommendations(cosmeticDto.getUsageRecommendations());
+            cosmetic.setApplicationMethod(cosmeticDto.getApplicationMethod());
+
+            // Установка связей по ID
+            cosmetic.setBrand(brandService.findById(cosmeticDto.getBrandId()));
+            cosmetic.setCatalog(catalogService.findById(cosmeticDto.getCatalogId()));
+
+            // Связь с ингредиентами, действиями, типами кожи
+            cosmetic.setIngredients(ingredientService.findById(cosmeticDto.getKeyIngredientIds()));
+            cosmetic.setActions(cosmeticActionService.findAllById(cosmeticDto.getActionIds()));
+            cosmetic.setSkinTypes(skinTypeService.findAllById(cosmeticDto.getSkinTypeIds()));
+
+            // Сохранение косметики (без изображений)
+            Cosmetic savedCosmetic = cosmeticService.save(cosmetic);
+
+            // Возвращаем ID новой косметики
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Косметика добавлена");
+            response.put("id", savedCosmetic.getId());
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return new ResponseEntity<>("Косметика не добавлена", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка добавления косметики");
         }
     }
+//    @PostMapping("/addCosmetic")
+//    @Operation(summary = "Добавление косметики")
+//    public ResponseEntity<?> addCosmetic(
+//            @RequestPart("name") String name,
+//            @RequestPart("description") String description,
+//            @RequestPart("brandId") Long brandId,
+//            @RequestPart("catalogId") Long catalogId,
+//            @RequestPart("keyIngredientIds") List<Long> keyIngredientIds,
+//            @RequestPart("actionIds") List<Long> actionIds,
+//            @RequestPart("skinTypeIds") List<Long> skinTypeIds,
+//            @RequestPart("images") MultipartFile[] images
+//    ){
+//        try {
+//            Cosmetic cosmetic = new Cosmetic();
+//            cosmetic.setName(name);
+//            cosmetic.setDescription(description);
+//
+//            cosmeticService.save(cosmetic, brandId, catalogId, keyIngredientIds, actionIds, skinTypeIds, images);
+//            return new ResponseEntity<>("Косметика добавлена", HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Косметика не добавлена", HttpStatus.BAD_REQUEST);
+//        }
+//    }
 }

@@ -1,10 +1,10 @@
-// src/pages/Home.tsx
+// src/pages/HomeForm.tsx
 import React from 'react';
 // import CatalogTree from "../components/CatalogTree";
 // import App1 from "../components/App1";
 // import CatalogTree1 from "../components/CatalogTree1";
 //
-const Home: React.FC = () => {
+const HomeForm: React.FC = () => {
     return (
         <div style={{ padding: '2rem' }}>
             <h1>Главная страница</h1>
@@ -16,4 +16,4 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+export default HomeForm;

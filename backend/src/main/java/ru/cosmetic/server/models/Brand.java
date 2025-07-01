@@ -18,6 +18,4 @@ public class Brand {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
-    private List<Cosmetic> cosmetics;
 }
