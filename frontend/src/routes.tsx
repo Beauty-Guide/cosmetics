@@ -11,13 +11,13 @@ import CatalogForm from "./pages/CatalogForm"
 import SkinTypeForm from "./pages/SkinTypeForm"
 import BrandForm from "./pages/BrandForm"
 import IngredientForm from "./pages/IngredientForm"
-import App from "./App"
+import Sandbox from "./pages/Sandbox"
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Публичные маршруты */}
-      <Route path="/app" element={<App />} />
+      <Route path="/app" element={<Sandbox />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/" element={<HomeForm />} />
 
