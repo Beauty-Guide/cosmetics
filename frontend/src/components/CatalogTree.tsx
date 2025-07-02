@@ -4,7 +4,6 @@ import {
   StaticTreeDataProvider,
   Tree,
   UncontrolledTreeEnvironment,
-  useTreeItemRenderContext,
 } from "react-complex-tree"
 // import 'react-complex-tree/lib/style.css';
 import "react-complex-tree/lib/style-modern.css"
@@ -25,26 +24,6 @@ type TreeItem = {
 }
 
 type TreeData = Record<string, TreeItem>
-
-const RenderTreeItem = () => {
-  const { item, depth, isOpen, onToggle } = useTreeItemRenderContext()
-  return (
-    <div style={{ marginLeft: depth * 16 }}>
-      {/* Стрелка показывается только если hasChildren */}
-      {item.hasChildren && (
-        <span
-          onClick={onToggle}
-          style={{ cursor: "pointer", marginRight: "8px" }}
-        >
-          {isOpen ? "▼" : "▶"}
-        </span>
-      )}
-
-      {/* Название элемента */}
-      {item.data}
-    </div>
-  )
-}
 
 const CatalogTree: React.FC = () => {
   // const [treeData, setTreeData] = useState<TreeData>({});
