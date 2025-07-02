@@ -17,3 +17,17 @@ export const getAllCatalogs = async (): Promise<Catalog[]> => {
         throw new Error('Ошибка при получении данных');
     }
 };
+
+export const updateCatalog = async (id: number, data: { name?: string; parentId?: number | null }) => {
+    const response = await fetch(`/api/catalogs/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) throw new Error('Ошибка при обновлении каталога');
+
+    return await response.json();
+};

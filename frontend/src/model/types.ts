@@ -37,6 +37,13 @@ export interface Catalog {
     children?: Catalog[];
 }
 
+export interface Catalog1 {
+    id: number;
+    name: string;
+    parent: Catalog | null;
+    children?: Catalog[];
+}
+
 export interface Cosmetic {
     name: string;
     description?: string;
