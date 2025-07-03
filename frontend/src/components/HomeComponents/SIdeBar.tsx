@@ -1,10 +1,10 @@
 import type { TCategory } from "@/types"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion"
+// import {
+//   Accordion,
+//   AccordionContent,
+//   AccordionItem,
+//   AccordionTrigger,
+// } from "../ui/accordion"
 import CategoryItem from "./CategoryItem"
 
 type SideBarProps = {
@@ -22,7 +22,7 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
           <CategoryItem key={cat.id} category={cat} />
         ))}
       </div>
-      <Accordion
+      {/* <Accordion
         type="single"
         collapsible
         className="w-full"
@@ -43,7 +43,7 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-4 text-balance"></AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </Accordion> */}
     </div>
   )
 }
