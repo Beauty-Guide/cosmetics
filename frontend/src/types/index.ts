@@ -5,7 +5,7 @@ export type TProduct = {
   compatibility: string
   usageRecommendations: string
   applicationMethod: string
-  catalog: TCatalog
+  catalog: TCategory
   brand: TBrand
   actions: TAction[]
   skinTypes: TSkinType[]
@@ -13,10 +13,10 @@ export type TProduct = {
   img: string
 }
 
-type TCatalog = {
+export type TCategory = {
   id: number
   name: string
-  parent: TCatalog | null
+  parent: TCategory | null
 }
 
 type TBrand = {

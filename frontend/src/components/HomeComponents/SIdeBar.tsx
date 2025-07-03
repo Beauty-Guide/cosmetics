@@ -1,16 +1,27 @@
+import type { TCategory } from "@/types"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion"
+import CategoryItem from "./CategoryItem"
 
-const SideBar = ({ categoryTree }) => {
+type SideBarProps = {
+  categoryTree: TCategory[]
+}
+
+const SideBar = ({ categoryTree }: SideBarProps) => {
   console.log(categoryTree)
 
   return (
     <div className="flex flex-col gap-4 w-[500px]">
       <h1 className="text-3xl text-blue-500">Категории</h1>
+      <div>
+        {categoryTree.map((cat) => (
+          <CategoryItem key={cat.id} category={cat} />
+        ))}
+      </div>
       <Accordion
         type="single"
         collapsible
@@ -29,13 +40,6 @@ const SideBar = ({ categoryTree }) => {
         <AccordionItem value="item-2">
           <AccordionTrigger>
             <h1>Макияж</h1>
-          </AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-4 text-balance"></AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-3">
-          <AccordionTrigger>
-            <h1>Волосы</h1>
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-4 text-balance"></AccordionContent>
         </AccordionItem>
