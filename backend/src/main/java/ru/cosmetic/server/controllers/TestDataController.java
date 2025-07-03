@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.service.*;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Типы кожи", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@RequestMapping("/api")
 public class TestDataController {
 
     private final CosmeticService cosmeticService;
@@ -28,8 +30,16 @@ public class TestDataController {
 
     @GetMapping("/generate-cosmetics")
     public ResponseEntity<String> generateTestCosmetics() {
-        int count = 100; // можно изменить количество
-        for (int i = 0; i < count; i++) {
+        int count = 100;
+        int countI = 0;
+        List<Cosmetic> allCosmetics = cosmeticService.getAllCosmetics();
+
+        if (!allCosmetics.isEmpty()) {
+            count = allCosmetics.size() + 100;
+            countI = allCosmetics.size() + 1;
+        }
+
+        for (int i = countI; i < count; i++) {
             try {
                 Cosmetic cosmetic = new Cosmetic();
 
