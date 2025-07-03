@@ -1,11 +1,17 @@
 import { useNavigate } from "react-router"
 import { Button } from "../ui/button"
+import { toast } from "sonner"
 
 const Item = ({ item }) => {
   const navigate = useNavigate()
 
   const navigateToItem = () => {
     navigate(`/item/${item.id}`)
+  }
+
+  const handleAddToFavorite = () => {
+    toast("Добавлено в избранное")
+    console.log("Добавлено в избранное")
   }
 
   return (
@@ -21,7 +27,7 @@ const Item = ({ item }) => {
       <h1>{item.name}</h1>
       <p>{item.description}</p>
       <span className="flex gap-4 items-center justify-center mt-5">
-        <Button>Добавить в избранное</Button>
+        <Button onClick={handleAddToFavorite}>Добавить в избранное</Button>
       </span>
     </div>
   )
