@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router"
 import PrivateRoute from "./components/PrivateRoute"
 
 import LoginForm from "./pages/LoginForm"
-import HomeForm from "./pages/HomeForm"
+import HomePage from "./pages/HomePage"
 
 import Cosmetic from "./pages/CosmetiForm"
 import ActionForm from "./pages/ActionForm"
@@ -19,7 +19,7 @@ const AppRoutes = () => {
       {/* Публичные маршруты */}
       <Route path="/app" element={<Sandbox />} />
       <Route path="/login" element={<LoginForm />} />
-      <Route path="/" element={<HomeForm />} />
+      <Route path="/" element={<HomePage />} />
 
       {/* Защищённые маршруты */}
       <Route
