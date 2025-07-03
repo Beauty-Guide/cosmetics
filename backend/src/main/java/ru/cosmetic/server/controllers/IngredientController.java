@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.exceptions.AppError;
 import ru.cosmetic.server.models.Ingredient;
+import ru.cosmetic.server.models.SkinType;
 import ru.cosmetic.server.service.IngredientService;
 
 @RestController
@@ -20,17 +21,30 @@ public class IngredientController {
     private final IngredientService ingredientService;
 
     @PostMapping("/addIngredient")
-    @Operation(summary = "Добавление бренда косметики")
+    @Operation(summary = "Добавление ингредиента")
     public ResponseEntity<?> addIngredient(@RequestBody Ingredient ingredient) {
         try {
             ingredientService.save(ingredient);
-            return new ResponseEntity<>("Действие косметики добавлено", HttpStatus.OK);
+            return new ResponseEntity<>("Ингредиент добавлен", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Действие косметики не добавлено", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ингредиент не добавлен", HttpStatus.BAD_REQUEST);
         }
     }
 
-    @Operation(summary = "Удаление бренда косметики")
+    @PutMapping("/updateIngredient/{id}")
+    @Operation(summary = "Обновление ингредиента")
+    public ResponseEntity<?> updateIngredient(@RequestBody Ingredient ingredient, @PathVariable Long id) {
+        try {
+            Ingredient findIngredient = ingredientService.findById(id);
+            findIngredient.setName(ingredient.getName());
+            ingredientService.save(findIngredient);
+            return new ResponseEntity<>("Ингредиент обновлен", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary = "Удаление ингредиента")
     @DeleteMapping("/deleteIngredient/{id}")
     public ResponseEntity<?> deleteIngredient(@PathVariable Long id) {
         try {
@@ -40,33 +54,33 @@ public class IngredientController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            if (e.getMessage().contains("fk_cosmetic_action_action")) {
+            if (e.getMessage().contains("fk_cosmetic_ingredient_ingredient")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new AppError(
                         HttpStatus.BAD_REQUEST.value(),
-                        "Это действие используется в косметике"
+                        "Этот ингредиент используется в косметике"
                 ));
             }
-            return new ResponseEntity<>("Ошибка удаление действия косметики", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ошибка удаление ингредиента", HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getIngredientById")
-    @Operation(summary = "Получение всех действий косметики")
+    @Operation(summary = "Получение ингредиента")
     public ResponseEntity<?> getIngredientById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(ingredientService.findById(id));
         } catch (Exception e) {
-            return new ResponseEntity<>("Действие косметики не добавлено", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ошибка получения ингредиента", HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getAllIngredient")
-    @Operation(summary = "Получение всех действий косметики")
+    @Operation(summary = "Получение всех ингредиентов")
     public ResponseEntity<?> getAllIngredient() {
         try {
             return ResponseEntity.ok(ingredientService.findAll());
         } catch (Exception e) {
-            return new ResponseEntity<>("Действие косметики не добавлено", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ошибка получения ингредиентов", HttpStatus.BAD_REQUEST);
         }
     }
 

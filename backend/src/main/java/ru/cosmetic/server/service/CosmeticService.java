@@ -38,4 +38,8 @@ public class CosmeticService {
     public List<Cosmetic> getCosmeticsByActions(List<CosmeticAction> actions) {
         return cosmeticRepo.findAllByActionsIn(actions);
     }
+
+    public List<Cosmetic> findAll() {
+        return cosmeticRepo.findAll();
+    }
 }

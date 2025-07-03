@@ -1,32 +1,36 @@
-import type { SkinType, SkinTypeView } from "../model/types"
-import apiClient from "./adminApi" //
+import type {SkinType, SkinTypeView} from '../model/types';
+import apiClient from './adminApi'; //
 
 export const addSkinType = async (skinType: SkinType): Promise<void> => {
   try {
-    await apiClient.post("/admin/skin-type/addSkinType", skinType)
+    await apiClient.post('/admin/skin-type/addSkinType', skinType);
   } catch (error) {
-    throw new Error("Ошибка добавления типа кожи")
+    throw new Error('Ошибка добавления типа кожи');
   }
-}
+};
 
 export const getAllSkinType = async (): Promise<SkinTypeView[]> => {
   try {
-    const response = await apiClient.get("/admin/skin-type/getAllSkinType")
-    return response.data
+    const response = await apiClient.get('/admin/skin-type/getAllSkinType');
+    return response.data;
   } catch (error) {
-    throw new Error("Ошибка при получении данных")
+    throw new Error('Ошибка при получении данных');
   }
-}
+};
 
-export const deleteSkinType = async (id: number): Promise<void> => {
+export const updateSkinType = async (id: number, data: { name?: string }) => {
+  const response = await apiClient.put(`/admin/skin-type/updateSkinType/${id}`, data);
+  return response.data;
+};
+
+export const deleteSkinType = async (id: number): Promise<boolean> => {
   try {
-    const response = await apiClient.delete(
-      `/admin/skin-type/deleteSkinType/${id}`
-    )
-    if (response.status !== 200) {
-      throw new Error("Ошибка удаления")
+    const response = await apiClient.delete(`/admin/skin-type/deleteSkinType/${id}`);
+    return response.status === 200;
+  } catch (err: any) {
+    if (err.response?.status === 409) {
+      throw err.response.data;
     }
-  } catch (error) {
-    throw new Error("Ошибка удаления")
+    return false;
   }
-}
+};

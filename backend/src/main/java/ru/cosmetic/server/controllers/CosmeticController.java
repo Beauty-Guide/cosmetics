@@ -64,27 +64,15 @@ public class CosmeticController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка добавления косметики");
         }
     }
-//    @PostMapping("/addCosmetic")
-//    @Operation(summary = "Добавление косметики")
-//    public ResponseEntity<?> addCosmetic(
-//            @RequestPart("name") String name,
-//            @RequestPart("description") String description,
-//            @RequestPart("brandId") Long brandId,
-//            @RequestPart("catalogId") Long catalogId,
-//            @RequestPart("keyIngredientIds") List<Long> keyIngredientIds,
-//            @RequestPart("actionIds") List<Long> actionIds,
-//            @RequestPart("skinTypeIds") List<Long> skinTypeIds,
-//            @RequestPart("images") MultipartFile[] images
-//    ){
-//        try {
-//            Cosmetic cosmetic = new Cosmetic();
-//            cosmetic.setName(name);
-//            cosmetic.setDescription(description);
-//
-//            cosmeticService.save(cosmetic, brandId, catalogId, keyIngredientIds, actionIds, skinTypeIds, images);
-//            return new ResponseEntity<>("Косметика добавлена", HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>("Косметика не добавлена", HttpStatus.BAD_REQUEST);
-//        }
-//    }
+
+    @GetMapping("/getAllCosmetic")
+    @Operation(summary = "Получение всей косметики")
+    public ResponseEntity<?> getAllCosmetic() {
+        try {
+            return ResponseEntity.ok(cosmeticService.findAll());
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка получения брендов", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.exceptions.AppError;
+import ru.cosmetic.server.models.Brand;
 import ru.cosmetic.server.models.SkinType;
 import ru.cosmetic.server.service.SkinTypeService;
 
@@ -30,6 +31,19 @@ public class SkinTypeController {
         }
     }
 
+    @PutMapping("/updateSkinType/{id}")
+    @Operation(summary = "Обновление типа кожи")
+    public ResponseEntity<?> updateSkinType(@RequestBody SkinType skinType, @PathVariable Long id) {
+        try {
+            SkinType findSkinType = skinTypeService.findById(id);
+            findSkinType.setName(skinType.getName());
+            skinTypeService.save(findSkinType);
+            return new ResponseEntity<>("Типа кожи добавлен", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Operation(summary = "Удаление типа кожи")
     @DeleteMapping("/deleteSkinType/{id}")
     public ResponseEntity<?> deleteSkinType(@PathVariable Long id) {
@@ -40,7 +54,7 @@ public class SkinTypeController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            if (e.getMessage().contains("fk_cosmetic_skin_cosmetic")) {
+            if (e.getMessage().contains("fk_cosmetic_skin_skin_type")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new AppError(
                         HttpStatus.BAD_REQUEST.value(),
                         "Этот тип кожи используется в косметике"
@@ -56,7 +70,7 @@ public class SkinTypeController {
         try {
             return ResponseEntity.ok(skinTypeService.findById(id));
         } catch (Exception e) {
-            return new ResponseEntity<>("Действие косметики не добавлено", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ошибка получения типа кожи", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -66,7 +80,7 @@ public class SkinTypeController {
         try {
             return ResponseEntity.ok(skinTypeService.findAll());
         } catch (Exception e) {
-            return new ResponseEntity<>("Действие косметики не добавлено", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ошибка получения всех типов кожи", HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.dtos.CatalogDto;
+import ru.cosmetic.server.exceptions.AppError;
+import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.service.CatalogService;
 
 @RestController
@@ -26,6 +28,40 @@ public class CatalogController {
             return new ResponseEntity<>("Типа кожи добавлен", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/updateCatalog/{id}")
+    @Operation(summary = "Обновление каталога")
+    public ResponseEntity<?> updateCatalog(@RequestBody CatalogDto catalog, @PathVariable Long id) {
+        try {
+            Catalog findCatalog = catalogService.findById(id);
+            findCatalog.setName(catalog.getName());
+            if (catalog.getParentId() != null) {
+                Catalog findParentCatalog = catalogService.findById(catalog.getParentId());
+                findCatalog.setParent(findParentCatalog);
+            }
+            catalogService.update(findCatalog);
+            return new ResponseEntity<>("Типа кожи добавлен", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/deleteCatalog/{id}")
+    @Operation(summary = "Удаление каталога")
+    public ResponseEntity<?> deleteCatalog(@PathVariable Long id) {
+        try {
+            catalogService.remove(id);
+            return new ResponseEntity<>("Каталог удален", HttpStatus.OK);
+        } catch (Exception e) {
+            if (e.getMessage().contains("fk_catalog_parent")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new AppError(
+                        HttpStatus.CONFLICT.value(),
+                        "Этот каталог нельзя удалить, так как он имеет подкатегории"
+                ));
+            }
+            return new ResponseEntity<>("Ошибка при удалении каталога", HttpStatus.BAD_REQUEST);
         }
     }
 

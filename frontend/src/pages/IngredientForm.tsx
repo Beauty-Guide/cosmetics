@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -7,13 +7,22 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
+import Modal from 'react-bootstrap/Modal';
 
 // API
 import {
     addIngredient,
     deleteIngredient,
     getAllIngredients,
+    updateIngredient,
 } from '../services/adminIngredientApi';
+
+// Компоненты
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import FeedbackModal from '../components/FeedbackModal';
+
+// Иконки
+import { PencilFill, TrashFill } from 'react-bootstrap-icons';
 
 // Типы
 interface Ingredient {
@@ -25,13 +34,24 @@ interface IngredientView extends Ingredient {
 }
 
 const IngredientForm: React.FC = () => {
-    const [message, setMessage] = useState<string>('');
-    const [error, setError] = useState<string>('');
+    const [message, setMessage] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [ingredients, setIngredients] = useState<IngredientView[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+
+    // Форма добавления
     const [name, setName] = useState<string>('');
 
-    // Загрузка всех ингредиентов при монтировании компонента
+    // Редактирование
+    const [showEditModal, setShowEditModal] = useState<boolean>(false);
+    const [editingIngredient, setEditingIngredient] = useState<IngredientView | null>(null);
+    const [editName, setEditName] = useState<string>('');
+
+    // Удаление
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState<boolean>(false);
+    const [ingredientToDeleteId, setIngredientToDeleteId] = useState<number | null>(null);
+    const [ingredientToDeleteName, setIngredientToDeleteName] = useState<string | null>(null);
+
     useEffect(() => {
         const fetchIngredients = async () => {
             try {
@@ -59,34 +79,47 @@ const IngredientForm: React.FC = () => {
             await addIngredient({ name });
             setMessage('Ингредиент успешно добавлен!');
             setError('');
+            setName('');
 
             const updatedIngredients = await getAllIngredients();
             setIngredients(updatedIngredients);
-            setName('');
         } catch (err: any) {
             setError(err.message || 'Произошла ошибка при добавлении');
             setMessage('');
         }
     };
 
-    const handleDelete = async (id: number) => {
-        if (!window.confirm('Вы уверены, что хотите удалить этот ингредиент?')) return;
+    const handleEditClick = (ingredient: IngredientView) => {
+        setEditingIngredient(ingredient);
+        setEditName(ingredient.name);
+        setShowEditModal(true);
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editingIngredient || !editName.trim()) return;
 
         try {
-            const success = await deleteIngredient(id);
-            if (success) {
-                setIngredients(ingredients.filter((i) => i.id !== id));
-            } else {
-                alert('Ошибка при удалении ингредиента');
-            }
+            await updateIngredient(editingIngredient.id, { name: editName });
+            setMessage('Ингредиент успешно обновлён');
+            setError(null);
+
+            const updatedIngredients = await getAllIngredients();
+            setIngredients(updatedIngredients);
+            setShowEditModal(false);
         } catch (err: any) {
-            if (err.status === 409) {
-                alert('Этот ингредиент используется в косметике и не может быть удален.');
-            } else {
-                alert('Ошибка при удалении');
-            }
-            console.error(err);
+            setError(err.message || 'Ошибка при обновлении');
         }
+    };
+
+    const handleDelete = async (id: number, name: string) => {
+        setIngredientToDeleteId(id);
+        setIngredientToDeleteName(name);
+        setShowConfirmDeleteModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setMessage(null);
+        setError(null);
     };
 
     return (
@@ -119,8 +152,7 @@ const IngredientForm: React.FC = () => {
                     </Form>
 
                     {/* Сообщения */}
-                    {message && <Alert variant="success">{message}</Alert>}
-                    {error && <Alert variant="danger">{error}</Alert>}
+                    <FeedbackModal message={message} error={error} onClose={handleCloseModal} />
 
                     {/* Список ингредиентов */}
                     <h5>Список ингредиентов</h5>
@@ -133,7 +165,9 @@ const IngredientForm: React.FC = () => {
                             <thead>
                             <tr>
                                 <th>Название</th>
-                                <th style={{ width: '120px' }}>Действия</th>
+                                <th style={{ width: '0%' }} className="text-end">
+                                    Действия
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -141,15 +175,28 @@ const IngredientForm: React.FC = () => {
                                 <tr key={ingredient.id}>
                                     <td>{ingredient.name}</td>
                                     <td>
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onClick={() => handleDelete(ingredient.id)}
-                                            aria-label={`Удалить ${ingredient.name}`}
-                                            className="w-100"
-                                        >
-                                            Удалить
-                                        </Button>
+                                        <div className="d-flex justify-content-end gap-2">
+                                            <Button
+                                                variant="outline-primary"
+                                                size="sm"
+                                                onClick={() => handleEditClick(ingredient)}
+                                                className="d-flex align-items-center gap-1"
+                                                title="Редактировать"
+                                            >
+                                                <PencilFill size={16} />
+                                            </Button>
+                                            <Button
+                                                variant="outline-danger"
+                                                size="sm"
+                                                onClick={() =>
+                                                    handleDelete(ingredient.id, ingredient.name)
+                                                }
+                                                className="d-flex align-items-center gap-1"
+                                                title="Удалить"
+                                            >
+                                                <TrashFill size={16} />
+                                            </Button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -158,6 +205,59 @@ const IngredientForm: React.FC = () => {
                     )}
                 </Card.Body>
             </Card>
+
+            {/* Модальное окно редактирования */}
+            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Редактировать ингредиент</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3" controlId="formEditIngredientName">
+                            <Form.Label>Название</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+                        Отмена
+                    </Button>
+                    <Button variant="primary" onClick={handleSaveEdit}>
+                        Сохранить
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Модальное окно подтверждения удаления */}
+            <ConfirmDeleteModal
+                show={showConfirmDeleteModal}
+                onHide={() => setShowConfirmDeleteModal(false)}
+                onConfirm={async () => {
+                    if (ingredientToDeleteId !== null) {
+                        try {
+                            await deleteIngredient(ingredientToDeleteId);
+                            const updatedIngredients = await getAllIngredients();
+                            setIngredients(updatedIngredients);
+                            setMessage('Ингредиент успешно удалён');
+                            setError(null);
+                        } catch (err: any) {
+                            setError(err.message || 'Ошибка при удалении');
+                            setMessage(null);
+                        } finally {
+                            setShowConfirmDeleteModal(false);
+                            setIngredientToDeleteId(null);
+                            setIngredientToDeleteName(null);
+                        }
+                    }
+                }}
+                itemName={ingredientToDeleteName || undefined}
+            />
         </Container>
     );
 };

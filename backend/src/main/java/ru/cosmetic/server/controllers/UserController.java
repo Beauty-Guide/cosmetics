@@ -33,7 +33,10 @@ public class UserController {
             return new ResponseEntity<>("Действие косметики не добавлено", HttpStatus.BAD_REQUEST);
         }
     }
-
+    //TODO добавить пагинацию   переделать на один запрос
+    // параметр sortByType
+    // параметр action
+    // параметр пагинацию
     @GetMapping("/find-all-by-action")
     @Operation(summary = "Получение косметики по типу кожи")
     public ResponseEntity<?> getCosmeticsByAction(@RequestBody List<CosmeticAction> cosmeticAction) {
@@ -43,6 +46,7 @@ public class UserController {
             return new ResponseEntity<>("Действие косметики не добавлено", HttpStatus.BAD_REQUEST);
         }
     }
+
 
 
 }

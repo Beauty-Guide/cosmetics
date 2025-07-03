@@ -2,10 +2,13 @@ package ru.cosmetic.server.service;
 
 import io.minio.*;
 import io.minio.http.Method;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 @Service
 public class MinioService {
@@ -25,9 +28,7 @@ public class MinioService {
     }
 
     // Загрузка файла
-    public String uploadFile(Long cosmeticId, MultipartFile file) throws Exception {
-        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-
+    public String uploadFile(Long cosmeticId, String fileName, MultipartFile file) throws Exception {
         String objectKey = cosmeticId + "/" + fileName;
         minioClient.putObject(
                 PutObjectArgs.builder()
@@ -39,6 +40,33 @@ public class MinioService {
         );
 
         return fileName;
+    }
+
+    public byte[] getFile(String fileName) {
+        try {
+            GetObjectArgs objectArgs = GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(fileName)
+                    .build();
+            try (InputStream is = minioClient.getObject(objectArgs)) {
+                return IOUtils.toByteArray(is);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при получении файла из MinIO", e);
+        }
+    }
+
+    public String getContentType(String fileName) {
+        // Можно использовать Apache Tika или простое определение по расширению:
+        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+            return "image/jpeg";
+        } else if (fileName.endsWith(".png")) {
+            return "image/png";
+        } else if (fileName.endsWith(".gif")) {
+            return "image/gif";
+        } else {
+            return "application/octet-stream";
+        }
     }
 
     // Получение URL файла

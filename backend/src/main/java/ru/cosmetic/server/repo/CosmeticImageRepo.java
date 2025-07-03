@@ -7,4 +7,5 @@ import ru.cosmetic.server.models.CosmeticImage;
 
 @Repository
 public interface CosmeticImageRepo extends JpaRepository<CosmeticImage, Long> {
+    Integer countByCosmetic_Id(Long cosmeticId);
 }

@@ -1,7 +1,10 @@
 package ru.cosmetic.server.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Косметика", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@Tag(name = "Изображения", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/api/files")
 public class FileController {
 
@@ -25,15 +28,15 @@ public class FileController {
     private final CosmeticService cosmeticService;
 
     @PostMapping("/upload")
-//    public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("cosmeticId") Long cosmeticId, @RequestParam("file") MultipartFile image) throws Exception {
-    public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("cosmeticId") Long cosmeticId, @RequestParam("image") MultipartFile image) throws Exception {
-
-        String fileName = minioService.uploadFile(cosmeticId, image);
-        String fileUrl = minioService.getFileUrl(fileName);
+    @Operation(summary = "Загрузка изображения")
+    public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("cosmeticId") Long cosmeticId, @RequestParam("number") Long number, @RequestParam("image") MultipartFile image) throws Exception {
+        Cosmetic cosmetic = cosmeticService.findById(cosmeticId);
+        String fileName = cosmeticId + "_" + number + ".jpg";
+        String fileUrl = minioService.uploadFile(cosmeticId, fileName, image);
         CosmeticImage cosmeticImage = new CosmeticImage();
-//        cosmeticImage.setCosmetic(cosmeticService.findById(cosmeticId));
-        Cosmetic byId = cosmeticService.findById(cosmeticId);
-        cosmeticImage.setUrl(image.getOriginalFilename());
+
+        cosmeticImage.setCosmetic(cosmetic);
+        cosmeticImage.setUrl(fileUrl);
         cosmeticImageService.save(cosmeticImage);
 
 
@@ -42,13 +45,20 @@ public class FileController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{fileName}")
-    public ResponseEntity<String> getFileUrl(@PathVariable String fileName) throws Exception {
-        String url = minioService.getFileUrl(fileName);
-        return ResponseEntity.ok(url);
+    @GetMapping()
+    @Operation(summary = "Получение изображения")
+    public ResponseEntity<ByteArrayResource> getFile(@RequestParam("cosmeticId") Long cosmeticId,@RequestParam("fileName") String fileName) throws Exception {
+        String format = "%s/%s_%s.jpg";
+        byte[] fileData = minioService.getFile(String.format(format, cosmeticId,cosmeticId ,fileName));
+        String contentType = minioService.getContentType(fileName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(new ByteArrayResource(fileData));
     }
 
     @DeleteMapping("/{fileName}")
+    @Operation(summary = "Удаление изображения")
     public ResponseEntity<Void> deleteFile(@PathVariable String fileName) throws Exception {
         minioService.deleteFile(fileName);
         return ResponseEntity.noContent().build();

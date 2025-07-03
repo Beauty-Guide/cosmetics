@@ -1,43 +1,36 @@
-import apiClient from "./adminApi" //
-import type { CosmeticActionAdd, CosmeticActionView } from "../model/types"
+import apiClient from './adminApi'; //
+import type {CosmeticActionAdd, CosmeticActionView} from '../model/types';
 
-export const addCosmeticAction = async (
-  action: CosmeticActionAdd
-): Promise<void> => {
+export const addCosmeticAction = async (action: CosmeticActionAdd): Promise<void> => {
   try {
-    await apiClient.post("/admin/cosmetic-action/addCosmeticAction", action)
+    await apiClient.post('/admin/cosmetic-action/addCosmeticAction', action);
   } catch (error) {
-    throw new Error("Ошибка добавления действия косметики")
+    throw new Error('Ошибка добавления действия косметики');
   }
-}
+};
 
-export const getAllCosmeticActions = async (): Promise<
-  CosmeticActionView[]
-> => {
+export const getAllCosmeticActions = async (): Promise<CosmeticActionView[]> => {
   try {
-    const response = await apiClient.get(
-      "/admin/cosmetic-action/getAllCosmeticAction"
-    )
-    return response.data
+    const response = await apiClient.get('/admin/cosmetic-action/getAllCosmeticAction');
+    return response.data;
   } catch (error) {
-    throw new Error("Ошибка при получении данных")
+    throw new Error('Ошибка при получении данных');
   }
-}
+};
 
-export const deleteCosmeticAction = async (id: number): Promise<void> => {
+export const updateCosmeticAction = async (id: number, data: { name: string }) => {
+  const response = await apiClient.put(`/admin/cosmetic-action/updateCosmeticAction/${id}`, data);
+  return response.data;
+};
+
+export const deleteCosmeticAction = async (id: number): Promise<boolean> => {
   try {
-    const response = await apiClient.delete(
-      `/admin/cosmetic-action/deleteCosmeticAction/${id}`
-    )
-    if (response.status !== 200) {
-      throw new Error(response.data.message || "Ошибка удаления")
+    const response = await apiClient.delete(`/admin/cosmetic-action/deleteCosmeticAction/${id}`);
+    return response.status === 200;
+  } catch (err: any) {
+    if (err.response?.status === 409) {
+      throw err.response.data;
     }
-  } catch (error: any) {
-    let errorMessage = "Ошибка удаления"
-    if (error.response?.data) {
-      const serverError = error.response.data as { message?: string }
-      errorMessage = serverError.message || errorMessage
-    }
-    throw new Error(errorMessage)
+    return false;
   }
-}
+};

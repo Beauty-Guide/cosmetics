@@ -1,38 +1,42 @@
-import apiClient from "./adminApi"
-
-/**
- * Загрузка изображений для косметики
- */
-export const addBrand = async (brand: { name: string }): Promise<void> => {
-  await apiClient.post("/admin/brand/addBrand", brand)
-}
+import apiClient from './adminApi';
 
 export const uploadCosmeticImages = async (
-  cosmeticId: number,
-  files: File[]
+    cosmeticId: number,
+    files: File[]
 ): Promise<void> => {
-  if (!files.length) {
-    throw new Error("Нет изображений для загрузки")
-  }
+    if (!files.length) {
+        throw new Error('Нет изображений для загрузки');
+    }
 
-  // Используем Promise.all для обработки всех промисов
-  await Promise.all(
-    files.map(async (file) => {
-      const formData = new FormData()
-      formData.append("image", file)
-      try {
-        await apiClient.post(
-          `/api/files/upload?cosmeticId=${cosmeticId}`,
-          formData
-        )
-      } catch (err: any) {
-        const message =
-          err.response?.data?.message ||
-          err.message ||
-          "Ошибка при загрузке изображений"
+    // Используем Promise.all для обработки всех промисов
+    await Promise.all(
+        files.map(async (file, index) => {
+            const formData = new FormData();
+            formData.append('image', file);
+            try {
+                await apiClient.post(`/api/files/upload?cosmeticId=${cosmeticId}&number=${index}`, formData);
+            } catch (err: any) {
+                const message = err.response?.data?.message
+                    || err.message
+                    || 'Ошибка при загрузке изображений';
 
-        throw new Error(message)
-      }
-    })
-  )
-}
+                throw new Error(message);
+            }
+        })
+    );
+};
+
+
+// === Отдельный метод для получения URL по имени файла ===
+const fetchImageUrlAfterUpload = async (fileName: string): Promise<string> => {
+    try {
+        const urlResponse = await apiClient.get(`/api/files/${fileName}`);
+        return urlResponse.data; // должен вернуть URL, например: "https://minio.example.com/... "
+    } catch (err: any) {
+        const message = err.response?.data?.message
+            || err.message
+            || 'Ошибка при получении URL изображения';
+        throw new Error(message);
+    }
+};
+

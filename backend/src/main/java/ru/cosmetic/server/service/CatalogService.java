@@ -28,6 +28,10 @@ public class CatalogService {
         catalogRepo.save(catalog);
     }
 
+    public void update(Catalog catalog) {
+        catalogRepo.save(catalog);
+    }
+
     public boolean remove(Long id) {
         if (!catalogRepo.existsById(id)) {
             return false;

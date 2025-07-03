@@ -32,6 +32,11 @@ public class CosmeticImageService {
         return cosmeticImageRepo.findById(id).orElse(null);
     }
 
+    public Integer getCountImageByCosmeticId(Long cosmeticId) {
+        return cosmeticImageRepo.countByCosmetic_Id(cosmeticId);
+    }
+
+
     public List<CosmeticImage> findAllById(List<Long> ids) {
         return cosmeticImageRepo.findAllById(ids);
     }

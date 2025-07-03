@@ -1,24 +1,10 @@
 package ru.cosmetic.server.dtos;
 
+import lombok.Data;
 
+@Data
 public class CatalogDto {
+    private Long id;
     private String name;
     private Long parentId;
-
-    // Геттеры и сеттеры
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
 }

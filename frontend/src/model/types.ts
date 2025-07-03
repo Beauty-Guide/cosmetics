@@ -63,6 +63,21 @@ export interface Cosmetic {
     imageFiles?: File[];   // Новые изображения для загрузки
 }
 
+export type CosmeticResponse = {
+    id: number;
+    name: string;
+    description: string;
+    compatibility: string;
+    usageRecommendations: string;
+    applicationMethod: string;
+    catalog: Catalog1;
+    brand: BrandView;
+    actions: CosmeticActionView[];
+    skinTypes: SkinTypeView[];
+    ingredients: IngredientView[];
+};
+
+
 export type Ingredient = {
     name: string;
 };
