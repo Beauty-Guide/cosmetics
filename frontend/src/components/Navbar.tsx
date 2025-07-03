@@ -1,9 +1,7 @@
 import React from "react"
 import { Link } from "react-router"
-import Container from "react-bootstrap/Container"
-import Nav from "react-bootstrap/Nav"
-import Navbar from "react-bootstrap/Navbar"
 import { useNavigate } from "react-router"
+import { Button } from "./ui/button"
 
 const AppNavbar: React.FC = () => {
   const navigate = useNavigate()
@@ -15,46 +13,32 @@ const AppNavbar: React.FC = () => {
   }
 
   return (
-    <Navbar bg="dark" data-bs-theme="dark" expand="lg" className="mb-4">
-      <Container>
-        <Navbar.Brand as={Link} to="/">
+    <div className="flex mb-4 p-4 w-full bg-gray-700">
+      <span className="flex gap-4 items-center justify-between w-full">
+        <Link className="text-amber-50" to="/">
           Beauty Guide
-        </Navbar.Brand>
+        </Link>
 
-        <Nav className="me-auto">
-          {/*<Nav.Link as={Link} to="/">Главная</Nav.Link>*/}
-
+        <div className="flex gap-4 text-amber-50">
           {isAuthenticated && (
             <>
-              <Nav.Link as={Link} to="/admin/catalog">
-                Каталоги
-              </Nav.Link>
-              <Nav.Link as={Link} to="/admin">
-                Косметика
-              </Nav.Link>
-              <Nav.Link as={Link} to="/admin/brand">
-                Бренды
-              </Nav.Link>
-              <Nav.Link as={Link} to="/admin/skinType">
-                Типы кожи
-              </Nav.Link>
-              <Nav.Link as={Link} to="/admin/action">
-                Действия
-              </Nav.Link>
-              <Nav.Link as={Link} to="/admin/ingredient">
-                Ингредиенты
-              </Nav.Link>
+              <Link to="/admin/catalog">Каталоги</Link>
+              <Link to="/admin">Косметика</Link>
+              <Link to="/admin/brand">Бренды</Link>
+              <Link to="/admin/skinType">Типы кожи</Link>
+              <Link to="/admin/action">Действия</Link>
+              <Link to="/admin/ingredient">Ингредиенты</Link>
             </>
           )}
-        </Nav>
+        </div>
 
         {isAuthenticated && (
-          <button className="btn btn-outline-light ms-3" onClick={handleLogout}>
+          <Button variant="outline" onClick={handleLogout}>
             Выйти
-          </button>
+          </Button>
         )}
-      </Container>
-    </Navbar>
+      </span>
+    </div>
   )
 }
 
