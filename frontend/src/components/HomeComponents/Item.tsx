@@ -10,8 +10,7 @@ const Item = ({ item }) => {
       <h1>{item.name}</h1>
       <p>{item.description}</p>
       <span className="flex gap-4 items-center justify-center mt-5">
-        <p className="font-bold">{item.price} ₽</p>
-        <Button>Добавить в корзину</Button>
+        <Button>Добавить в избранное</Button>
       </span>
     </div>
   )

@@ -3,7 +3,7 @@ import axios from "axios"
 
 const fetchAllItems = async () => {
   const response = await axios.get(
-    "https://jsonplaceholder.typicode.com/todos/1"
+    "http://localhost:8080/admin/cosmetic/getAllCosmetic"
   )
   return response.data
 }
