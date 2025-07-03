@@ -1,38 +1,39 @@
-export type Product = {
+export type TProduct = {
   id: number
   name: string
   description: string
   compatibility: string
   usageRecommendations: string
   applicationMethod: string
-  catalog: Catalog
-  brand: Brand
-  actions: Action[]
-  skinTypes: SkinType[]
-  ingredients: Ingredient[]
+  catalog: TCatalog
+  brand: TBrand
+  actions: TAction[]
+  skinTypes: TSkinType[]
+  ingredients: TIngredient[]
+  img: string
 }
 
-type Catalog = {
+type TCatalog = {
   id: number
   name: string
-  parent: Catalog | null
+  parent: TCatalog | null
 }
 
-type Brand = {
-  id: number
-  name: string
-}
-
-type Action = {
+type TBrand = {
   id: number
   name: string
 }
 
-type SkinType = {
+type TAction = {
   id: number
   name: string
 }
 
-type Ingredient = {
+type TSkinType = {
+  id: number
+  name: string
+}
+
+type TIngredient = {
   any
 }

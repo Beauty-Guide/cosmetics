@@ -1,8 +1,13 @@
 import { useNavigate } from "react-router"
 import { Button } from "../ui/button"
 import { toast } from "sonner"
+import type { TProduct } from "@/types"
 
-const Product = ({ product }) => {
+type ProductProps = {
+  product: TProduct
+}
+
+const Product = ({ product }: ProductProps) => {
   const navigate = useNavigate()
 
   const navigateToItem = () => {
