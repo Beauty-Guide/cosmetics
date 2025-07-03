@@ -21,7 +21,7 @@ services:
       - postgres
 
   postgres:
-    image: postgres
+    image: postgres:17
     ports:
       - "5432:5432"
     environment:
@@ -53,7 +53,7 @@ services:
     networks:
       - my-network
 
-  minio:
+  cosmetic-minio:
     image: minio/minio:latest
     ports:
       - "9000:9000"
@@ -66,6 +66,27 @@ services:
     command: ["server", "/data", "--console-address", ":9001"]
     networks:
       - my-network
+
+  create-bucket:
+    image: quay.io/minio/mc
+    container_name: create-bucket
+    depends_on:
+      - cosmetic-minio
+    networks:
+      - my-network
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5 &&
+      mc alias set minio http://cosmetic-minio:9000 minioadmin minioadmin &&
+      if ! mc ls minio/cosmetics > /dev/null 2>&1; then
+        echo 'Бакет не найден. Создаю бакет \"cosmetics\"...' &&
+        mc mb minio/cosmetics &&
+        mc anonymous set public minio/cosmetics &&
+        echo 'Bucket \"cosmetics\" успешно создан и сделан публичным';
+      else
+        echo 'Bucket \"cosmetics\" уже существует';
+      fi;
+      "
 
 # Объявляем именованный том здесь ↓↓↓
 volumes:

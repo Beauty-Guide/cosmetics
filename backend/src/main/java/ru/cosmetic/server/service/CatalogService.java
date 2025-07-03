@@ -2,8 +2,7 @@ package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.cosmetic.server.dtos.CatalogDto;
-import ru.cosmetic.server.models.Brand;
+import ru.cosmetic.server.requestDto.CatalogRequest;
 import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.repo.CatalogRepo;
 
@@ -15,7 +14,7 @@ public class CatalogService {
 
     private final CatalogRepo catalogRepo;
 
-    public void save(CatalogDto catalogDto) {
+    public void save(CatalogRequest catalogDto) {
         Catalog catalog = new Catalog();
         catalog.setName(catalogDto.getName());
 

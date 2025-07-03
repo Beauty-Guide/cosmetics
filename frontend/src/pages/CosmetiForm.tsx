@@ -66,7 +66,7 @@ const CosmeticForm: React.FC = () => {
 
   // Для пагинации
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 300;
 
   // Состояния загрузки справочников
   const [loading, setLoading] = useState({
@@ -104,7 +104,7 @@ const CosmeticForm: React.FC = () => {
         setActions(actionData);
         setSkinTypes(skinTypeData);
         setIngredients(ingredientData);
-        // setCosmetics(cosmeticData)
+        setCosmetics(cosmeticData)
       } catch (err: any) {
         setError('Ошибка загрузки справочных данных');
         console.error(err);

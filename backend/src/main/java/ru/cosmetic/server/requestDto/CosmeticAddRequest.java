@@ -1,11 +1,11 @@
-package ru.cosmetic.server.dtos;
+package ru.cosmetic.server.requestDto;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class CosmeticDto {
+public class CosmeticAddRequest {
     private String name;
     private String description;
     private Long brandId;

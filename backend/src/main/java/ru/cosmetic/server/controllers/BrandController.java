@@ -6,10 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.cosmetic.server.dtos.CatalogDto;
 import ru.cosmetic.server.exceptions.AppError;
 import ru.cosmetic.server.models.Brand;
-import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.service.BrandService;
 
 @RestController

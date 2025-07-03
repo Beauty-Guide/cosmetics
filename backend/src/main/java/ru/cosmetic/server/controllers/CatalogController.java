@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.cosmetic.server.dtos.CatalogDto;
+import ru.cosmetic.server.requestDto.CatalogRequest;
 import ru.cosmetic.server.exceptions.AppError;
 import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.service.CatalogService;
@@ -22,7 +22,7 @@ public class CatalogController {
 
     @PostMapping("/addCatalog")
     @Operation(summary = "Добавление каталога")
-    public ResponseEntity<?> addCatalog(@RequestBody CatalogDto catalog) {
+    public ResponseEntity<?> addCatalog(@RequestBody CatalogRequest catalog) {
         try {
             catalogService.save(catalog);
             return new ResponseEntity<>("Типа кожи добавлен", HttpStatus.OK);
@@ -33,7 +33,7 @@ public class CatalogController {
 
     @PutMapping("/updateCatalog/{id}")
     @Operation(summary = "Обновление каталога")
-    public ResponseEntity<?> updateCatalog(@RequestBody CatalogDto catalog, @PathVariable Long id) {
+    public ResponseEntity<?> updateCatalog(@RequestBody CatalogRequest catalog, @PathVariable Long id) {
         try {
             Catalog findCatalog = catalogService.findById(id);
             findCatalog.setName(catalog.getName());

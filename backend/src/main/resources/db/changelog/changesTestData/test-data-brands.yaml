@@ -1,0 +1,924 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-test-brands
+      author: yourname
+      changes:
+        # --- Бренды ---
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "L'Oreal"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Estee Lauder"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Maybelline"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Revlon"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Nivea"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "The Ordinary"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "La Roche-Posay"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Vichy"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "CeraVe"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Neutrogena"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Clinique"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Lancôme"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Dior"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Shiseido"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Kiehl's"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Bioderma"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Avene"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Eucerin"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Philosophy"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Origins"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Sephora"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Fenty Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Too Faced"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "M.A.C"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Urban Decay"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "NARS"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Bobbi Brown"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Hourglass"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Tom Ford Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "YSL Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Chanel"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Clarins"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Elizabeth Arden"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Purified Skincare"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Drunk Elephant"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Paula's Choice"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "First Aid Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "SkinCeuticals"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Tatcha"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Dr. Jart+"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Innisfree"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Etude House"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Missha"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Laneige"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "AmorePacific"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "3CE"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Rom&nd"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Peripera"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Holika Holika"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Pony Effect"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Canmake"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Shu Uemura"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Laura Mercier"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Make Up For Ever"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Benefit"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Smashbox"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Stila"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Wet n Wild"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "NYX"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Maybelline New York"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Rimmel London"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Max Factor"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "L'Oréal Paris"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Garnier"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Vichy Laboratories"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Cetaphil"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Aveeno"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Olay"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Simple"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Caudalie"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Biossance"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Herbivore Botanicals"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Glossier"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Follain"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Youth to the People"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Farmacy Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Tata Harper"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Kora Organics"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "REN Clean Skincare"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Aesop"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Sunday Riley"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Glow Recipe"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Purito"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Round Lab"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Pyunkang Yul"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "CNP"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Iope"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Skinfood"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Huda Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Pat McGrath Labs"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Anastasia Beverly Hills"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Becca Cosmetics"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Juvia's Place"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "ColourPop"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Morphe"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "MILK MAKEUP"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Rare Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Wander Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Ilia Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "RMS Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Alima Pure"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Au Naturale"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Credo Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "100% Pure"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Derma E"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Yes To"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Jason Natural"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Weleda"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Burt's Bees"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Alba Botanica"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "California Baby"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Badger Balm"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Acure Organics"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Mad Hippie"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "TruSkin Naturals"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Heritage Store"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Andalou Naturals"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Juice Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "COOLA"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Solara Suncare"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Sun Bum"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Hello Bello"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Beautycounter"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Bliss"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Peter Thomas Roth"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Rodan + Fields"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Obagi Medical"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "PCA Skin"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Dermalogica"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Murad"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "EltaMD"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "SkinMedica"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "ISDIN"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "La Prairie"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Valmont"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Sisley"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "By Terry"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Helena Rubinstein"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Jeanne Piaubert"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Carita"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Givenchy Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Surratt Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Freeman Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "StriVectin"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Kate Somerville"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Dr. Dennis Gross"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "OSEA Malibu"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Renewable Beauty"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "True Botanicals"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Odacité"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Vintner's Daughter"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Summer Fridays"
+        - insert:
+            tableName: brand
+            columns:
+              - column:
+                  name: name
+                  value: "Fenty Skin"
