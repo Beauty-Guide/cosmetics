@@ -1,4 +1,4 @@
-import Item from "@/components/HomeComponents/Item"
+import Product from "@/components/HomeComponents/Product"
 import SideBar from "@/components/HomeComponents/SIdeBar"
 import { useGetAllItems } from "@/hooks/getAllItems"
 import { useGetCategories } from "@/hooks/getCategories"
@@ -6,7 +6,7 @@ import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useMemo } from "react"
 
 const HomePage = () => {
-  const { data: items, isLoading: isLoadingItems } = useGetAllItems()
+  const { data: products, isLoading: isLoadingItems } = useGetAllItems()
   const { data: categories, isLoading: isLoadingCategories } =
     useGetCategories()
 
@@ -20,8 +20,8 @@ const HomePage = () => {
       <SideBar categoryTree={categoryTree} />
       {!isLoadingItems && (
         <div className="flex items-center justify-center w-full flex-wrap">
-          {items.map((item) => (
-            <Item key={item.id} item={item} />
+          {products.map((product) => (
+            <Product key={product.id} product={product} />
           ))}
         </div>
       )}

@@ -2,11 +2,11 @@ import { useNavigate } from "react-router"
 import { Button } from "../ui/button"
 import { toast } from "sonner"
 
-const Item = ({ item }) => {
+const Product = ({ product }) => {
   const navigate = useNavigate()
 
   const navigateToItem = () => {
-    navigate(`/item/${item.id}`)
+    navigate(`/product/${product.id}`)
   }
 
   const handleAddToFavorite = () => {
@@ -16,16 +16,16 @@ const Item = ({ item }) => {
 
   return (
     <div
-      key={item.id}
+      key={product.id}
       className="flex flex-col items-center mt-5 mx-2 w-[400px] border-1 border-gray-400 p-4 rounded-md"
     >
       <img
-        src={item.img || "https://placehold.co/600x400"}
+        src={product.img || "https://placehold.co/600x400"}
         alt=""
         onClick={navigateToItem}
       />
-      <h1>{item.name}</h1>
-      <p>{item.description}</p>
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
       <span className="flex gap-4 items-center justify-center mt-5">
         <Button onClick={handleAddToFavorite}>Добавить в избранное</Button>
       </span>
@@ -33,4 +33,4 @@ const Item = ({ item }) => {
   )
 }
 
-export default Item
+export default Product
