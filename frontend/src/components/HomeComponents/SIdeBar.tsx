@@ -5,7 +5,9 @@ import {
   AccordionTrigger,
 } from "../ui/accordion"
 
-const SideBar = () => {
+const SideBar = ({ categoryTree }) => {
+  console.log(categoryTree)
+
   return (
     <div className="flex flex-col gap-4 w-[500px]">
       <h1 className="text-3xl text-blue-500">Категории</h1>

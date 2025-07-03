@@ -15,11 +15,9 @@ const HomePage = () => {
     [categories, isLoadingCategories]
   )
 
-  console.log(items, categoryTree)
-
   return (
     <main className="min-h-screen w-full flex items-center justify-center p-4">
-      <SideBar />
+      <SideBar categoryTree={categoryTree} />
       {!isLoadingItems && (
         <div className="flex items-center justify-center w-full flex-wrap">
           {items.map((item) => (
