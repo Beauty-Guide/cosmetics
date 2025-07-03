@@ -12,6 +12,7 @@ import SkinTypeForm from "./pages/SkinTypeForm"
 import BrandForm from "./pages/BrandForm"
 import IngredientForm from "./pages/IngredientForm"
 import Sandbox from "./pages/Sandbox"
+import ItemPage from "./pages/ItemPage"
 
 const AppRoutes = () => {
   return (
@@ -19,7 +20,10 @@ const AppRoutes = () => {
       {/* Публичные маршруты */}
       <Route path="/app" element={<Sandbox />} />
       <Route path="/login" element={<LoginForm />} />
-      <Route path="/" element={<HomePage />} />
+      <Route index path="/" element={<HomePage />} />
+      <Route path="/item/:id" element={<ItemPage />} />
+
+      <Route path="*" element={<h1>404</h1>} />
 
       {/* Защищённые маршруты */}
       <Route

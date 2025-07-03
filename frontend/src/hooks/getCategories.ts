@@ -1,9 +1,10 @@
+import { API_BASE_URL } from "@/config/consts"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 
 const fetchCategories = async () => {
   const response = await axios.get(
-    "http://localhost:8080/admin/catalog/getAllCatalogs"
+    `${API_BASE_URL}/admin/catalog/getAllCatalogs`
   )
   return response.data
 }
