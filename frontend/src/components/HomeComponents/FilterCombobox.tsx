@@ -46,7 +46,7 @@ export default function MultiSelectCombobox({
 
   const selectedLabels = useMemo(() => {
     return options
-      .filter((opt) => values.includes(opt.id))
+      .filter((opt) => values.includes(String(opt.id)))
       .map((opt) => opt.name)
   }, [options, values])
 
@@ -75,11 +75,16 @@ export default function MultiSelectCombobox({
             <CommandEmpty>Ничего не найдено.</CommandEmpty>
             <CommandGroup className="max-h-60 overflow-y-auto">
               {options.map((opt) => (
-                <CommandItem key={opt.id} onSelect={() => toggleValue(opt.id)}>
+                <CommandItem
+                  key={opt.id}
+                  onSelect={() => toggleValue(String(opt.id))}
+                >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      values.includes(opt.id) ? "opacity-100" : "opacity-0"
+                      values.includes(String(opt.id))
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
                   {opt.name}

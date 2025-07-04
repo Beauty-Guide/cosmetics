@@ -1,20 +1,45 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import FilterCombobox from "./FilterCombobox"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { useGetAllSkinType } from "@/hooks/getAllSkinType"
+import { useLocation, useSearchParams } from "react-router"
 
 const categories = [
-  { name: "Уход за кожей", id: "skin" },
-  { name: "Кремы", id: "creams" },
-  { name: "Маски", id: "masks" },
+  { name: "Уход за кожей", id: "1" },
+  { name: "Кремы", id: "2" },
+  { name: "Маски", id: "3" },
 ]
 
 const ProductFilters = () => {
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedSkinTypes, setSelectedSkinTypes] = useState<string[]>([])
+  const { pathname } = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(
+    searchParams.getAll("brand")
+  )
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    searchParams.getAll("category")
+  )
+  const [selectedSkinTypes, setSelectedSkinTypes] = useState<string[]>(
+    searchParams.getAll("skinType")
+  )
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
   const { data: skinTypes, isLoading: isLoadingSkinTypes } = useGetAllSkinType()
+
+  useEffect(() => {
+    setSelectedBrands(searchParams.getAll("brand"))
+    setSelectedCategories(searchParams.getAll("category"))
+    setSelectedSkinTypes(searchParams.getAll("skinType"))
+  }, [pathname, searchParams])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+
+    selectedBrands.forEach((b) => params.append("brand", b))
+    selectedCategories.forEach((c) => params.append("category", c))
+    selectedSkinTypes.forEach((s) => params.append("skinType", s))
+
+    setSearchParams(params, { replace: false })
+  }, [selectedBrands, selectedCategories, selectedSkinTypes, setSearchParams])
 
   if (isLoadingBrands || isLoadingSkinTypes) {
     return <div>Loading...</div>

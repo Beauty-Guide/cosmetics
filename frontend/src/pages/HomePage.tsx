@@ -6,6 +6,7 @@ import { useGetCategories } from "@/hooks/getCategories"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useMemo } from "react"
 import { PaginationButtons } from "@/components/Pagination"
+// import { useLocation, useSearchParams } from "react-router"
 
 const HomePage = () => {
   const { data: products, isLoading: isLoadingItems } = useGetAllItems()
@@ -16,6 +17,18 @@ const HomePage = () => {
     () => buildCategoryTree(isLoadingCategories ? [] : categories),
     [categories, isLoadingCategories]
   )
+
+  // const { pathname } = useLocation()
+  // const [searchParams] = useSearchParams()
+
+  // const selectedBrands = searchParams.getAll("brand")
+  // const selectedSkinTypes = searchParams.getAll("skinType")
+  // const selectedFilterCategories = searchParams.getAll("category")
+
+  // console.log(
+  //   selectedBrands,
+  //   decodeURIComponent(pathname.split("/").at(-1) || "")
+  // )
 
   return (
     <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4">
