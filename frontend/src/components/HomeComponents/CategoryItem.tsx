@@ -5,6 +5,10 @@ export default function CategoryItem({ category }) {
 
   const hasChildren = category.children && category.children.length > 0
 
+  const handleClick = () => {
+    console.log(category.name)
+  }
+
   return (
     <div className="ml-4 mt-1">
       <div
@@ -14,7 +18,9 @@ export default function CategoryItem({ category }) {
         {hasChildren && (
           <span className="text-gray-500">{open ? "▾" : "▸"}</span>
         )}
-        <span className="hover:underline">{category.name}</span>
+        <span className="hover:underline" onClick={handleClick}>
+          {category.name}
+        </span>
       </div>
 
       {hasChildren && open && (
