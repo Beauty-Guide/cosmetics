@@ -23,3 +23,10 @@ databaseChangeLog:
       file: db/changelog/changes/011-create-key-ingredient-schema.yaml
   - include:
       file: db/changelog/changes/012-create-catalog-schema.yaml
+  - include:
+      file: db/changelog/changesTestData/test-data-brands.yaml
+  - include:
+      file: db/changelog/changesTestData/test-data-ingredients.yaml
+  - include:
+      file: db/changelog/changesTestData/test-data-catalogs.yaml
+

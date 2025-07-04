@@ -1,6 +1,4 @@
 import React from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 
 interface ConfirmDeleteModalProps {
     show: boolean;
@@ -13,25 +11,46 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
                                                                    show,
                                                                    onHide,
                                                                    onConfirm,
-                                                                   itemName
+                                                                   itemName,
                                                                }) => {
+    if (!show) return null;
+
     return (
-        <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Подтверждение удаления</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                Вы уверены, что хотите удалить{itemName ? ` "${itemName}"` : ''}?
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Отмена
-                </Button>
-                <Button variant="danger" onClick={onConfirm}>
-                    Удалить
-                </Button>
-            </Modal.Footer>
-        </Modal>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+                <div className="flex justify-between items-center mb-4">
+                    <h5 className="text-lg font-semibold">Подтверждение удаления</h5>
+                    <button
+                        onClick={onHide}
+                        className="text-gray-500 hover:text-gray-800 text-xl"
+                        aria-label="Закрыть"
+                    >
+                        &times;
+                    </button>
+                </div>
+
+                <div className="mb-6">
+                    <p className="text-sm text-gray-700">
+                        Вы уверены, что хотите удалить{itemName ? ` "${itemName}"` : ''}?
+                    </p>
+                </div>
+
+                <div className="flex justify-end gap-3">
+                    <button
+                        onClick={onHide}
+                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition"
+                    >
+                        Отмена
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+                    >
+                        Удалить
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 };
 

@@ -1,16 +1,5 @@
 import React, {useEffect, useState} from 'react';
-
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
-import Table from 'react-bootstrap/Table';
-import {PencilFill, TrashFill} from 'react-bootstrap-icons';
-import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
-import FeedbackModal from '../components/FeedbackModal';
-
+// API
 // Импортируем методы получения данных
 import {getAllBrands} from '../services/adminBrandApi';
 import {getAllCatalogs} from '../services/adminCatalogApi';
@@ -18,642 +7,597 @@ import {getAllCosmeticActions} from '../services/adminCosmeticActionApi';
 import {getAllSkinType} from '../services/adminSkinTypeApi';
 import {getAllIngredients} from '../services/adminIngredientApi';
 import {addCosmetic, getAllCosmetics,} from '../services/adminCosmeticApi';
-import {uploadCosmeticImages} from "../services/fileApi";
 
 // Типы
 import type {
-  BrandView,
-  Catalog,
-  Catalog1,
-  Cosmetic,
-  CosmeticActionView,
-  CosmeticResponse,
-  IngredientView,
-  SkinTypeView,
+    BrandView,
+    Catalog,
+    CosmeticActionView,
+    CosmeticResponse,
+    IngredientView,
+    SkinTypeView,
 } from '../model/types';
-import Alert from "react-bootstrap/Alert";
-import {Carousel} from "react-bootstrap";
-
+// Компоненты
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import FeedbackModal from '../components/FeedbackModal';
 
 const CosmeticForm: React.FC = () => {
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-  // Состояния для полей формы
-  const [name, setName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [brandId, setBrandId] = useState<number | ''>('');
-  const [catalogId, setCatalogId] = useState<number | ''>('');
-  const [compatibility, setCompatibility] = useState<string>('');
-  const [usageRecommendations, setUsageRecommendations] = useState<string>('');
-  const [applicationMethod, setApplicationMethod] = useState<string>('');
+    // Состояния формы
+    const [name, setName] = useState<string>('');
+    const [description, setDescription] = useState<string>('');
+    const [brandId, setBrandId] = useState<number | ''>('');
+    const [catalogId, setCatalogId] = useState<number | ''>('');
+    const [compatibility, setCompatibility] = useState<string>('');
+    const [usageRecommendations, setUsageRecommendations] = useState<string>('');
+    const [applicationMethod, setApplicationMethod] = useState<string>('');
+    const [actionIds, setActionIds] = useState<number[]>([]);
+    const [skinTypeIds, setSkinTypeIds] = useState<number[]>([]);
+    const [keyIngredientIds, setKeyIngredientIds] = useState<number[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
 
-  // Множественный выбор
-  const [actionIds, setActionIds] = useState<number[]>([]);
-  const [skinTypeIds, setSkinTypeIds] = useState<number[]>([]);
-  const [keyIngredientIds, setKeyIngredientIds] = useState<number[]>([]);
+    // Состояние данных
+    const [cosmetics, setCosmetics] = useState<CosmeticResponse[]>([]);
+    const [loadingCosmetics, setLoadingCosmetics] = useState<boolean>(true);
 
-  // Загрузка изображений
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [cosmetics, setCosmetics] = useState<CosmeticResponse[]>([]);
-  const [loadingCosmetics, setLoadingCosmetics] = useState<boolean>(true);
-  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState<boolean>(false);
-  const [cosmeticToDeleteId, setCosmeticToDeleteId] = useState<number | null>(null);
-  const [cosmeticToDeleteName, setCosmeticToDeleteName] = useState<string | null>(null);
+    // Состояние модальных окон
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState<boolean>(false);
+    const [cosmeticToDeleteId, setCosmeticToDeleteId] = useState<number | null>(null);
+    const [cosmeticToDeleteName, setCosmeticToDeleteName] = useState<string | null>(null);
 
-  // Для поиска
-  const [searchTerm, setSearchTerm] = useState<string>('');
+    // Справочники
+    const [brands, setBrands] = useState<BrandView[]>([]);
+    const [catalogs, setCatalogs] = useState<Catalog[]>([]);
+    const [actions, setActions] = useState<CosmeticActionView[]>([]);
+    const [skinTypes, setSkinTypes] = useState<SkinTypeView[]>([]);
+    const [ingredients, setIngredients] = useState<IngredientView[]>([]);
 
-  // Для пагинации
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 10;
+    // Поиск и пагинация
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const itemsPerPage = 30;
 
-  // Состояния загрузки справочников
-  const [loading, setLoading] = useState({
-    brands: true,
-    catalogs: true,
-    actions: true,
-    skinTypes: true,
-    ingredients: true,
-  });
+    // Состояние сворачивания секций
+    const [isOpen1, setIsOpen1] = useState<boolean>(true);
+    const [isOpen2, setIsOpen2] = useState<boolean>(true);
 
-  // Списки из API
-  const [brands, setBrands] = useState<BrandView[]>([]);
-  const [catalogs, setCatalogs] = useState<Catalog[]>([]);
-  const [actions, setActions] = useState<CosmeticActionView[]>([]);
-  const [skinTypes, setSkinTypes] = useState<SkinTypeView[]>([]);
-  const [ingredients, setIngredients] = useState<IngredientView[]>([]);
+    const [filteredIngredients, setFilteredIngredients] = useState<IngredientView[]>([]);
+    const [selectedIngredients, setSelectedIngredients] = useState<number[]>([]);
 
-  const [isOpen1, setIsOpen1] = useState(true);
-  const [isOpen2, setIsOpen2] = useState(true);
+    // Загрузка данных
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [
+                    brandData,
+                    catalogData,
+                    actionData,
+                    skinTypeData,
+                    ingredientData,
+                    cosmeticData,
+                ] = await Promise.all([
+                    getAllBrands(),
+                    getAllCatalogs(),
+                    getAllCosmeticActions(),
+                    getAllSkinType(),
+                    getAllIngredients(),
+                    getAllCosmetics(),
+                ]);
 
-  // Загрузка всех справочников
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [brandData, catalogData, actionData, skinTypeData, ingredientData, cosmeticData] = await Promise.all([
-          getAllBrands(),
-          getAllCatalogs(),
-          getAllCosmeticActions(),
-          getAllSkinType(),
-          getAllIngredients(),
-          getAllCosmetics(),
-        ]);
-        setBrands(brandData);
-        setCatalogs(catalogData);
-        setActions(actionData);
-        setSkinTypes(skinTypeData);
-        setIngredients(ingredientData);
-        // setCosmetics(cosmeticData)
-      } catch (err: any) {
-        setError('Ошибка загрузки справочных данных');
-        console.error(err);
-      } finally {
-        setLoading({
-          brands: false,
-          catalogs: false,
-          actions: false,
-          skinTypes: false,
-          ingredients: false,
-        });
-        setLoadingCosmetics(false);
-      }
+                setBrands(brandData);
+                setCatalogs(catalogData);
+                setActions(actionData);
+                setSkinTypes(skinTypeData);
+                setIngredients(ingredientData);
+                setCosmetics(cosmeticData);
+                setFilteredIngredients(ingredientData);
+            } catch (err: any) {
+                setError(err.message || 'Ошибка загрузки данных');
+                console.error(err);
+            } finally {
+                setLoadingCosmetics(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // Фильтрация поискового запроса
+    useEffect(() => {
+        const filtered = ingredients.filter((ingr) =>
+            ingr.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredIngredients(filtered);
+    }, [searchTerm, ingredients]);
+
+    // Переключение выбранных ингредиентов
+    const toggleIngredient = (id: number) => {
+        setSelectedIngredients((prev) =>
+            prev.includes(id)
+                ? prev.filter((item) => item !== id)
+                : [...prev, id]
+        );
     };
 
-    fetchData();
-  }, []);
 
-  // // Фильтрация по названию
-  // const filteredCosmetics = cosmetics.filter((cosmetic) =>
-  //     cosmetic.name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-  const filteredCosmetics = cosmetics.filter(cosmetic =>
-      [
-        cosmetic.name,
-        cosmetic.catalog?.name,
-        cosmetic.brand?.name,
-        ...cosmetic.actions.map(a => a.name),
-        ...cosmetic.skinTypes.map(s => s.name),
-        ...cosmetic.ingredients.map(i => i.name)
-      ].some(value =>
-          value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+    // Фильтрация
+    const filteredCosmetics = cosmetics.filter((cosmetic) =>
+        [
+            cosmetic.name,
+            cosmetic.catalog?.name,
+            cosmetic.brand?.name,
+            ...cosmetic.actions.map((a) => a.name),
+            ...cosmetic.skinTypes.map((s) => s.name),
+            ...cosmetic.ingredients.map((i) => i.name),
+        ].some((value) =>
+            value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+    );
 
+    // Пагинация
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredCosmetics.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredCosmetics.length / itemsPerPage);
 
-// Вычисление текущих элементов для отображения
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredCosmetics.slice(indexOfFirstItem, indexOfLastItem);
-
-// Общее количество страниц
-//     const totalPages = Math.ceil(filteredCosmetics.length / itemsPerPage);
-
-  const resetForm = () => {
-    setName('');
-    setDescription('');
-    setBrandId('');
-    setCatalogId('');
-    setCompatibility('');
-    setUsageRecommendations('');
-    setApplicationMethod('');
-    setActionIds([]);
-    setSkinTypeIds([]);
-    setKeyIngredientIds([]);
-    setImageFiles([]);
-  };
-
-
-  const handleAddCosmetic = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!brandId || !catalogId) {
-      setError('Выберите бренд и каталог');
-      return;
-    }
-
-    const cosmetic: Cosmetic = {
-      name,
-      description,
-      brandId: Number(brandId),
-      catalogId: Number(catalogId),
-      keyIngredientIds,
-      actionIds,
-      skinTypeIds,
-      compatibility,
-      usageRecommendations,
-      applicationMethod,
-      imageUrls: [],
-      imageFiles, // ← здесь просто храним файлы
+    // Обработчики событий
+    const resetForm = () => {
+        setName('');
+        setDescription('');
+        setBrandId('');
+        setCatalogId('');
+        setCompatibility('');
+        setUsageRecommendations('');
+        setApplicationMethod('');
+        setActionIds([]);
+        setSkinTypeIds([]);
+        setKeyIngredientIds([]);
+        setImageFiles([]);
     };
 
-    try {
-      const response = await addCosmetic(cosmetic);
-      const cosmeticId = response.id;
+    const handleAddCosmetic = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-      // Шаг 2: загружаем изображения
-      if (imageFiles.length > 0) {
-        await uploadCosmeticImages(cosmeticId, imageFiles);
-      }
-      setMessage('Косметика успешно добавлена!');
-      setError('');
-      resetForm();
-    } catch (err: any) {
-      setError(err.message || 'Произошла ошибка при добавлении косметики');
-      setMessage('');
-    }
-  };
+        if (!brandId || !catalogId) {
+            setError('Выберите бренд и каталог');
+            return;
+        }
 
-  // Обработчики множественного выбора
-  const toggleArrayValue = (
-      array: number[],
-      setter: React.Dispatch<React.SetStateAction<number[]>>,
-      value: number
-  ) => {
-    if (array.includes(value)) {
-      setter(array.filter((id) => id !== value));
-    } else {
-      setter([...array, value]);
-    }
-  };
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('brandId', brandId.toString());
+        formData.append('catalogId', catalogId.toString());
+        formData.append('compatibility', compatibility);
+        formData.append('usageRecommendations', usageRecommendations);
+        formData.append('applicationMethod', applicationMethod);
+        actionIds.forEach((id) => formData.append('actionIds', id.toString()));
+        skinTypeIds.forEach((id) => formData.append('skinTypeIds', id.toString()));
+        keyIngredientIds.forEach((id) => formData.append('keyIngredientIds', id.toString()));
+        imageFiles.forEach((file) => formData.append('images', file));
 
-  const handleDelete = async (id: number, name: string) => {
-    setCosmeticToDeleteId(id);
-    setCosmeticToDeleteName(name);
-    setShowConfirmDeleteModal(true);
-  };
+        try {
+            await addCosmetic(formData);
+            setMessage('Косметика успешно добавлена!');
+            setError(null);
+            resetForm();
+        } catch (err: any) {
+            setError(err.message || 'Произошла ошибка при добавлении косметики');
+            setMessage(null);
+        }
+    };
 
-  const handleEditClick = (catalog: Catalog1) => {
-    setEditingCatalog(catalog);
-    setEditName(catalog.name);
-    setEditParentId(catalog.parent?.id || null); // Если есть родитель — берем его ID
-    setShowEditModal(true); // Показываем модальное окно
-  };
+    const toggleArrayValue = (
+        array: number[],
+        setter: React.Dispatch<React.SetStateAction<number[]>>,
+        value: number
+    ) => {
+        if (array.includes(value)) {
+            setter(array.filter((id) => id !== value));
+        } else {
+            setter([...array, value]);
+        }
+    };
 
+    const handleDelete = (id: number, name: string) => {
+        setCosmeticToDeleteId(id);
+        setCosmeticToDeleteName(name);
+        setShowConfirmDeleteModal(true);
+    };
 
-  return (
-      <Container className="mt-4">
-        <Card>
-          <Card.Header as="h4" className="text-center"
-                       style={{ cursor: 'pointer' }}
-                       onClick={() => setIsOpen1(!isOpen1)}>
-            Управление косметикой
-          </Card.Header>
-          <Card.Body className={"card-body1"} style={{ display: isOpen1 ? 'block' : 'none' }}>
-            <Form onSubmit={handleAddCosmetic}>
-              {/* Основные поля */}
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="formName">
-                  <Form.Label>Название</Form.Label>
-                  <Form.Control
-                      type="text"
-                      placeholder="Введите название"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                  />
-                </Form.Group>
+    return (
+        <div className="p-4 max-w-7xl mx-auto">
+            {/* Карточка формы добавления */}
+            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
+                <h4 className="text-xl font-semibold text-center mb-4">Управление косметикой</h4>
 
-                <Form.Group as={Col} controlId="formBrand">
-                  <Form.Label>Бренд</Form.Label>
-                  <Form.Select
-                      disabled={loading.brands}
-                      value={brandId}
-                      onChange={(e) => setBrandId(Number(e.target.value) || '')}
-                      required
-                  >
-                    <option value="">-- Выберите бренд --</option>
-                    {loading.brands ? (
-                        <option disabled>Загрузка...</option>
-                    ) : (
-                        brands.map((brand) => (
-                            <option key={brand.id} value={brand.id}>
-                              {brand.name}
-                            </option>
-                        ))
-                    )}
-                  </Form.Select>
-                </Form.Group>
-              </Row>
+                <form onSubmit={handleAddCosmetic} className="space-y-6">
+                    {/* Основные поля */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label htmlFor="formName" className="block text-sm font-medium text-gray-700 mb-1">
+                                Название
+                            </label>
+                            <input
+                                id="formName"
+                                type="text"
+                                placeholder="Введите название"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
 
-              <Row className="mb-3">
-                <Form.Group as={Col} className="mb-3" controlId="formDescription">
-                  <Form.Label>Описание</Form.Label>
-                  <Form.Control
-                      as="textarea"
-                      rows={3}
-                      placeholder="Введите описание"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                  />
-                </Form.Group>
-                <Form.Group as={Col} controlId="formCatalog">
-                  <Form.Label>Каталог</Form.Label>
-                  <Form.Select
-                      disabled={loading.catalogs}
-                      value={catalogId}
-                      onChange={(e) =>
-                          setCatalogId(Number(e.target.value) || '')
-                      }
-                      required
-                  >
-                    <option value="">-- Выберите каталог --</option>
-                    {loading.catalogs ? (
-                        <option disabled>Загрузка...</option>
-                    ) : (
-                        catalogs.map((catalog) => (
-                            <option key={catalog.id} value={catalog.id}>
-                              {catalog.name}
-                            </option>
-                        ))
-                    )}
-                  </Form.Select>
-                </Form.Group>
-              </Row>
+                        <div>
+                            <label htmlFor="formBrand" className="block text-sm font-medium text-gray-700 mb-1">
+                                Бренд
+                            </label>
+                            <select
+                                id="formBrand"
+                                disabled={brands.length === 0}
+                                value={brandId}
+                                onChange={(e) => setBrandId(Number(e.target.value) || '')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">-- Выберите бренд --</option>
+                                {brands.map((brand) => (
+                                    <option key={brand.id} value={brand.id}>
+                                        {brand.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
 
-              <Row className="mb-3">
-                {/*<Form.Group as={Col} controlId="formCatalog">*/}
-                {/*    <Form.Label>Каталог</Form.Label>*/}
-                {/*    <Form.Select*/}
-                {/*        disabled={loading.catalogs}*/}
-                {/*        value={catalogId}*/}
-                {/*        onChange={(e) =>*/}
-                {/*            setCatalogId(Number(e.target.value) || '')*/}
-                {/*        }*/}
-                {/*        required*/}
-                {/*    >*/}
-                {/*        <option value="">-- Выберите каталог --</option>*/}
-                {/*        {loading.catalogs ? (*/}
-                {/*            <option disabled>Загрузка...</option>*/}
-                {/*        ) : (*/}
-                {/*            catalogs.map((catalog) => (*/}
-                {/*                <option key={catalog.id} value={catalog.id}>*/}
-                {/*                    {catalog.name}*/}
-                {/*                </option>*/}
-                {/*            ))*/}
-                {/*        )}*/}
-                {/*    </Form.Select>*/}
-                {/*</Form.Group>*/}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label htmlFor="formDescription" className="block text-sm font-medium text-gray-700 mb-1">
+                                Описание
+                            </label>
+                            <textarea
+                                id="formDescription"
+                                rows={3}
+                                placeholder="Введите описание"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
 
-                <Form.Group as={Col} controlId="formCompatibility">
-                  <Form.Label>Совместимость</Form.Label>
-                  <Form.Control
-                      type="textarea"
-                      value={compatibility}
-                      onChange={(e) => setCompatibility(e.target.value)}
-                      as="textarea"
-                      rows={3}
-                      placeholder="Пример: Подходит для всех типов кожи"
-                      required
-                  />
-                </Form.Group>
-                <Form.Group as={Col} controlId="formUsage">
-                  <Form.Label>Рекомендации по применению</Form.Label>
-                  <Form.Control
-                      type="textarea"
-                      value={usageRecommendations}
-                      onChange={(e) => setUsageRecommendations(e.target.value)}                                    as="textarea"
-                      rows={3}
-                      placeholder="Как использовать средство"
-                      required
-                  />
-                </Form.Group>
-              </Row>
+                        <div>
+                            <label htmlFor="formCatalog" className="block text-sm font-medium text-gray-700 mb-1">
+                                Каталог
+                            </label>
+                            <select
+                                id="formCatalog"
+                                disabled={catalogs.length === 0}
+                                value={catalogId}
+                                onChange={(e) => setCatalogId(Number(e.target.value) || '')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">-- Выберите каталог --</option>
+                                {catalogs.map((catalog) => (
+                                    <option key={catalog.id} value={catalog.id}>
+                                        {catalog.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
 
-              <Row className="mb-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label htmlFor="formCompatibility" className="block text-sm font-medium text-gray-700 mb-1">
+                                Совместимость
+                            </label>
+                            <textarea
+                                id="formCompatibility"
+                                rows={3}
+                                placeholder="Пример: Подходит для всех типов кожи"
+                                value={compatibility}
+                                onChange={(e) => setCompatibility(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
 
-                <Form.Group as={Col} controlId="formApplication">
-                  <Form.Label>Способ применения</Form.Label>
-                  <Form.Control
-                      type="textarea"
-                      value={applicationMethod}
-                      onChange={(e) => setApplicationMethod(e.target.value)}                                   as="textarea"
-                      rows={3}
-                      placeholder="Пример: Нанести утром и вечером"
-                      required
-                  />
-                </Form.Group>
-                <Form.Group as={Col} className="mb-3" controlId="formImages">
-                  <Form.Label>Изображения</Form.Label>
-                  <Form.Control
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          setImageFiles(Array.from(e.target.files));
-                        }
-                      }}
-                  />
-                  <Form.Text className="text-muted">Можно выбрать несколько изображений</Form.Text>
-                </Form.Group>
-              </Row>
+                        <div>
+                            <label htmlFor="formUsage" className="block text-sm font-medium text-gray-700 mb-1">
+                                Рекомендации по применению
+                            </label>
+                            <textarea
+                                id="formUsage"
+                                rows={3}
+                                placeholder="Как использовать средство"
+                                value={usageRecommendations}
+                                onChange={(e) => setUsageRecommendations(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                    </div>
 
-              {/* Поле для загрузки изображений */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label htmlFor="formApplication" className="block text-sm font-medium text-gray-700 mb-1">
+                                Способ применения
+                            </label>
+                            <textarea
+                                id="formApplication"
+                                rows={3}
+                                placeholder="Пример: Нанести утром и вечером"
+                                value={applicationMethod}
+                                onChange={(e) => setApplicationMethod(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
 
+                        <div>
+                            <label htmlFor="formImages" className="block text-sm font-medium text-gray-700 mb-1">
+                                Изображения
+                            </label>
+                            <input
+                                id="formImages"
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={(e) => {
+                                    if (e.target.files) {
+                                        setImageFiles(Array.from(e.target.files));
+                                    }
+                                }}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <small className="text-gray-500 mt-1">Можно выбрать несколько изображений</small>
+                        </div>
+                    </div>
 
-              {/* Множественный выбор */}
-              <Row className="mb-3">
-                <Form.Group as={Col} md={4}>
-                  <Form.Label>Действия</Form.Label>
-                  {loading.actions ? (
-                      <p>Загрузка...</p>
-                  ) : (
-                      actions.map((action) => (
-                          <Form.Check
-                              key={action.id}
-                              type="checkbox"
-                              label={action.name}
-                              checked={actionIds.includes(action.id)}
-                              onChange={() =>
-                                  toggleArrayValue(actionIds, setActionIds, action.id)
-                              }
-                          />
-                      ))
-                  )}
-                </Form.Group>
+                    {/* Множественный выбор */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Действия</label>
+                            {actions.length === 0 ? (
+                                <p className="text-sm text-gray-500">Загрузка...</p>
+                            ) : (
+                                actions.map((action) => (
+                                    <div key={action.id} className="flex items-center mb-2">
+                                        <input
+                                            id={`action-${action.id}`}
+                                            type="checkbox"
+                                            checked={actionIds.includes(action.id)}
+                                            onChange={() => toggleArrayValue(actionIds, setActionIds, action.id)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor={`action-${action.id}`} className="text-sm text-gray-700">
+                                            {action.name}
+                                        </label>
+                                    </div>
+                                ))
+                            )}
+                        </div>
 
-                <Form.Group as={Col} md={4}>
-                  <Form.Label>Типы кожи</Form.Label>
-                  {loading.skinTypes ? (
-                      <p>Загрузка...</p>
-                  ) : (
-                      skinTypes.map((type) => (
-                          <Form.Check
-                              key={type.id}
-                              type="checkbox"
-                              label={type.name}
-                              checked={skinTypeIds.includes(type.id)}
-                              onChange={() =>
-                                  toggleArrayValue(skinTypeIds, setSkinTypeIds, type.id)
-                              }
-                          />
-                      ))
-                  )}
-                </Form.Group>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Типы кожи</label>
+                            {skinTypes.length === 0 ? (
+                                <p className="text-sm text-gray-500">Загрузка...</p>
+                            ) : (
+                                skinTypes.map((type) => (
+                                    <div key={type.id} className="flex items-center mb-2">
+                                        <input
+                                            id={`skinType-${type.id}`}
+                                            type="checkbox"
+                                            checked={skinTypeIds.includes(type.id)}
+                                            onChange={() => toggleArrayValue(skinTypeIds, setSkinTypeIds, type.id)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor={`skinType-${type.id}`} className="text-sm text-gray-700">
+                                            {type.name}
+                                        </label>
+                                    </div>
+                                ))
+                            )}
+                        </div>
 
-                <Form.Group as={Col} md={4}>
-                  <Form.Label>Ингредиенты</Form.Label>
-                  {loading.ingredients ? (
-                      <p>Загрузка...</p>
-                  ) : (
-                      ingredients.map((ingr) => (
-                          <Form.Check
-                              key={ingr.id}
-                              type="checkbox"
-                              label={ingr.name}
-                              checked={keyIngredientIds.includes(ingr.id)}
-                              onChange={() =>
-                                  toggleArrayValue(keyIngredientIds, setKeyIngredientIds, ingr.id)
-                              }
-                          />
-                      ))
-                  )}
-                </Form.Group>
-              </Row>
+                        <div className="p-4">
+                            {/* Селектор с множественным выбором и поиском */}
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Ингредиенты</label>
 
-              {/* Сообщения */}
-              {message && <div className="alert alert-success">{message}</div>}
-              {error && <div className="alert alert-danger">{error}</div>}
+                                {/* Поле поиска */}
+                                <input
+                                    type="text"
+                                    placeholder="Поиск ингредиентов..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full px-3 py-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
 
-              <Button variant="primary" type="submit" className="w-100">
-                Добавить косметику
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
-        <div style={{paddingBottom : "10px"}}></div>
-        <Card>
-          <Card.Header as="h4" className="text-center"
-                       style={{ cursor: 'pointer' }}
-                       onClick={() => setIsOpen2(!isOpen2)}>
-            Список косметики
-          </Card.Header>
-          <Card.Body className={"card-body2"} style={{ display: isOpen2 ? 'block' : 'none' }}>
-            <FeedbackModal message={message} error={error} onClose={() => {
-              setMessage(null);
-              setError(null);
-            }}/>
-            <div className="d-flex flex-wrap gap-3 align-items-center mb-3">
-              {/* Поле поиска */}
-              <Form.Group className="flex-grow-1 mb-0">
-                <Form.Control
-                    type="text"
-                    placeholder="Поиск по названию косметики..."
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setCurrentPage(1); // Сброс на первую страницу при новом поиске
-                    }}
-                />
-              </Form.Group>
+                                {/* Список ингредиентов */}
+                                <div className="max-h-48 overflow-y-auto border border-gray-300 rounded-md bg-white p-2">
+                                    {filteredIngredients.length === 0 ? (
+                                        <p className="text-sm text-gray-500 py-1">Нет доступных ингредиентов</p>
+                                    ) : (
+                                        filteredIngredients.map((ingr) => (
+                                            <div
+                                                key={ingr.id}
+                                                className="flex items-center px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                                                onClick={() => toggleIngredient(ingr.id)}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIngredients.includes(ingr.id)}
+                                                    onChange={() => toggleIngredient(ingr.id)}
+                                                    className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                                />
+                                                <span className="text-sm text-gray-700">{ingr.name}</span>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-              {/*/!* Выбор количества записей на странице *!/*/}
-              {/*<Form.Group className="mb-0" controlId="formPageSize">*/}
-              {/*    <Form.Label className="me-2 mb-0">Записей на странице</Form.Label>*/}
-              {/*    <Form.Select*/}
-              {/*        value={itemsPerPage}*/}
-              {/*        onChange={(e) => {*/}
-              {/*            const newLimit = parseInt(e.target.value);*/}
-              {/*            setItemsPerPage(newLimit); // Убедитесь, что вы обновляете состояние*/}
-              {/*            setCurrentPage(1);*/}
-              {/*        }}*/}
-              {/*    >*/}
-              {/*        <option value={10}>10</option>*/}
-              {/*        <option value={20}>20</option>*/}
-              {/*        <option value={50}>50</option>*/}
-              {/*    </Form.Select>*/}
-              {/*</Form.Group>*/}
+                    {/* Сообщения */}
+                    {message && <div className="text-green-600">{message}</div>}
+                    {error && <div className="text-red-600">{error}</div>}
+
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+                    >
+                        Добавить косметику
+                    </button>
+                </form>
             </div>
-            {/* Список косметики */}
-            <h5 className="mt-4">Список косметики</h5>
-            {loadingCosmetics ? (
-                <p>Загрузка косметики...</p>
-            ) : cosmetics.length === 0 ? (
-                <Alert variant="info">Нет доступной косметики</Alert>
-            ) : (
 
-                <Table striped bordered hover responsive className="mt-3">
-                  <thead>
-                  <tr>
-                    <th>Название</th>
-                    <th>Бренд</th>
-                    <th>Каталог</th>
-                    <th>Совместимость</th>
-                    <th>Рекомендации по применению</th>
-                    <th>Способ применения</th>
-                    <th>Действия</th>
-                    <th>Тип кожи</th>
-                    <th>Изо</th>
-                    <th style={{width: '0%'}}>Действия</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {currentItems.length > 0 ? (
-                      currentItems.map((cosmetic) => (
-                          <tr key={cosmetic.id}>
-                            <td>{cosmetic.name}</td>
-                            <td>{cosmetic.brand?.name || '—'}</td>
-                            <td>{cosmetic.catalog?.name || '—'}</td>
-                            <td>{cosmetic.compatibility || '—'}</td>
-                            <td>{cosmetic.usageRecommendations || '—'}</td>
-                            <td>{cosmetic.applicationMethod || '—'}</td>
-                            <td>{cosmetic.actions.map(a => a.name).join('\n') || '—'}</td>
-                            <td>{cosmetic.skinTypes.map(s => s.name).join('\n') || '—'}</td>
-                            <td>
-                              <div style={{ width: '200px', height: '150px' }}>
-                                <Carousel variant="dark" interval={null} slide={true}>
-                                  <Carousel.Item>
-                                    <img
-                                        className="d-block w-100"
-                                        src={`http://localhost:8080/api/files?cosmeticId=${cosmetic.id}&fileName=0`}
-                                        alt="Первое изображение"
-                                        style={{ maxHeight: '150px', objectFit: 'contain' }}
-                                    />
-                                  </Carousel.Item>
-                                  <Carousel.Item>
-                                    <img
-                                        className="d-block w-100"
-                                        src={`http://localhost:8080/api/files?cosmeticId=${cosmetic.id}&fileName=1`}
-                                        alt="Второе изображение"
-                                        style={{ maxHeight: '150px', objectFit: 'contain' }}
-                                    />
-                                  </Carousel.Item>
-                                  <Carousel.Item>
-                                    <img
-                                        className="d-block w-100"
-                                        src={`http://localhost:8080/api/files?cosmeticId=${cosmetic.id}&fileName=2`}
-                                        alt="Третье изображение"
-                                        style={{ maxHeight: '150px', objectFit: 'contain' }}
-                                    />
-                                  </Carousel.Item>
-                                </Carousel>
-                              </div>
-                            </td>
-                            <td>
-                              <div className="d-flex justify-content-end gap-2">
-                                <Button
-                                    variant="outline-primary"
-                                    size="sm"
-                                    onClick={() => handleEditClick(cosmetic)}
-                                    className="d-flex align-items-center gap-1"
-                                    title="Редактировать"
-                                >
-                                  <PencilFill size={16}/>
-                                </Button>
-                                <Button
-                                    variant="outline-danger"
-                                    size="sm"
-                                    onClick={() => handleDelete(cosmetic.id, cosmetic.name)}
-                                    className="d-flex align-items-center gap-1"
-                                    title="Удалить"
-                                >
-                                  <TrashFill size={16}/>
-                                </Button>
-                              </div>
-                            </td>
+            {/* Карточка списка косметики */}
+            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6">
+                <h4 className="text-xl font-semibold text-center mb-4">Список косметики</h4>
 
-                          </tr>
-                      ))
-                  ) : (
-                      <tr>
-                        <td colSpan={9} className="text-center">
-                          Нет совпадений
-                        </td>
-                      </tr>
-                  )}
-                  </tbody>
-                </Table>
-            )}
-            {/*/!* Пагинация *!/*/}
-            {/*{totalPages > 1 && (*/}
-            {/*    <div className="d-flex justify-content-center mt-3">*/}
-            {/*        <Button*/}
-            {/*            variant="secondary"*/}
-            {/*            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}*/}
-            {/*            disabled={currentPage === 1}*/}
-            {/*        >*/}
-            {/*            Назад*/}
-            {/*        </Button>*/}
-            {/*        <div className="mx-3">*/}
-            {/*            Страница {currentPage} из {totalPages}*/}
-            {/*        </div>*/}
-            {/*        <Button*/}
-            {/*            variant="secondary"*/}
-            {/*            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}*/}
-            {/*            disabled={currentPage === totalPages}*/}
-            {/*        >*/}
-            {/*            Вперед*/}
-            {/*        </Button>*/}
-            {/*    </div>*/}
-            {/*)}*/}
+                {/* Поиск и заголовок на одной строке */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                    <h5 className="font-medium text-lg">Список косметики</h5>
+                    <div className="w-full md:w-64">
+                        <input
+                            type="text"
+                            placeholder="Поиск по косметике..."
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                </div>
+
+                {/* Таблица косметики */}
+                {loadingCosmetics ? (
+                    <p>Загрузка данных...</p>
+                ) : filteredCosmetics.length === 0 ? (
+                    <div className="bg-blue-50 text-blue-700 p-3 rounded-md text-sm">Нет доступной косметики</div>
+                ) : (
+                    <>
+                        <div className="overflow-x-auto mb-4">
+                            <table className="min-w-full table-auto border-collapse border border-gray-300">
+                                <thead className="bg-gray-100">
+                                <tr>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Название</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Бренд</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Каталог</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Совместимость</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Рекомендации</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Способ применения</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Тип кожи</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-right">Действия</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {currentItems.map((cosmetic) => (
+                                    <tr key={cosmetic.id}>
+                                        <td className="border border-gray-300 px-4 py-2">{cosmetic.name}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{cosmetic.brand?.name || '—'}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{cosmetic.catalog?.name || '—'}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{cosmetic.compatibility || '—'}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{cosmetic.usageRecommendations || '—'}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{cosmetic.applicationMethod || '—'}</td>
+                                        <td className="border border-gray-300 px-4 py-2">
+                                            {cosmetic.skinTypes.map((s) => s.name).join(', ') || '—'}
+                                        </td>
+                                        <td className="border border-gray-300 px-4 py-2 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    onClick={() => {
+                                                    }}
+                                                    title="Редактировать"
+                                                    className="text-blue-600 hover:text-blue-800"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5"
+                                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                              strokeWidth={2}
+                                                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                    </svg>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(cosmetic.id, cosmetic.name)}
+                                                    title="Удалить"
+                                                    className="text-red-600 hover:text-red-800"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5"
+                                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                              strokeWidth={2}
+                                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Пагинация */}
+                        {totalPages > 1 && (
+                            <div className="flex justify-between items-center mt-4">
+                <span className="text-sm text-gray-500">
+                  Показано {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredCosmetics.length)} из{' '}
+                    {filteredCosmetics.length}
+                </span>
+                                <nav className="flex space-x-2">
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
+                                    >
+                                        Предыдущая
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
+                                    >
+                                        Следующая
+                                    </button>
+                                </nav>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+
+            {/* Модальное окно подтверждения удаления */}
             <ConfirmDeleteModal
                 show={showConfirmDeleteModal}
                 onHide={() => setShowConfirmDeleteModal(false)}
                 onConfirm={async () => {
-                  if (cosmeticToDeleteId !== null) {
-                    try {
-                      await deleteCosmetic(cosmeticToDeleteId);
-                      setCosmetics(cosmetics.filter(c => c.id !== cosmeticToDeleteId));
-                      setMessage('Косметика успешно удалена');
-                      setError(null);
-                    } catch (err: any) {
-                      setError(err.message || 'Ошибка при удалении');
-                      setMessage(null);
-                    } finally {
-                      setShowConfirmDeleteModal(false);
-                      setCosmeticToDeleteId(null);
-                      setCosmeticToDeleteName(null);
+                    if (cosmeticToDeleteId !== null) {
+                        try {
+                            await deleteCosmetic(cosmeticToDeleteId);
+                            setCosmetics(cosmetics.filter((c) => c.id !== cosmeticToDeleteId));
+                            setMessage('Косметика успешно удалена');
+                            setError(null);
+                        } catch (err: any) {
+                            setError(err.message || 'Ошибка при удалении');
+                            setMessage(null);
+                        } finally {
+                            setShowConfirmDeleteModal(false);
+                            setCosmeticToDeleteId(null);
+                            setCosmeticToDeleteName(null);
+                        }
                     }
-                  }
                 }}
                 itemName={cosmeticToDeleteName || undefined}
             />
-          </Card.Body>
-        </Card>
-      </Container>
-  );
+
+            {/* Модальное окно сообщений */}
+            <FeedbackModal message={message} error={error} onClose={() => setMessage(null)}/>
+        </div>
+    );
 };
 
 export default CosmeticForm;

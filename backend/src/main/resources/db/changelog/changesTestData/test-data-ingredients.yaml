@@ -1,0 +1,900 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-test-ingredients-unique
+      author: yourname
+      changes:
+        # --- Ингредиенты ---
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Aloe Vera
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Hyaluronic Acid
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Salicylic Acid
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Glycerin
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Niacinamide
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Retinol
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Vitamin E
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Vitamin C
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Shea Butter
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Jojoba Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Rosehip Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Green Tea Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Centella Asiatica
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Ceramides
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Allantoin
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Panthenol
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Lactic Acid
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Mandelic Acid
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Azelaic Acid
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Witch Hazel
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Squalane
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Bakuchiol
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Licorice Root Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Calendula Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Chamomile Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Tea Tree Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Coconut Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Avocado Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Sunflower Seed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Olive Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Cucumber Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Pomegranate Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Kakadu Plum
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Raspberry Seed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Argan Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Mango Butter
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Collagen
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Peptides
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Alpha Arbutin
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Beta Glucan
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Ferulic Acid
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Tocopherol
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Soybean Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Macadamia Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Evening Primrose Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Papaya Enzyme
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Pineapple Enzyme
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Lemon Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Orange Peel Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Grapefruit Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Lavender Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Clary Sage Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Frankincense Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Myrrh Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Rose Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Geranium Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Patchouli Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Marigold Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Arnica Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Horsetail Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Nettle Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Dandelion Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Chickweed Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Comfrey Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Gotu Kola
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Seaweed Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Algae Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Kelp Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Cranberry Seed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Pumpkin Seed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Peach Kernel Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Apricot Kernel Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Castor Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Grapeseed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Safflower Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Corn Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Linseed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Borage Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Sea Buckthorn Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Black Seed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Cottonseed Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Hazelnut Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Moringa Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Neem Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Pomegranate Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Baobab Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Meadowfoam Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Tamanu Oil
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Candelilla Wax
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Carnauba Wax
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Beeswax
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Cocoa Butter
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Mangosteen Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Lychee Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: White Tea Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Chrysanthellum Indicum Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Snail Mucin
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Honey
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Propolis
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Royal Jelly
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Manuka Honey
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Bee Venom
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Bee Pollen
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Lactobacillus Ferment
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Saccharomyces Ferment
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Aspergillus Ferment
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Bifida Ferment
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Lactobacillus/Soymilk Ferment
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Brewed Green Tea
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Black Tea Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Pu'erh Tea Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Matcha Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Pine Needle Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Eucalyptus Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Lemon Balm Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Thyme Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Oregano Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Peppermint Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Spearmint Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Sage Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Rosemary Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Chamomile Flower Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Yarrow Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Plantain Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Marshmallow Root Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Slippery Elm Bark Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Willow Bark Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Birch Bark Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Licorice Root
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Gotu Kola Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Houttuynia Cordata Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Polygonum Multiflorum Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Rehmannia Root Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Angelica Root Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Scutellaria Baicalensis Root Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Sophora Root Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Anemarrhena Asphodeloides Root Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Poria Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Reishi Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Chaga Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Cordyceps Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Agaricus Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Maitake Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Shiitake Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Enoki Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Porcini Mushroom Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Truffle Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: White Truffle Extract
+        - insert:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: name
+                  value: Black Truffle Extract

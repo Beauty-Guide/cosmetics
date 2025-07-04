@@ -22,8 +22,8 @@ const AppNavbar: React.FC = () => {
         <div className="flex gap-4 text-amber-50">
           {isAuthenticated && (
             <>
-              <Link to="/admin/catalog">Каталоги</Link>
               <Link to="/admin">Косметика</Link>
+              <Link to="/admin/catalog">Каталоги</Link>
               <Link to="/admin/brand">Бренды</Link>
               <Link to="/admin/skinType">Типы кожи</Link>
               <Link to="/admin/action">Действия</Link>

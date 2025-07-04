@@ -6,15 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import ru.cosmetic.server.dtos.CatalogDto;
-import ru.cosmetic.server.dtos.CosmeticDto;
+import ru.cosmetic.server.requestDto.CosmeticAddRequest;
 import ru.cosmetic.server.models.Cosmetic;
-import ru.cosmetic.server.repo.CosmeticRepo;
 import ru.cosmetic.server.service.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,23 +29,23 @@ public class CosmeticController {
 
     @PostMapping("/addCosmetic")
     @Operation(summary = "Добавление косметики без изображений")
-    public ResponseEntity<?> addCosmetic(@RequestBody CosmeticDto cosmeticDto) {
+    public ResponseEntity<?> addCosmetic(@RequestBody CosmeticAddRequest request) {
         try {
             Cosmetic cosmetic = new Cosmetic();
-            cosmetic.setName(cosmeticDto.getName());
-            cosmetic.setDescription(cosmeticDto.getDescription());
-            cosmetic.setCompatibility(cosmeticDto.getCompatibility());
-            cosmetic.setUsageRecommendations(cosmeticDto.getUsageRecommendations());
-            cosmetic.setApplicationMethod(cosmeticDto.getApplicationMethod());
+            cosmetic.setName(request.getName());
+            cosmetic.setDescription(request.getDescription());
+            cosmetic.setCompatibility(request.getCompatibility());
+            cosmetic.setUsageRecommendations(request.getUsageRecommendations());
+            cosmetic.setApplicationMethod(request.getApplicationMethod());
 
             // Установка связей по ID
-            cosmetic.setBrand(brandService.findById(cosmeticDto.getBrandId()));
-            cosmetic.setCatalog(catalogService.findById(cosmeticDto.getCatalogId()));
+            cosmetic.setBrand(brandService.findById(request.getBrandId()));
+            cosmetic.setCatalog(catalogService.findById(request.getCatalogId()));
 
             // Связь с ингредиентами, действиями, типами кожи
-            cosmetic.setIngredients(ingredientService.findById(cosmeticDto.getKeyIngredientIds()));
-            cosmetic.setActions(cosmeticActionService.findAllById(cosmeticDto.getActionIds()));
-            cosmetic.setSkinTypes(skinTypeService.findAllById(cosmeticDto.getSkinTypeIds()));
+            cosmetic.setIngredients(ingredientService.findById(request.getKeyIngredientIds()));
+            cosmetic.setActions(cosmeticActionService.findAllById(request.getActionIds()));
+            cosmetic.setSkinTypes(skinTypeService.findAllById(request.getSkinTypeIds()));
 
             // Сохранение косметики (без изображений)
             Cosmetic savedCosmetic = cosmeticService.save(cosmetic);

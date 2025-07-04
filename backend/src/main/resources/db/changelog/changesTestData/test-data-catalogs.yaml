@@ -1,0 +1,219 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-test-catalogs
+      author: yourname
+      changes:
+        # --- Корневые категории ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Косметика"
+
+        # --- Дочерние категории ---
+        # Уход за кожей
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Уход за кожей"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Очищение"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Тонизирование"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Увлажнение"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Антивозрастной уход"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+
+        # Макияж
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Макияж"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Лицо"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Основа"
+              - column:
+                  name: parent_id
+                  valueNumeric: 7
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Румяна"
+              - column:
+                  name: parent_id
+                  valueNumeric: 7
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Глаза"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Тушь"
+              - column:
+                  name: parent_id
+                  valueNumeric: 9
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Подводка"
+              - column:
+                  name: parent_id
+                  valueNumeric: 9
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Губы"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Помада"
+              - column:
+                  name: parent_id
+                  valueNumeric: 11
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Бальзамы"
+              - column:
+                  name: parent_id
+                  valueNumeric: 11
+
+        # Парфюмерия
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Парфюмерия"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Для женщин"
+              - column:
+                  name: parent_id
+                  valueNumeric: 13
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Для мужчин"
+              - column:
+                  name: parent_id
+                  valueNumeric: 13
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Унисекс"
+              - column:
+                  name: parent_id
+                  valueNumeric: 13
+
+        # Уход за волосами
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Уход за волосами"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Шампуни"
+              - column:
+                  name: parent_id
+                  valueNumeric: 16
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Кондиционеры"
+              - column:
+                  name: parent_id
+                  valueNumeric: 16
