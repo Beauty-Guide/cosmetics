@@ -16,10 +16,10 @@ const HomePage = () => {
   )
 
   return (
-    <main className="min-h-screen w-full flex items-center justify-center p-4">
+    <main className="min-h-screen w-full flex items-start justify-center p-4">
       <SideBar categoryTree={categoryTree} />
       {!isLoadingItems && (
-        <div className="flex items-center justify-center w-full flex-wrap">
+        <div className="flex items-start justify-center w-full flex-wrap">
           {products.map((product) => (
             <Product key={product.id} product={product} />
           ))}

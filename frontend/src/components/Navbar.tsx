@@ -14,12 +14,12 @@ const AppNavbar: React.FC = () => {
 
   return (
     <div className="flex mb-4 p-4 w-full bg-gray-700">
-      <span className="flex gap-4 items-center justify-between w-full">
+      <span className="flex gap-4 items-center justify-between w-full flex-wrap">
         <Link className="text-amber-50" to="/">
           Beauty Guide
         </Link>
 
-        <div className="flex gap-4 text-amber-50">
+        <div className="flex flex-wrap gap-4 text-amber-50">
           {isAuthenticated && (
             <>
               <Link to="/admin">Косметика</Link>

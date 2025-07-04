@@ -1,12 +1,6 @@
 import type { TCategory } from "@/types"
-// import {
-//   Accordion,
-//   AccordionContent,
-//   AccordionItem,
-//   AccordionTrigger,
-// } from "../ui/accordion"
-// import CategoryItem from "./CategoryItem"
-import CategoryAccordion from "./CategoryAccordion"
+import CategoryItem from "./CategoryItem"
+// import CategoryAccordion from "./CategoryAccordion"
 
 type SideBarProps = {
   categoryTree: TCategory[]
@@ -16,13 +10,13 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
   console.log(categoryTree)
 
   return (
-    <div className="flex flex-col gap-4 w-[500px]">
+    <div className="flex flex-col gap-4 w-[500px] max-md:hidden">
       <h1 className="text-3xl text-blue-500">Категории</h1>
       <div>
-        {/* {categoryTree.map((cat) => (
+        {categoryTree.map((cat) => (
           <CategoryItem key={cat.id} category={cat} />
-        ))} */}
-        <CategoryAccordion categories={categoryTree} />
+        ))}
+        {/* <CategoryAccordion categories={categoryTree} /> */}
       </div>
       {/* <Accordion
         type="single"

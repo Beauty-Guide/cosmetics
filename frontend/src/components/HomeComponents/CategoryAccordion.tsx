@@ -6,11 +6,13 @@ import {
 } from "@/components/ui/accordion"
 
 export default function CategoryAccordion({ categories, level = 0 }) {
+  console.log(level)
+
   return (
     <Accordion type="multiple" className="w-full">
       {categories.map((cat) => (
         <AccordionItem value={`item-${cat.id}`} key={cat.id}>
-          <AccordionTrigger className={`pl-${level * 4}`}>
+          <AccordionTrigger className={`ml-${level * 4}`}>
             {cat.name}
           </AccordionTrigger>
           <AccordionContent>
