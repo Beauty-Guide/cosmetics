@@ -6,6 +6,7 @@ import { useGetCategories } from "@/hooks/getCategories"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useMemo } from "react"
 import { PaginationButtons } from "@/components/Pagination"
+import { Input } from "@/components/ui/input"
 // import { useLocation, useSearchParams } from "react-router"
 
 const HomePage = () => {
@@ -31,9 +32,10 @@ const HomePage = () => {
   // )
 
   return (
-    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4">
+    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 pt-8 max-md:pt-0">
       <SideBar categoryTree={categoryTree} />
-      <div className="flex flex-col items-center justify-center gap-4 w-full">
+      <div className="flex flex-col items-center justify-center gap-4 w-full mt-1">
+        <Input type="search" placeholder="Поиск" className="max-w-md mr-auto" />
         <ProductFilters />
         {!isLoadingItems && (
           <div className="flex items-start justify-center w-full flex-wrap">

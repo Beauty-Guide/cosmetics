@@ -18,7 +18,7 @@ type SideBarProps = {
 const SideBar = ({ categoryTree }: SideBarProps) => {
   return (
     <>
-      <div className="flex flex-col gap-4 w-[300px] max-md:hidden mt-5">
+      <div className="flex flex-col gap-4 w-[300px] max-md:hidden">
         <h1 className="text-3xl text-blue-500 font-bold">Категории</h1>
         <div>
           {categoryTree.map((cat) => (
@@ -29,7 +29,9 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
       <div className="md:hidden">
         <Drawer>
           <DrawerTrigger asChild>
-            <Button variant="outline">Категории</Button>
+            <Button variant="outline" className="my-2">
+              Категории
+            </Button>
           </DrawerTrigger>
           <DrawerContent aria-describedby={undefined}>
             <div className="mx-auto w-full max-w-sm">
