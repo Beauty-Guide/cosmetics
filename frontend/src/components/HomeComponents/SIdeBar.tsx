@@ -31,7 +31,7 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
           <DrawerTrigger asChild>
             <Button variant="outline">Категории</Button>
           </DrawerTrigger>
-          <DrawerContent>
+          <DrawerContent aria-describedby={undefined}>
             <div className="mx-auto w-full max-w-sm">
               <DrawerHeader>
                 <DrawerTitle>Категории</DrawerTitle>

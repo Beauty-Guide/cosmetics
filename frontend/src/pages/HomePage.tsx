@@ -24,9 +24,13 @@ const HomePage = () => {
         <ProductFilters />
         {!isLoadingItems && (
           <div className="flex items-start justify-center w-full flex-wrap">
-            {products.map((product) => (
-              <Product key={product.id} product={product} />
-            ))}
+            {products.length === 0 ? (
+              <p>Ничего не найдено</p>
+            ) : (
+              products.map((product) => (
+                <Product key={product.id} product={product} />
+              ))
+            )}
             <PaginationButtons pages={5} />
           </div>
         )}

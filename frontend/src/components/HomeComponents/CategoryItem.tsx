@@ -1,5 +1,6 @@
-import { useState } from "react"
-import { useNavigate } from "react-router"
+import { cn } from "@/lib/utils"
+import { memo, useEffect, useMemo, useState } from "react"
+import { useLocation, useNavigate } from "react-router"
 
 interface TCategoryItem {
   id: number
@@ -7,19 +8,39 @@ interface TCategoryItem {
   children?: TCategoryItem[]
 }
 
-export default function CategoryItem({
+function CategoryItem({
   category,
+  parentPath = "",
 }: {
   category: TCategoryItem
+  parentPath?: string
 }) {
   const [open, setOpen] = useState<boolean>(false)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const fullPath = useMemo(
+    () => `${parentPath}/${category.name}`,
+    [parentPath, category.name]
+  )
+
+  const isActive = decodeURIComponent(location.pathname).startsWith(
+    `/category${fullPath}`
+  )
+  const isSelected =
+    decodeURIComponent(location.pathname) === `/category${fullPath}`
 
   const hasChildren = category.children && category.children.length > 0
 
   const handleClick = () => {
-    navigate(`/category/${category.name}`)
+    navigate(`/category${fullPath}`)
   }
+
+  useEffect(() => {
+    if (isActive) {
+      setOpen(true)
+    }
+  }, [isActive])
 
   return (
     <div className="ml-3 mt-2 relative group">
@@ -44,7 +65,10 @@ export default function CategoryItem({
         )}
 
         <span
-          className="text-sm text-gray-800 hover:underline"
+          className={cn(
+            "text-sm text-gray-800 hover:underline",
+            isSelected && "text-blue-500"
+          )}
           onClick={handleClick}
         >
           {category.name}
@@ -55,10 +79,16 @@ export default function CategoryItem({
         <div className="ml-4 pl-2 border-l border-gray-300 transition-all duration-200">
           {category.children &&
             category.children.map((child) => (
-              <CategoryItem key={child.id} category={child} />
+              <CategoryItem
+                key={child.id}
+                category={child}
+                parentPath={fullPath}
+              />
             ))}
         </div>
       )}
     </div>
   )
 }
+
+export default memo(CategoryItem)
