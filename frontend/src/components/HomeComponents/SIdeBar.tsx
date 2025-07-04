@@ -1,44 +1,58 @@
+import type { TCategory } from "@/types"
+import CategoryItem from "./CategoryItem"
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion"
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Button } from "../ui/button"
 
-const SideBar = () => {
+type SideBarProps = {
+  categoryTree: TCategory[]
+}
+
+const SideBar = ({ categoryTree }: SideBarProps) => {
   return (
-    <div className="flex flex-col gap-4 w-[500px]">
-      <h1 className="text-3xl text-blue-500">Категории</h1>
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full"
-        defaultValue="item-1"
-      >
-        <AccordionItem value="item-1">
-          <AccordionTrigger>
-            <h1>Уход за кожей</h1>
-          </AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-4 text-balance">
-            Уход для лица
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-2">
-          <AccordionTrigger>
-            <h1>Макияж</h1>
-          </AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-4 text-balance"></AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-3">
-          <AccordionTrigger>
-            <h1>Волосы</h1>
-          </AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-4 text-balance"></AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </div>
+    <>
+      <div className="flex flex-col gap-4 w-[300px] max-md:hidden">
+        <h1 className="text-3xl text-blue-500 font-bold">Категории</h1>
+        <div>
+          {categoryTree.map((cat) => (
+            <CategoryItem key={cat.id} category={cat} />
+          ))}
+        </div>
+      </div>
+      <div className="md:hidden">
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button variant="outline" className="my-2">
+              Категории
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent aria-describedby={undefined}>
+            <div className="mx-auto w-full max-w-sm">
+              <DrawerHeader>
+                <DrawerTitle>Категории</DrawerTitle>
+              </DrawerHeader>
+              <div>
+                {categoryTree.map((cat) => (
+                  <CategoryItem key={cat.id} category={cat} />
+                ))}
+              </div>
+              <DrawerFooter>
+                <DrawerClose asChild>
+                  <Button variant="outline">Закрыть</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </div>
+    </>
   )
 }
 

@@ -12,64 +12,76 @@ import SkinTypeForm from "./pages/SkinTypeForm"
 import BrandForm from "./pages/BrandForm"
 import IngredientForm from "./pages/IngredientForm"
 import Sandbox from "./pages/Sandbox"
+import ProductPage from "./pages/ProductPage"
+import Layout from "./components/Layout"
 
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Публичные маршруты */}
       <Route path="/app" element={<Sandbox />} />
       <Route path="/login" element={<LoginForm />} />
-      <Route path="/" element={<HomePage />} />
 
-      {/* Защищённые маршруты */}
-      <Route
-        path="/admin"
-        element={
-          <PrivateRoute>
-            <Cosmetic />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/admin/catalog"
-        element={
-          <PrivateRoute>
-            <CatalogForm />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/admin/brand"
-        element={
-          <PrivateRoute>
-            <BrandForm />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/admin/action"
-        element={
-          <PrivateRoute>
-            <ActionForm />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/admin/skinType"
-        element={
-          <PrivateRoute>
-            <SkinTypeForm />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/admin/ingredient"
-        element={
-          <PrivateRoute>
-            <IngredientForm />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+
+        <Route path="/category" element={<HomePage />}>
+          <Route path="*" element={<HomePage />} />
+        </Route>
+
+        <Route path="/product/:productId" element={<ProductPage />} />
+
+        <Route path="*" element={<h1>404</h1>} />
+
+        {/* Защищённые маршруты */}
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <Cosmetic />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/catalog"
+          element={
+            <PrivateRoute>
+              <CatalogForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/brand"
+          element={
+            <PrivateRoute>
+              <BrandForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/action"
+          element={
+            <PrivateRoute>
+              <ActionForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/skinType"
+          element={
+            <PrivateRoute>
+              <SkinTypeForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/ingredient"
+          element={
+            <PrivateRoute>
+              <IngredientForm />
+            </PrivateRoute>
+          }
+        />
+      </Route>
     </Routes>
   )
 }

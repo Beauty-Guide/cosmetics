@@ -1,7 +1,6 @@
 import React from "react"
-import { Link } from "react-router"
-import { useNavigate } from "react-router"
-import { Button } from "./ui/button"
+import { Link, useNavigate } from "react-router"
+import { Button } from "@/components/ui/button"
 
 const AppNavbar: React.FC = () => {
   const navigate = useNavigate()
@@ -13,32 +12,62 @@ const AppNavbar: React.FC = () => {
   }
 
   return (
-    <div className="flex mb-4 p-4 w-full bg-gray-700">
-      <span className="flex gap-4 items-center justify-between w-full">
-        <Link className="text-amber-50" to="/">
+    <nav className="bg-gray-900 text-white shadow-sm">
+      <div className="container mx-auto flex items-center justify-between p-4 flex-wrap gap-2">
+        <Link to="/" className="text-xl font-bold tracking-tight text-white">
           Beauty Guide
         </Link>
 
-        <div className="flex gap-4 text-amber-50">
+        <div className="flex flex-wrap gap-5 max-md:gap-2 items-center text-sm py-2">
           {isAuthenticated && (
             <>
-              <Link to="/admin">Косметика</Link>
-              <Link to="/admin/catalog">Каталоги</Link>
-              <Link to="/admin/brand">Бренды</Link>
-              <Link to="/admin/skinType">Типы кожи</Link>
-              <Link to="/admin/action">Действия</Link>
-              <Link to="/admin/ingredient">Ингредиенты</Link>
+              <Link
+                to="/admin"
+                className="hover:text-blue-300 transition-colors"
+              >
+                Косметика
+              </Link>
+              <Link
+                to="/admin/catalog"
+                className="hover:text-blue-300 transition-colors"
+              >
+                Каталоги
+              </Link>
+              <Link
+                to="/admin/brand"
+                className="hover:text-blue-300 transition-colors"
+              >
+                Бренды
+              </Link>
+              <Link
+                to="/admin/skinType"
+                className="hover:text-blue-300 transition-colors"
+              >
+                Типы кожи
+              </Link>
+              <Link
+                to="/admin/action"
+                className="hover:text-blue-300 transition-colors"
+              >
+                Действия
+              </Link>
+              <Link
+                to="/admin/ingredient"
+                className="hover:text-blue-300 transition-colors"
+              >
+                Ингредиенты
+              </Link>
             </>
           )}
         </div>
 
         {isAuthenticated && (
-          <Button variant="outline" onClick={handleLogout}>
+          <Button variant="secondary" onClick={handleLogout}>
             Выйти
           </Button>
         )}
-      </span>
-    </div>
+      </div>
+    </nav>
   )
 }
 

@@ -1,59 +1,54 @@
-import Item from "@/components/HomeComponents/Item"
+import ProductFilters from "@/components/HomeComponents/ProductFilters"
+import Product from "@/components/HomeComponents/Product"
 import SideBar from "@/components/HomeComponents/SIdeBar"
-
-const items = [
-  {
-    id: 1,
-    name: "Крем",
-    img: null,
-    description: "Крем для лица",
-    price: 100,
-  },
-  {
-    id: 2,
-    name: "Крем",
-    img: null,
-    description: "Крем для лица",
-    price: 100,
-  },
-  {
-    id: 3,
-    name: "Крем",
-    img: null,
-    description: "Крем для лица",
-    price: 100,
-  },
-  {
-    id: 4,
-    name: "Крем",
-    img: null,
-    description: "Крем для лица",
-    price: 100,
-  },
-  {
-    id: 5,
-    name: "Крем",
-    img: null,
-    description: "Крем для лица",
-    price: 100,
-  },
-  {
-    id: 6,
-    name: "Крем",
-    img: null,
-    description: "Крем для лица",
-    price: 100,
-  },
-]
+import { useGetAllItems } from "@/hooks/getAllItems"
+import { useGetCategories } from "@/hooks/getCategories"
+import { buildCategoryTree } from "@/lib/buildCategoryTree"
+import { useMemo } from "react"
+import { PaginationButtons } from "@/components/Pagination"
+import { Input } from "@/components/ui/input"
+// import { useLocation, useSearchParams } from "react-router"
 
 const HomePage = () => {
+  const { data: products, isLoading: isLoadingItems } = useGetAllItems()
+  const { data: categories, isLoading: isLoadingCategories } =
+    useGetCategories()
+
+  const categoryTree = useMemo(
+    () => buildCategoryTree(isLoadingCategories ? [] : categories),
+    [categories, isLoadingCategories]
+  )
+
+  // const { pathname } = useLocation()
+  // const [searchParams] = useSearchParams()
+
+  // const selectedBrands = searchParams.getAll("brand")
+  // const selectedSkinTypes = searchParams.getAll("skinType")
+  // const selectedFilterCategories = searchParams.getAll("category")
+
+  // console.log(
+  //   selectedBrands,
+  //   decodeURIComponent(pathname.split("/").at(-1) || "")
+  // )
+
   return (
-    <main className="min-h-screen w-full flex items-center justify-center p-4">
-      <SideBar />
-      <div className="flex items-center justify-center w-full flex-wrap">
-        {items.map((item) => (
-          <Item key={item.id} item={item} />
-        ))}
+    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 pt-8 max-md:pt-0">
+      <SideBar categoryTree={categoryTree} />
+      <div className="flex flex-col items-center justify-center gap-4 w-full mt-1">
+        <Input type="search" placeholder="Поиск" className="max-w-md mr-auto" />
+        <ProductFilters />
+        {!isLoadingItems && (
+          <div className="flex items-start justify-center w-full flex-wrap">
+            {products.length === 0 ? (
+              <p>Ничего не найдено</p>
+            ) : (
+              products.map((product) => (
+                <Product key={product.id} product={product} />
+              ))
+            )}
+            <PaginationButtons pages={5} />
+          </div>
+        )}
       </div>
     </main>
   )

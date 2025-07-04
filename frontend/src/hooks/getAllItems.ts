@@ -1,9 +1,10 @@
+import { API_BASE_URL } from "@/config/consts"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 
 const fetchAllItems = async () => {
   const response = await axios.get(
-    "https://jsonplaceholder.typicode.com/todos/1"
+    `${API_BASE_URL}/admin/cosmetic/getAllCosmetic`
   )
   return response.data
 }
