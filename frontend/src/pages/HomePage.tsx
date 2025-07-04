@@ -18,16 +18,16 @@ const HomePage = () => {
   )
 
   return (
-    <main className="min-h-screen w-full flex items-start justify-center p-4">
+    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4">
       <SideBar categoryTree={categoryTree} />
-      <div className="flex flex-col gap-4 w-full">
+      <div className="flex flex-col items-center justify-center gap-4 w-full">
         <ProductFilters />
         {!isLoadingItems && (
           <div className="flex items-start justify-center w-full flex-wrap">
             {products.map((product) => (
               <Product key={product.id} product={product} />
             ))}
-            <PaginationButtons pages={10} />
+            <PaginationButtons pages={5} />
           </div>
         )}
       </div>

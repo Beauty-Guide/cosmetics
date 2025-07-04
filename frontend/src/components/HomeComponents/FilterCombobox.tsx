@@ -51,7 +51,7 @@ export default function MultiSelectCombobox({
   }, [options, values])
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full max-w-xs">
       <label className="block mb-1 text-sm font-medium text-gray-700">
         {label}
       </label>

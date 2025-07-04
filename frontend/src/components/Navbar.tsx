@@ -13,12 +13,12 @@ const AppNavbar: React.FC = () => {
 
   return (
     <nav className="bg-gray-900 text-white shadow-sm">
-      <div className="container mx-auto flex items-center justify-between p-4 flex-wrap">
+      <div className="container mx-auto flex items-center justify-between p-4 flex-wrap gap-2">
         <Link to="/" className="text-xl font-bold tracking-tight text-white">
           Beauty Guide
         </Link>
 
-        <div className="flex flex-wrap gap-4 items-center text-sm">
+        <div className="flex flex-wrap gap-5 max-md:gap-2 items-center text-sm py-2">
           {isAuthenticated && (
             <>
               <Link
