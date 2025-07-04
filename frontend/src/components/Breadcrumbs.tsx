@@ -19,6 +19,20 @@ export default function Breadcrumbs() {
     { name: "Главная", to: "/" },
     ...pathnames.map((segment, index) => {
       const to = "/" + pathnames.slice(0, index + 1).join("/")
+
+      switch (segment) {
+        case "category":
+          return {
+            name: "Каталог",
+            to: "/",
+          }
+        case "product":
+          return {
+            name: "Товары",
+            to: "/",
+          }
+      }
+
       return {
         name: decodeURIComponent(segment),
         to,

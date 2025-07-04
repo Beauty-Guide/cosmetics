@@ -11,7 +11,7 @@ const Product = ({ product }: ProductProps) => {
   const navigate = useNavigate()
 
   const navigateToItem = () => {
-    navigate(`/product/${product.id}`)
+    navigate(`/product/${product.name}`)
   }
 
   const handleAddToFavorite = () => {
