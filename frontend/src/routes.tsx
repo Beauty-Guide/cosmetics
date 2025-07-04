@@ -23,7 +23,11 @@ const AppRoutes = () => {
 
       <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="/category/:categoryId" element={<HomePage />} />
+
+        <Route path="/category" element={<HomePage />}>
+          <Route path=":categoryName" element={<HomePage />} />
+        </Route>
+
         <Route path="/product/:productId" element={<ProductPage />} />
 
         <Route path="*" element={<h1>404</h1>} />
