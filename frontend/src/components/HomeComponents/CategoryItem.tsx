@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router"
 
 interface TCategoryItem {
   id: number
@@ -12,11 +13,12 @@ export default function CategoryItem({
   category: TCategoryItem
 }) {
   const [open, setOpen] = useState<boolean>(false)
+  const navigate = useNavigate()
 
   const hasChildren = category.children && category.children.length > 0
 
   const handleClick = () => {
-    console.log(category.name)
+    navigate(`/category/${category.name}`)
   }
 
   return (
