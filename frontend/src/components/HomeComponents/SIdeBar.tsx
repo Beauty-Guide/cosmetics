@@ -7,7 +7,7 @@ type SideBarProps = {
 
 const SideBar = ({ categoryTree }: SideBarProps) => {
   return (
-    <div className="flex flex-col gap-4 w-[500px] max-md:hidden">
+    <div className="flex flex-col gap-4 w-[500px] max-md:hidden mt-5">
       <h1 className="text-3xl text-blue-500 font-bold">Категории</h1>
       <div>
         {categoryTree.map((cat) => (

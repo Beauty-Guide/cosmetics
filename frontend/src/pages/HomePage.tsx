@@ -5,6 +5,7 @@ import { useGetAllItems } from "@/hooks/getAllItems"
 import { useGetCategories } from "@/hooks/getCategories"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useMemo } from "react"
+import { PaginationButtons } from "@/components/Pagination"
 
 const HomePage = () => {
   const { data: products, isLoading: isLoadingItems } = useGetAllItems()
@@ -26,6 +27,7 @@ const HomePage = () => {
             {products.map((product) => (
               <Product key={product.id} product={product} />
             ))}
+            <PaginationButtons pages={10} />
           </div>
         )}
       </div>
