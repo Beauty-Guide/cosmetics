@@ -26,6 +26,7 @@ interface MultiSelectComboboxProps {
   options: Option[]
   values: string[]
   onChange: (values: string[]) => void
+  singleSelect?: boolean
 }
 
 export default function MultiSelectCombobox({
@@ -33,14 +34,24 @@ export default function MultiSelectCombobox({
   options,
   values,
   onChange,
+  singleSelect = false,
 }: MultiSelectComboboxProps) {
   const [open, setOpen] = useState<boolean>(false)
 
   const toggleValue = (value: string) => {
-    if (values.includes(value)) {
-      onChange(values.filter((v) => v !== value))
+    if (singleSelect) {
+      if (values.includes(value)) {
+        onChange([])
+      } else {
+        onChange([value])
+      }
+      setOpen(false)
     } else {
-      onChange([...values, value])
+      if (values.includes(value)) {
+        onChange(values.filter((v) => v !== value))
+      } else {
+        onChange([...values, value])
+      }
     }
   }
 
@@ -64,7 +75,9 @@ export default function MultiSelectCombobox({
             className="w-full justify-between overflow-hidden"
           >
             {selectedLabels.length > 0
-              ? `${selectedLabels.join(", ")}`
+              ? singleSelect
+                ? selectedLabels[0]
+                : selectedLabels.join(", ")
               : `Выбрать ${label.toLowerCase()}`}
             <ChevronsUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
           </Button>
@@ -95,7 +108,7 @@ export default function MultiSelectCombobox({
         </PopoverContent>
       </Popover>
 
-      {values.length > 0 && (
+      {!singleSelect && values.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
           {selectedLabels.map((label, index) => (
             <Badge key={index} variant="secondary">
