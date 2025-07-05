@@ -24,11 +24,15 @@ function CategoryItem({
     [parentPath, category.name]
   )
 
-  const isActive = decodeURIComponent(location.pathname).startsWith(
-    `/category${fullPath}`
-  )
-  const isSelected =
-    decodeURIComponent(location.pathname) === `/category${fullPath}`
+  const isActive = useMemo(() => {
+    return decodeURIComponent(location.pathname).startsWith(
+      `/category${fullPath}`
+    )
+  }, [location.pathname, fullPath])
+
+  const isSelected = useMemo(() => {
+    return decodeURIComponent(location.pathname) === `/category${fullPath}`
+  }, [location.pathname, fullPath])
 
   const hasChildren = category.children && category.children.length > 0
 
