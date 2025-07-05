@@ -1,42 +1,21 @@
 import { ImageCarousel } from "@/components/ImageCarousel"
 import { Badge } from "@/components/ui/badge"
-import type { TProductPage } from "@/types"
+import { useItemById } from "@/hooks/getItemById"
 import { useParams } from "react-router"
 
-const product: TProductPage = {
-  id: 1,
-  name: "Low pH Good Morning Gel Cleanser",
-  description: "Description",
-  compatibility:
-    "Нельзя сочетать с жесткими пиллингами или кислотами. Алкогольные тоники или агрессивные очищающие средства.",
-  usageRecommendations:
-    "Подходит для ежедневного использования утром и вечером.",
-  applicationMethod:
-    "Увлажните лицо теплой водой, вспените гель между руками и нанесите на лицо и мягко массируйте в течении 30-60 секунд особенно в Т-зоне. После смыть теплой водой",
-  catalog: { id: 1, name: "Catalog name", parent: null },
-  brand: { id: 1, name: "Dr. Jart+" },
-  actions: [
-    { id: 1, name: "Себорегуляция" },
-    { id: 2, name: "Противоспалительное" },
-    { id: 3, name: "Очищение" },
-  ],
-  skinTypes: [
-    { id: 1, name: "Нормальный" },
-    { id: 2, name: "Жирный" },
-    { id: 3, name: "Комбинированный" },
-  ],
-  ingredients: [],
-  imgs: [
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-  ],
-}
-
 const ProductPage = () => {
-  const { id } = useParams()
-  console.log(id)
+  const { productId } = useParams()
+  const { data: product, isLoading: isLoadingProduct } = useItemById(
+    productId || ""
+  )
+
+  if (isLoadingProduct) {
+    return <div>Loading...</div>
+  }
+
+  if (!product) {
+    return <div>Такого товара не существует</div>
+  }
 
   return (
     <main className="flex flex-col w-full items-center justify-center gap-5 p-4">
@@ -46,7 +25,13 @@ const ProductPage = () => {
       </span>
       <div className="flex gap-15 max-md:flex-col">
         <div className="px-2">
-          <ImageCarousel images={product.imgs} />
+          <ImageCarousel
+            images={
+              product.imageUrls.length === 0
+                ? ["/600x400.svg"]
+                : product.imageUrls
+            }
+          />
         </div>
         <div className="flex gap-6">
           <span className="flex flex-col items-start gap-2">

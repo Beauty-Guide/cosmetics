@@ -98,7 +98,7 @@ const CosmeticForm: React.FC = () => {
         setActions(actionData)
         setSkinTypes(skinTypeData)
         setIngredients(ingredientData)
-        setCosmetics(cosmeticData)
+        setCosmetics(cosmeticData.cosmetics)
         setFilteredIngredients(ingredientData)
       } catch (err: any) {
         setError(err.message || "Ошибка загрузки данных")
