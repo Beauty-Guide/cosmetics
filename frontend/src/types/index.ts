@@ -13,6 +13,10 @@ export type TProduct = {
   img: string
 }
 
+export type TProductPage = Omit<TProduct, "img"> & {
+  imgs: string[]
+}
+
 export type TCategory = {
   id: number
   name: string

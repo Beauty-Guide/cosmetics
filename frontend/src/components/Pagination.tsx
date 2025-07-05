@@ -20,7 +20,7 @@ export function PaginationButtons({ pages }: TPaginationButtonsProps) {
         <PaginationItem>
           <PaginationPrevious href="#" />
         </PaginationItem>
-        {new Array(pages).fill(1).map((_, index) => (
+        {Array.from({ length: pages }).map((_, index) => (
           <PaginationItem key={index}>
             <PaginationLink href="#">{index}</PaginationLink>
           </PaginationItem>
