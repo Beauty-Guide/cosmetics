@@ -4,12 +4,17 @@ import { useItemById } from "@/hooks/getItemById"
 import { useParams } from "react-router"
 
 const ProductPage = () => {
-  const { data: product, isLoading: isLoadingProduct } = useItemById("1")
-  const { id } = useParams()
-  console.log(id, product)
+  const { productId } = useParams()
+  const { data: product, isLoading: isLoadingProduct } = useItemById(
+    productId || ""
+  )
 
-  if (isLoadingProduct || !product) {
+  if (isLoadingProduct) {
     return <div>Loading...</div>
+  }
+
+  if (!product) {
+    return <div>Такого товара не существует</div>
   }
 
   return (
@@ -23,7 +28,7 @@ const ProductPage = () => {
           <ImageCarousel
             images={
               product.imageUrls.length === 0
-                ? ["https://placehold.co/600x400"]
+                ? ["/600x400.svg"]
                 : product.imageUrls
             }
           />

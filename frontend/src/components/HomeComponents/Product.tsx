@@ -11,7 +11,7 @@ const Product = ({ product }: ProductProps) => {
   const navigate = useNavigate()
 
   const navigateToItem = () => {
-    navigate(`/product/${product.name}`)
+    navigate(`/product/${product.id}`)
   }
 
   const handleAddToFavorite = () => {
@@ -25,7 +25,7 @@ const Product = ({ product }: ProductProps) => {
       className="flex flex-col items-center mt-5 mx-2 w-[400px] border-1 border-gray-400 p-4 rounded-md shadow-sm hover:shadow-md"
     >
       <img
-        src={product.img || "https://placehold.co/600x400"}
+        src={product.imageUrl || "/600x400.svg"}
         alt=""
         onClick={navigateToItem}
       />
