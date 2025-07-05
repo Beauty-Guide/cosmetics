@@ -70,7 +70,6 @@ public class CosmeticController {
             cosmeticFilterRequest.setSortBy("id");
             cosmeticFilterRequest.setSortDirection("ASC");
             Long countOfCosmetics = cosmeticService.getCountOfCosmetics();
-            cosmeticFilterRequest.setTotal(countOfCosmetics);
             cosmeticFilterRequest.setSize(countOfCosmetics);
             return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(cosmeticFilterRequest));
         } catch (Exception e) {

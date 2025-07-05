@@ -88,8 +88,7 @@ public class CosmeticService {
         }
     }
 
-    public List<CosmeticResponse> getCosmeticsByFilters(CosmeticFilterRequest filter) {
-        filter.setTotal(getCountOfCosmetics());
+    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter) {
         StringBuilder sql = new StringBuilder("""
                     SELECT
                         c.id AS cosmetic_id,
@@ -167,7 +166,11 @@ public class CosmeticService {
         // Выполняем запрос
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
 
-        return groupCosmeticResponses(rows);
+        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows);
+        CosmeticsResponse cosmeticsResponse = new CosmeticsResponse();
+        cosmeticsResponse.setCosmetics(cosmeticResponses);
+        cosmeticsResponse.setTotal(getCountOfCosmetics());
+        return cosmeticsResponse;
     }
 
     // Группируем результаты по косметике
