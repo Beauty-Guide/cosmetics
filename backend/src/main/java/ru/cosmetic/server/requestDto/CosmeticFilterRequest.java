@@ -3,6 +3,7 @@ package ru.cosmetic.server.requestDto;
 import lombok.Data;
 
 import java.util.List;
+import java.util.function.LongBinaryOperator;
 
 @Data
 public class CosmeticFilterRequest {
@@ -13,8 +14,9 @@ public class CosmeticFilterRequest {
     private List<Long> brandIds;
 
     // Пагинация
-    private int page = 0;
-    private int size = 10;
+    private Long page = 0L;
+    private Long size = 10L;
+    private Long total = 0L;
 
     // Сортировка
     private String sortBy;

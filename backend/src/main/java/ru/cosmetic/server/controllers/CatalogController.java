@@ -71,7 +71,7 @@ public class CatalogController {
         try {
             return ResponseEntity.ok(catalogService.findAll());
         } catch (Exception e) {
-            return new ResponseEntity<>("Ошибка", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ошибка получения всех каталогов", HttpStatus.BAD_REQUEST);
         }
     }
 

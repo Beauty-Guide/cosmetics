@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.requestDto.CosmeticAddRequest;
 import ru.cosmetic.server.models.Cosmetic;
+import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.service.*;
 
 import java.util.HashMap;
@@ -65,7 +66,13 @@ public class CosmeticController {
     @Operation(summary = "Получение всей косметики")
     public ResponseEntity<?> getAllCosmetic() {
         try {
-            return ResponseEntity.ok(cosmeticService.findAll());
+            CosmeticFilterRequest cosmeticFilterRequest = new CosmeticFilterRequest();
+            cosmeticFilterRequest.setSortBy("id");
+            cosmeticFilterRequest.setSortDirection("ASC");
+            Long countOfCosmetics = cosmeticService.getCountOfCosmetics();
+            cosmeticFilterRequest.setTotal(countOfCosmetics);
+            cosmeticFilterRequest.setSize(countOfCosmetics);
+            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(cosmeticFilterRequest));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения брендов", HttpStatus.BAD_REQUEST);
         }

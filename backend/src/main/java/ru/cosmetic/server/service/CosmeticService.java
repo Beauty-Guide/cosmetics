@@ -2,10 +2,10 @@ package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.postgresql.jdbc.PgArray;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.cosmetic.server.models.Cosmetic;
-import ru.cosmetic.server.models.SkinType;
 import ru.cosmetic.server.repo.CosmeticRepo;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.responseDto.*;
@@ -38,12 +38,15 @@ public class CosmeticService {
         return cosmeticRepo.findAll();
     }
 
-    public List<Cosmetic> getCosmeticsBySkinTypes(List<SkinType> skinTypes) {
-        return cosmeticRepo.findAllBySkinTypesIn(skinTypes);
+    public Long getCountOfCosmetics() {
+        return cosmeticRepo.count();
     }
 
-    public List<CosmeticResponse> getCosmeticsByFilters(CosmeticFilterRequest filter) {
+    public List<Cosmetic> findAll() {
+        return cosmeticRepo.findAll();
+    }
 
+    public CosmeticResponse getCosmeticById(Long id) {
         StringBuilder sql = new StringBuilder("""
                     SELECT
                         c.id AS cosmetic_id,
@@ -60,7 +63,9 @@ public class CosmeticService {
                         ARRAY_AGG(DISTINCT a.name) AS action_names,
                         ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
                         ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
-                        ARRAY_AGG(DISTINCT ci.url) AS image_urls
+                        ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
+                        ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
+                        ARRAY_AGG(DISTINCT img.url) AS image_urls
                     FROM cosmetic c
                     JOIN brand b ON c.brand_id = b.id
                     JOIN catalog cat ON c.catalog_id = cat.id
@@ -68,7 +73,52 @@ public class CosmeticService {
                     LEFT JOIN cosmetic_action a ON cca.action_id = a.id
                     LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
                     LEFT JOIN skin_type st ON cst.skin_type_id = st.id
-                    LEFT JOIN cosmetic_image ci ON c.id = ci.cosmetic_id
+                    LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
+                    LEFT JOIN ingredient i ON ci.ingredient_id = i.id
+                    LEFT JOIN cosmetic_image img ON c.id = img.cosmetic_id
+                    WHERE c.id = ?
+                    GROUP BY c.id, b.id, cat.id
+                """);
+
+        try {
+            Map<String, Object> row = jdbcTemplate.queryForMap(sql.toString(), id);
+            return mapRowToCosmeticResponse(row);
+        } catch (EmptyResultDataAccessException ex) {
+            return null; // или throw new ResourceNotFoundException("Cosmetic not found");
+        }
+    }
+
+    public List<CosmeticResponse> getCosmeticsByFilters(CosmeticFilterRequest filter) {
+        filter.setTotal(getCountOfCosmetics());
+        StringBuilder sql = new StringBuilder("""
+                    SELECT
+                        c.id AS cosmetic_id,
+                        c.name AS cosmetic_name,
+                        c.description AS cosmetic_description,
+                        c.compatibility,
+                        c.usage_recommendations,
+                        c.application_method,
+                        b.id AS brand_id,
+                        b.name AS brand_name,
+                        cat.id AS catalog_id,
+                        cat.name AS catalog_name,
+                        ARRAY_AGG(DISTINCT a.id) AS action_ids,
+                        ARRAY_AGG(DISTINCT a.name) AS action_names,
+                        ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
+                        ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
+                        ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
+                        ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
+                        ARRAY_AGG(DISTINCT img.url) AS image_urls
+                    FROM cosmetic c
+                    JOIN brand b ON c.brand_id = b.id
+                    JOIN catalog cat ON c.catalog_id = cat.id
+                    LEFT JOIN cosmetic_cosmetic_action cca ON c.id = cca.cosmetic_id
+                    LEFT JOIN cosmetic_action a ON cca.action_id = a.id
+                    LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
+                    LEFT JOIN skin_type st ON cst.skin_type_id = st.id
+                    LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
+                    LEFT JOIN ingredient i ON ci.ingredient_id = i.id
+                    LEFT JOIN cosmetic_image img ON c.id = img.cosmetic_id
                     WHERE 1=1
                 """);
 
@@ -123,59 +173,68 @@ public class CosmeticService {
     // Группируем результаты по косметике
     private List<CosmeticResponse> groupCosmeticResponses(List<Map<String, Object>> rows) {
         List<CosmeticResponse> result = new ArrayList<>();
-
         for (Map<String, Object> row : rows) {
-            CosmeticResponse cr = new CosmeticResponse();
-
-            cr.setId(safeGetLong(row, "cosmetic_id"));
-            cr.setName(safeGetString(row, "cosmetic_name"));
-            cr.setDescription(safeGetString(row, "cosmetic_description"));
-            cr.setCompatibility(safeGetString(row, "compatibility"));
-            cr.setUsageRecommendations(safeGetString(row, "usage_recommendations"));
-            cr.setApplicationMethod(safeGetString(row, "application_method"));
-
-            // Brand
-            BrandResponse brand = new BrandResponse();
-            brand.setId(safeGetLong(row, "brand_id"));
-            brand.setName(safeGetString(row, "brand_name"));
-            cr.setBrand(brand);
-
-            // Catalog
-            CatalogResponse catalog = new CatalogResponse();
-            catalog.setId(safeGetLong(row, "catalog_id"));
-            catalog.setName(safeGetString(row, "catalog_name"));
-            cr.setCatalog(catalog);
-
-            // Actions
-            List<Long> actionIds = safeGetLongList(row, "action_ids");
-            List<String> actionNames = safeGetStringList(row, "action_names");
-            List<ActionResponse> actions = new ArrayList<>();
-            for (int i = 0; i < Math.min(actionIds.size(), actionNames.size()); i++) {
-                if (actionIds.get(i) != null && actionNames.get(i) != null) {
-                    actions.add(new ActionResponse(actionIds.get(i), actionNames.get(i)));
-                }
-            }
-            cr.setActions(actions);
-
-            // Skin Types
-            List<Long> skinTypeIds = safeGetLongList(row, "skin_type_ids");
-            List<String> skinTypeNames = safeGetStringList(row, "skin_type_names");
-            List<SkinTypeResponse> skinTypes = new ArrayList<>();
-            for (int i = 0; i < Math.min(skinTypeIds.size(), skinTypeNames.size()); i++) {
-                if (skinTypeIds.get(i) != null && skinTypeNames.get(i) != null) {
-                    skinTypes.add(new SkinTypeResponse(skinTypeIds.get(i), skinTypeNames.get(i)));
-                }
-            }
-            cr.setSkinTypes(skinTypes);
-
-            // Images
-            List<String> imageUrls = safeGetStringList(row, "image_urls");
-            cr.setImageUrls(imageUrls);
-
-            result.add(cr);
+            result.add(mapRowToCosmeticResponse(row));
         }
-
         return result;
+    }
+
+    private CosmeticResponse mapRowToCosmeticResponse(Map<String, Object> row) {
+        CosmeticResponse response = new CosmeticResponse();
+        response.setId(safeGetLong(row, "cosmetic_id"));
+        response.setName(safeGetString(row, "cosmetic_name"));
+        response.setDescription(safeGetString(row, "cosmetic_description"));
+        response.setCompatibility(safeGetString(row, "compatibility"));
+        response.setUsageRecommendations(safeGetString(row, "usage_recommendations"));
+        response.setApplicationMethod(safeGetString(row, "application_method"));
+
+        // Brand
+        BrandResponse brand = new BrandResponse();
+        brand.setId(safeGetLong(row, "brand_id"));
+        brand.setName(safeGetString(row, "brand_name"));
+        response.setBrand(brand);
+
+        // Catalog
+        CatalogResponse catalog = new CatalogResponse();
+        catalog.setId(safeGetLong(row, "catalog_id"));
+        catalog.setName(safeGetString(row, "catalog_name"));
+        response.setCatalog(catalog);
+
+        // Actions
+        List<Long> actionIds = safeGetLongList(row, "action_ids");
+        List<String> actionNames = safeGetStringList(row, "action_names");
+        List<ActionResponse> actions = new ArrayList<>();
+        for (int i = 0; i < Math.min(actionIds.size(), actionNames.size()); i++) {
+            if (actionIds.get(i) != null && actionNames.get(i) != null) {
+                actions.add(new ActionResponse(actionIds.get(i), actionNames.get(i)));
+            }
+        }
+        response.setActions(actions);
+
+        // Skin Types
+        List<Long> skinTypeIds = safeGetLongList(row, "skin_type_ids");
+        List<String> skinTypeNames = safeGetStringList(row, "skin_type_names");
+        List<SkinTypeResponse> skinTypes = new ArrayList<>();
+        for (int i = 0; i < Math.min(skinTypeIds.size(), skinTypeNames.size()); i++) {
+            if (skinTypeIds.get(i) != null && skinTypeNames.get(i) != null) {
+                skinTypes.add(new SkinTypeResponse(skinTypeIds.get(i), skinTypeNames.get(i)));
+            }
+        }
+        response.setSkinTypes(skinTypes);
+
+        List<Long> ingredientIds = safeGetLongList(row, "ingredient_ids");
+        List<String> ingredientNames = safeGetStringList(row, "ingredient_names");
+        List<IngredientResponse> ingredients = new ArrayList<>();
+        for (int i = 0; i < Math.min(ingredientIds.size(), ingredientNames.size()); i++) {
+            if (ingredientIds.get(i) != null && ingredientNames.get(i) != null) {
+                ingredients.add(new IngredientResponse(ingredientIds.get(i), ingredientNames.get(i)));
+            }
+        }
+        response.setIngredients(ingredients);
+        // Images
+        List<String> imageUrls = safeGetStringList(row, "image_urls");
+        response.setImageUrls(imageUrls);
+        return response;
     }
 
     private static Long safeGetLong(Map<String, Object> row, String key) {
@@ -248,8 +307,4 @@ public class CosmeticService {
         return new ArrayList<>();
     }
 
-
-    public List<Cosmetic> findAll() {
-        return cosmeticRepo.findAll();
-    }
 }
