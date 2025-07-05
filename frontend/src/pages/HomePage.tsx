@@ -1,17 +1,18 @@
 import ProductFilters from "@/components/HomeComponents/ProductFilters"
 import Product from "@/components/HomeComponents/Product"
 import SideBar from "@/components/HomeComponents/SIdeBar"
+import Pagination from "@/components/Pagination"
 import { useGetAllItems } from "@/hooks/getAllItems"
 import { useGetCategories } from "@/hooks/getCategories"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useEffect, useMemo, useState } from "react"
-import { PaginationButtons } from "@/components/Pagination"
 import { Input } from "@/components/ui/input"
 import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
 
 const HomePage = () => {
   const { pathname } = useLocation()
+  const [page, setPage] = useState<number>(1)
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.getAll("brand")
@@ -25,7 +26,7 @@ const HomePage = () => {
   const [categoryId, setCategoryId] = useState<string | null>(null)
 
   const { data: products, isLoading: isLoadingItems } = useGetAllItems({
-    page: 0,
+    page: page - 1,
     size: PAGE_SIZE,
     sortBy: "id",
     sortDirection: "ASC",
@@ -69,6 +70,21 @@ const HomePage = () => {
     [categories, isLoadingCategories]
   )
 
+  const totalPages = useMemo(() => {
+    if (products) {
+      return Math.ceil(products.total / PAGE_SIZE)
+    } else {
+      return 1
+    }
+  }, [products])
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage <= totalPages) {
+      setPage(newPage)
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }
+
   return (
     <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 pt-8 max-md:pt-0">
       <SideBar categoryTree={categoryTree} />
@@ -91,9 +107,15 @@ const HomePage = () => {
                 <Product key={product.id} product={product} />
               ))
             )}
-            <PaginationButtons pages={5} />
           </div>
         )}
+        <Pagination
+          totalPages={totalPages}
+          currentPage={page}
+          onPageChange={handlePageChange}
+          siblingCount={2}
+          boundaryCount={1}
+        />
       </div>
     </main>
   )
