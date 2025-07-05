@@ -105,7 +105,7 @@ const HomePage = () => {
           setSelectedAction={setSelectedAction}
         />
         {!isLoadingItems && (
-          <div className="flex items-start justify-center w-full flex-wrap">
+          <div className="flex items-start justify-start w-full flex-wrap">
             {products?.cosmetics.length === 0 ? (
               <p>Ничего не найдено</p>
             ) : (
