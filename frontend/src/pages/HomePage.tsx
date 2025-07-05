@@ -46,13 +46,18 @@ const HomePage = () => {
 
     if (id) {
       setCategoryId(String(id))
+    } else {
+      setCategoryId(null)
     }
+    setPage(1)
   }, [categories, searchParams, pathname])
 
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
     setSelectedSkinTypes(searchParams.getAll("skinType"))
     setSelectedAction(searchParams.getAll("cosmeticAction"))
+
+    setPage(1)
   }, [pathname, searchParams])
 
   useEffect(() => {
