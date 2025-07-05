@@ -21,7 +21,7 @@ public class UserController {
     private final CosmeticActionService cosmeticActionService;
     private final CatalogService catalogService;
 
-    @GetMapping("/getCosmeticsByFilters")
+    @PostMapping("/getCosmeticsByFilters")
     @Operation(summary = "Получение косметики по фильтрам")
     public ResponseEntity<?> getCosmeticsByFilters(@RequestBody CosmeticFilterRequest request) {
         try {
