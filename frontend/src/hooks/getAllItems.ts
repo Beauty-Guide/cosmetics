@@ -12,7 +12,7 @@ type TProductFilters = {
   sortBy: string
   brandIds?: string[]
   catalogId?: string | null
-  actionId?: string[]
+  actionIds?: string[]
   skinTypeIds?: string[]
   sortDirection?: string
   page: number
@@ -25,7 +25,7 @@ const defaultFilters: TProductFilters = {
   size: 10,
   brandIds: [],
   catalogId: null,
-  actionId: [],
+  actionIds: [],
   skinTypeIds: [],
   sortDirection: "ASC",
 }

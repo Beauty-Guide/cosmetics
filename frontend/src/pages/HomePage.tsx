@@ -19,6 +19,9 @@ const HomePage = () => {
   const [selectedSkinTypes, setSelectedSkinTypes] = useState<string[]>(
     searchParams.getAll("skinType")
   )
+  const [selectedAction, setSelectedAction] = useState<string[]>(
+    searchParams.getAll("cosmeticAction")
+  )
   const [categoryId, setCategoryId] = useState<string | null>(null)
 
   const { data: products, isLoading: isLoadingItems } = useGetAllItems({
@@ -28,6 +31,7 @@ const HomePage = () => {
     sortDirection: "ASC",
     brandIds: selectedBrands,
     skinTypeIds: selectedSkinTypes,
+    actionIds: selectedAction,
     catalogId: categoryId,
   })
 
@@ -47,6 +51,7 @@ const HomePage = () => {
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
     setSelectedSkinTypes(searchParams.getAll("skinType"))
+    setSelectedAction(searchParams.getAll("cosmeticAction"))
   }, [pathname, searchParams])
 
   useEffect(() => {
@@ -54,9 +59,10 @@ const HomePage = () => {
 
     selectedBrands.forEach((b) => params.append("brand", b))
     selectedSkinTypes.forEach((s) => params.append("skinType", s))
+    selectedAction.forEach((a) => params.append("cosmeticAction", a))
 
     setSearchParams(params, { replace: false })
-  }, [selectedBrands, selectedSkinTypes, setSearchParams])
+  }, [selectedBrands, selectedSkinTypes, selectedAction, setSearchParams])
 
   const categoryTree = useMemo(
     () => buildCategoryTree(isLoadingCategories ? [] : categories),
@@ -71,8 +77,10 @@ const HomePage = () => {
         <ProductFilters
           selectedBrands={selectedBrands}
           selectedSkinTypes={selectedSkinTypes}
+          selectedAction={selectedAction}
           setSelectedBrands={setSelectedBrands}
           setSelectedSkinTypes={setSelectedSkinTypes}
+          setSelectedAction={setSelectedAction}
         />
         {!isLoadingItems && (
           <div className="flex items-start justify-center w-full flex-wrap">

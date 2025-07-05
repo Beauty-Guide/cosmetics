@@ -1,3 +1,4 @@
+import { useGetAllAction } from "@/hooks/getAllAction"
 import FilterCombobox from "./FilterCombobox"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { useGetAllSkinType } from "@/hooks/getAllSkinType"
@@ -6,20 +7,25 @@ import { memo } from "react"
 type TProductFiltersProps = {
   selectedBrands: string[]
   selectedSkinTypes: string[]
+  selectedAction: string[]
   setSelectedBrands: (brands: string[]) => void
   setSelectedSkinTypes: (skinTypes: string[]) => void
+  setSelectedAction: (actions: string[]) => void
 }
 
 const ProductFilters = ({
   selectedBrands,
   selectedSkinTypes,
+  selectedAction,
   setSelectedBrands,
   setSelectedSkinTypes,
+  setSelectedAction,
 }: TProductFiltersProps) => {
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
   const { data: skinTypes, isLoading: isLoadingSkinTypes } = useGetAllSkinType()
+  const { data: actions, isLoading: isLoadingActions } = useGetAllAction()
 
-  if (isLoadingBrands || isLoadingSkinTypes) {
+  if (isLoadingBrands || isLoadingSkinTypes || isLoadingActions) {
     return <div>Loading...</div>
   }
 
@@ -37,6 +43,12 @@ const ProductFilters = ({
           options={skinTypes}
           values={selectedSkinTypes}
           onChange={setSelectedSkinTypes}
+        />
+        <FilterCombobox
+          label="Действие"
+          options={actions}
+          values={selectedAction}
+          onChange={setSelectedAction}
         />
       </div>
     </div>
