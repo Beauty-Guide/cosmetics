@@ -4,9 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 
 const fetchCategories = async (): Promise<TCategory[]> => {
-  const response = await axios.get(
-    `${API_BASE_URL}/admin/catalog/getAllCatalogs`
-  )
+  const response = await axios.get(`${API_BASE_URL}/api/getAllCatalog`)
   return response.data
 }
 

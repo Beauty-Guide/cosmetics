@@ -41,7 +41,7 @@ export default function Breadcrumbs() {
   ]
 
   return (
-    <Breadcrumb className="m-5">
+    <Breadcrumb className="my-5 shadow-md rounded-md py-3 px-sides">
       <BreadcrumbList>
         {breadcrumbs.map((crumb, index) => {
           const isLast = index === breadcrumbs.length - 1
