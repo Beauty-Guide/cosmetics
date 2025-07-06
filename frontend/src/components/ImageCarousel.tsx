@@ -1,8 +1,9 @@
+import type { TImage } from "@/types"
 import useEmblaCarousel from "embla-carousel-react"
 import { useCallback, useEffect, useState } from "react"
 
 type TImageCarouselProps = {
-  images: string[]
+  images: TImage[]
 }
 
 export function ImageCarousel({ images }: TImageCarouselProps) {
@@ -30,9 +31,9 @@ export function ImageCarousel({ images }: TImageCarouselProps) {
       <div className="overflow-hidden rounded-md" ref={emblaRef}>
         <div className="flex">
           {images.map((img, index) => (
-            <div className="min-w-0 flex-[0_0_100%]" key={index}>
+            <div className="min-w-0 flex-[0_0_100%]" key={img.id}>
               <img
-                src={img}
+                src={img.url}
                 alt={`Image ${index + 1}`}
                 className="w-full h-auto object-cover rounded-md"
               />
@@ -44,8 +45,8 @@ export function ImageCarousel({ images }: TImageCarouselProps) {
       <span className="flex gap-2 my-2 overflow-hidden">
         {images.map((img, index) => (
           <img
-            src={img}
-            key={index}
+            src={img.url}
+            key={img.id}
             onClick={() => scrollTo(index)}
             alt={`Thumbnail ${index + 1}`}
             className={`w-25 select-none object-cover cursor-pointer rounded-md border-2 transition

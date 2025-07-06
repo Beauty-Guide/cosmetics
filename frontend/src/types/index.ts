@@ -10,11 +10,7 @@ export type TProduct = {
   actions: TAction[]
   skinTypes: TSkinType[]
   ingredients: TIngredient[]
-  imageUrl: string
-}
-
-export type TProductPage = Omit<TProduct, "img"> & {
-  imageUrls: string[]
+  images: TImage[]
 }
 
 export type TCategory = {
@@ -36,6 +32,12 @@ type TAction = {
 type TSkinType = {
   id: number
   name: string
+}
+
+export type TImage = {
+  id: string
+  url: string
+  isMain: boolean
 }
 
 type TIngredient = {

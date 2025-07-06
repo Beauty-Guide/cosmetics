@@ -25,7 +25,7 @@ const Product = ({ product }: ProductProps) => {
       className="flex flex-col items-center mt-5 w-[450px] border-1 border-gray-400 p-4 rounded-md shadow-sm hover:shadow-md"
     >
       <img
-        src={product.imageUrl || "/600x400.svg"}
+        src={product.images.find((img) => img.isMain)?.url || "/600x400.svg"}
         alt=""
         className="h-[300px] w-[450px] rounded-md"
         onClick={navigateToItem}
