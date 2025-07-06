@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router"
 import { Button } from "../ui/button"
-import { toast } from "sonner"
 import type { TProduct } from "@/types"
+import { useToggleFavProduct } from "@/hooks/useToggleFavProduct"
 
 type ProductProps = {
   product: TProduct
@@ -10,12 +10,14 @@ type ProductProps = {
 const Product = ({ product }: ProductProps) => {
   const navigate = useNavigate()
 
+  const { mutate: toggleFav } = useToggleFavProduct()
+
   const navigateToItem = () => {
     navigate(`/product/${product.id}`)
   }
 
   const handleAddToFavorite = () => {
-    toast("Добавлено в избранное")
+    toggleFav({ productId: String(product.id), action: "add" })
     console.log("Добавлено в избранное")
   }
 

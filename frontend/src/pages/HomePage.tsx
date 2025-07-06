@@ -11,6 +11,7 @@ import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
 import { Button } from "@/components/ui/button"
 import { Search } from "lucide-react"
+// import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 
 const HomePage = () => {
   const { pathname } = useLocation()
@@ -43,6 +44,9 @@ const HomePage = () => {
 
   const { data: categories, isLoading: isLoadingCategories } =
     useGetCategories()
+
+  // const { data: favourites } = useGetAllFavProducts()
+  // console.log(favourites)
 
   useEffect(() => {
     const id = categories?.find(

@@ -47,7 +47,7 @@ function CategoryItem({
   }, [isActive])
 
   return (
-    <div className="ml-3 mt-2 relative group">
+    <div className="mt-2 relative group">
       <div
         className={`flex items-center gap-2 px-2 py-1 rounded-md transition-colors duration-200 ${
           hasChildren ? "cursor-pointer hover:bg-gray-100" : ""
@@ -80,7 +80,7 @@ function CategoryItem({
       </div>
 
       {hasChildren && open && (
-        <div className="ml-4 pl-2 border-l border-gray-300 transition-all duration-200">
+        <div className="ml-2 pl-2 border-l border-gray-300 transition-all duration-200">
           {category.children &&
             category.children.map((child) => (
               <CategoryItem
