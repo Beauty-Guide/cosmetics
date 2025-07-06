@@ -35,7 +35,7 @@ public class TestDataController {
         List<Cosmetic> allCosmetics = cosmeticService.getAllCosmetics();
 
         if (!allCosmetics.isEmpty()) {
-            count = allCosmetics.size() + 10000;
+            count = allCosmetics.size() + 5000;
             countI = allCosmetics.size() + 1;
         }
 
