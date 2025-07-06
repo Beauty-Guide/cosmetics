@@ -3,9 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 
 const fetchAllSkinType = async () => {
-  const response = await axios.get(
-    `${API_BASE_URL}/admin/skin-type/getAllSkinType`
-  )
+  const response = await axios.get(`${API_BASE_URL}/api/getAllSkinType`)
   return response.data
 }
 
