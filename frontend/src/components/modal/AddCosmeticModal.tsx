@@ -1,7 +1,6 @@
 // src/components/admin/AddCosmeticModal.tsx
 import React, { useState, useEffect } from "react"
 import FilterCombobox from "@/components/HomeComponents/FilterCombobox"
-import SingleSelectCombobox from "@/components/HomeComponents/SingleSelectCombobox"
 import type {
     BrandView,
     Catalog, Cosmetic,
@@ -251,7 +250,7 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                         {/* Modal Content */}
                         <div className="p-6">
                             <h4 className="text-xl font-semibold text-center mb-6">
-                                Управление косметикой
+                                Добавление косметики
                             </h4>
                             {/* Показываем ошибку здесь */}
                             {error && (

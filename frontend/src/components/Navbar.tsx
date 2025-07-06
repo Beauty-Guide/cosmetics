@@ -1,10 +1,26 @@
 import React from "react"
 import { Link, useNavigate } from "react-router"
 import { Button } from "@/components/ui/button"
+import {jwtDecode, type JwtPayload} from "jwt-decode";
 
 const AppNavbar: React.FC = () => {
   const navigate = useNavigate()
-  const isAuthenticated = !!localStorage.getItem("token")
+  const token = localStorage.getItem("token");
+  const isAuthenticated = !!token;
+
+  // Получаем роли из токена
+  const userRoles = React.useMemo(() => {
+    if (!token) return [];
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      return decoded.roles || [];
+    } catch (error) {
+      console.error("Ошибка декодирования токена", error);
+      return [];
+    }
+  }, [token]);
+
+  const isAdmin = userRoles.includes("ROLE_ADMIN");
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -19,7 +35,7 @@ const AppNavbar: React.FC = () => {
         </Link>
 
         <div className="flex flex-wrap gap-5 max-md:gap-2 items-center text-sm py-2">
-          {isAuthenticated && (
+          {isAdmin && (
             <>
               <Link
                 to="/admin"
@@ -61,10 +77,15 @@ const AppNavbar: React.FC = () => {
           )}
         </div>
 
-        {isAuthenticated && (
-          <Button variant="secondary" onClick={handleLogout}>
-            Выйти
-          </Button>
+        {/* Условная кнопка входа/выхода */}
+        {isAuthenticated ? (
+            <Button variant="secondary" onClick={handleLogout}>
+              Выйти
+            </Button>
+        ) : (
+            <Button variant="secondary" asChild>
+              <Link to="/login">Войти</Link>
+            </Button>
         )}
       </div>
     </nav>

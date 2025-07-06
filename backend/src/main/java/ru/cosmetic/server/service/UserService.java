@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
             }
             userRepository.save(user);
             return true;
-        }
+        } else
         return false;
     }
 }

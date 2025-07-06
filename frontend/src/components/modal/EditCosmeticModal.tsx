@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
-import SingleSelectCombobox from "@/components/HomeComponents/SingleSelectCombobox";
 import type {
     BrandView,
     Catalog,
@@ -10,11 +9,11 @@ import type {
 } from "@/model/types";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {getAllCosmeticActions} from "@/services/adminCosmeticActionApi.ts";
-import {getAllBrands} from "@/services/adminBrandApi.ts";
-import {getAllCatalogs} from "@/services/adminCatalogApi.ts";
-import {getAllSkinType} from "@/services/adminSkinTypeApi.ts";
-import {getAllIngredients} from "@/services/adminIngredientApi.ts";
+import { getAllCosmeticActions } from "@/services/adminCosmeticActionApi.ts";
+import { getAllBrands } from "@/services/adminBrandApi.ts";
+import { getAllCatalogs } from "@/services/adminCatalogApi.ts";
+import { getAllSkinType } from "@/services/adminSkinTypeApi.ts";
+import { getAllIngredients } from "@/services/adminIngredientApi.ts";
 import FeedbackModal from "@/components/admin/FeedbackModal";
 import { updateCosmetic } from "@/services/adminCosmeticApi";
 
@@ -26,8 +25,8 @@ interface EditCosmeticModalProps {
         id: number;
         name: string;
         description: string;
-        brandId: number;
-        catalogId: number;
+        brandId: number | null;
+        catalogId: number | null;
         compatibility: string;
         usageRecommendations: string;
         applicationMethod: string;
@@ -54,22 +53,16 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
     const [ingredients, setIngredients] = useState<IngredientView[]>([]);
 
     // Локальные данные формы
-    const [name, setName] = useState(initialData.name);
-    const [description, setDescription] = useState(initialData.description);
-    const [brandId, setBrandId] = useState<number | null>(initialData.brandId);
-    const [catalogId, setCatalogId] = useState<number | null>(initialData.catalogId);
-    const [compatibility, setCompatibility] = useState(initialData.compatibility);
-    const [usageRecommendations, setUsageRecommendations] = useState(initialData.usageRecommendations);
-    const [applicationMethod, setApplicationMethod] = useState(initialData.applicationMethod);
-    const [actionIds, setActionIds] = useState<number[]>(
-        initialData.actions.map((a) => a.id)
-    );
-    const [skinTypeIdList, setSkinTypeIdList] = useState<number[]>(
-        initialData.skinTypes.map((s) => s.id)
-    );
-    const [ingredientIds, setIngredientIds] = useState<number[]>(
-        initialData.ingredients.map((i) => i.id)
-    );
+    const [name, setName] = useState(initialData?.name || "");
+    const [description, setDescription] = useState(initialData?.description || "");
+    const [brandId, setBrandId] = useState<number | null>(initialData?.brandId || null);
+    const [catalogId, setCatalogId] = useState<number | null>(initialData?.catalogId || null);
+    const [compatibility, setCompatibility] = useState(initialData?.compatibility || "");
+    const [usageRecommendations, setUsageRecommendations] = useState(initialData?.usageRecommendations || "");
+    const [applicationMethod, setApplicationMethod] = useState(initialData?.applicationMethod || "");
+    const [actionIds, setActionIds] = useState<number[]>(initialData?.actions.map((a) => a.id) || []);
+    const [skinTypeIdList, setSkinTypeIdList] = useState<number[]>(initialData?.skinTypes.map((s) => s.id) || []);
+    const [ingredientIds, setIngredientIds] = useState<number[]>(initialData?.ingredients.map((i) => i.id) || []);
 
     useEffect(() => {
         if (isOpen && initialData) {
@@ -89,13 +82,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [
-                    brandData,
-                    catalogData,
-                    actionData,
-                    skinTypeData,
-                    ingredientData,
-                ] = await Promise.all([
+                const [brandData, catalogData, actionData, skinTypeData, ingredientData] = await Promise.all([
                     getAllBrands(),
                     getAllCatalogs(),
                     getAllCosmeticActions(),
@@ -112,7 +99,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                 console.error(err);
             }
         };
-
         if (isOpen) {
             fetchData();
         }
@@ -120,7 +106,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-
         if (!name.trim()) {
             setError("Название не может быть пустым");
             return;
@@ -195,8 +180,21 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                                 label="Бренд"
                                 options={brands}
                                 values={brandId ? [brandId.toString()] : []}
-                                onChange={(selected) => setBrandId(selected.length > 0 ? parseInt(selected[0]) : null)}
+                                onChange={(selected) =>
+                                    setBrandId(selected.length > 0 ? parseInt(selected[0]) : null)
+                                }
                             />
+                            <div>
+                                <label htmlFor="editDescription" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Описание
+                                </label>
+                                <Textarea
+                                    id="editDescription"
+                                    rows={3}
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                />
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -204,13 +202,17 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                                 label="Каталог"
                                 options={catalogs}
                                 values={catalogId ? [catalogId.toString()] : []}
-                                onChange={(selected) => setCatalogId(selected.length > 0 ? parseInt(selected[0]) : null)}
+                                onChange={(selected) =>
+                                    setCatalogId(selected.length > 0 ? parseInt(selected[0]) : null)
+                                }
                             />
                             <FilterCombobox
                                 label="Тип кожи"
                                 options={skinTypes}
                                 values={skinTypeIdList.map((id) => id.toString())}
-                                onChange={(selected) => setSkinTypeIdList(selected.map((id) => parseInt(id)))}
+                                onChange={(selected) =>
+                                    setSkinTypeIdList(selected.map((id) => parseInt(id)))
+                                }
                             />
                         </div>
 
@@ -219,13 +221,17 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                                 label="Действия"
                                 options={actions}
                                 values={actionIds.map((id) => id.toString())}
-                                onChange={(selected) => setActionIds(selected.map((id) => parseInt(id)))}
+                                onChange={(selected) =>
+                                    setActionIds(selected.map((id) => parseInt(id)))
+                                }
                             />
                             <FilterCombobox
                                 label="Ингредиенты"
                                 options={ingredients}
                                 values={ingredientIds.map((id) => id.toString())}
-                                onChange={(selected) => setIngredientIds(selected.map((id) => parseInt(id)))}
+                                onChange={(selected) =>
+                                    setIngredientIds(selected.map((id) => parseInt(id)))
+                                }
                             />
                         </div>
 
