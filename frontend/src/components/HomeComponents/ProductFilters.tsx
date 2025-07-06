@@ -3,6 +3,7 @@ import FilterCombobox from "./FilterCombobox"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { useGetAllSkinType } from "@/hooks/getAllSkinType"
 import { memo } from "react"
+import { Skeleton } from "../ui/skeleton"
 
 type TProductFiltersProps = {
   selectedBrands: string[]
@@ -26,12 +27,16 @@ const ProductFilters = ({
   const { data: actions, isLoading: isLoadingActions } = useGetAllAction()
 
   if (isLoadingBrands || isLoadingSkinTypes || isLoadingActions) {
-    return <div>Loading...</div>
+    return (
+      <div className="w-full">
+        <Skeleton className="h-[100px] w-full rounded-xl p-4 my-5" />
+      </div>
+    )
   }
 
   return (
-    <div className="py-5 space-y-4 w-full">
-      <div className="flex gap-5 flex-wrap w-full">
+    <div className="flex py-5 w-full">
+      <div className="flex gap-5 max-md:flex-wrap p-3 shadow-xl rounded-xl">
         <FilterCombobox
           label="Бренд"
           options={brands}

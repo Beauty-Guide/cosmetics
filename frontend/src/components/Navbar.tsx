@@ -1,26 +1,26 @@
 import React from "react"
 import { Link, useNavigate } from "react-router"
 import { Button } from "@/components/ui/button"
-import {jwtDecode, type JwtPayload} from "jwt-decode";
+import { jwtDecode, type JwtPayload } from "jwt-decode"
 
 const AppNavbar: React.FC = () => {
   const navigate = useNavigate()
-  const token = localStorage.getItem("token");
-  const isAuthenticated = !!token;
+  const token = localStorage.getItem("token")
+  const isAuthenticated = !!token
 
   // Получаем роли из токена
   const userRoles = React.useMemo(() => {
-    if (!token) return [];
+    if (!token) return []
     try {
-      const decoded = jwtDecode<JwtPayload>(token);
-      return decoded.roles || [];
+      const decoded = jwtDecode<JwtPayload & { roles: string[] }>(token)
+      return decoded.roles || []
     } catch (error) {
-      console.error("Ошибка декодирования токена", error);
-      return [];
+      console.error("Ошибка декодирования токена", error)
+      return []
     }
-  }, [token]);
+  }, [token])
 
-  const isAdmin = userRoles.includes("ROLE_ADMIN");
+  const isAdmin = userRoles.includes("ROLE_ADMIN")
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -28,8 +28,8 @@ const AppNavbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-gray-900 text-white shadow-sm">
-      <div className="container mx-auto flex items-center justify-between p-4 flex-wrap gap-2">
+    <nav className="bg-gray-900 text-white shadow-md rounded-b-md px-sides">
+      <div className="container mx-auto flex items-center justify-between py-4 flex-wrap gap-2">
         <Link to="/" className="text-xl font-bold tracking-tight text-white">
           Beauty Guide
         </Link>
@@ -79,13 +79,13 @@ const AppNavbar: React.FC = () => {
 
         {/* Условная кнопка входа/выхода */}
         {isAuthenticated ? (
-            <Button variant="secondary" onClick={handleLogout}>
-              Выйти
-            </Button>
+          <Button variant="secondary" onClick={handleLogout}>
+            Выйти
+          </Button>
         ) : (
-            <Button variant="secondary" asChild>
-              <Link to="/login">Войти</Link>
-            </Button>
+          <Button variant="secondary" asChild>
+            <Link to="/login">Войти</Link>
+          </Button>
         )}
       </div>
     </nav>

@@ -1,14 +1,16 @@
 import ProductFilters from "@/components/HomeComponents/ProductFilters"
-import Product from "@/components/HomeComponents/Product"
+import Products from "@/components/HomeComponents/Products"
 import SideBar from "@/components/HomeComponents/SIdeBar"
 import Pagination from "@/components/Pagination"
 import { useGetAllItems } from "@/hooks/getAllItems"
 import { useGetCategories } from "@/hooks/getCategories"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
+import { Button } from "@/components/ui/button"
+import { Search } from "lucide-react"
 
 const HomePage = () => {
   const { pathname } = useLocation()
@@ -24,6 +26,8 @@ const HomePage = () => {
     searchParams.getAll("cosmeticAction")
   )
   const [categoryId, setCategoryId] = useState<string | null>(null)
+  const [searchValue, setSearchValue] = useState<string | null>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   const { data: products, isLoading: isLoadingItems } = useGetAllItems({
     page: page - 1,
@@ -34,6 +38,7 @@ const HomePage = () => {
     skinTypeIds: selectedSkinTypes,
     actionIds: selectedAction,
     catalogId: categoryId,
+    name: searchValue,
   })
 
   const { data: categories, isLoading: isLoadingCategories } =
@@ -90,12 +95,36 @@ const HomePage = () => {
     }
   }
 
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const searchValue = searchInputRef.current?.value
+    if (searchValue && searchValue.length > 2) {
+      setSearchValue(searchValue.trim())
+    } else if (!searchValue) {
+      setSearchValue(null)
+    }
+  }
+
   return (
-    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 pt-8 max-md:pt-0">
+    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 max-md:pt-0 px-sides">
       <SideBar categoryTree={categoryTree} />
       <div className="flex flex-col items-center justify-center gap-4 w-full mt-1">
         <h2 className="text-md mr-auto">Найдено: {products?.total}</h2>
-        <Input type="search" placeholder="Поиск" className="max-w-md mr-auto" />
+        <form
+          onSubmit={handleSearch}
+          className="flex w-full items-center justify-start gap-2"
+        >
+          <Input
+            type="search"
+            placeholder="Поиск"
+            className="max-w-[450px]"
+            ref={searchInputRef}
+          />
+          <Button type="submit" variant="outline" size="icon">
+            <Search />
+          </Button>
+        </form>
         <ProductFilters
           selectedBrands={selectedBrands}
           selectedSkinTypes={selectedSkinTypes}
@@ -104,17 +133,10 @@ const HomePage = () => {
           setSelectedSkinTypes={setSelectedSkinTypes}
           setSelectedAction={setSelectedAction}
         />
-        {!isLoadingItems && (
-          <div className="flex items-start justify-start w-full flex-wrap">
-            {products?.cosmetics.length === 0 ? (
-              <p>Ничего не найдено</p>
-            ) : (
-              products?.cosmetics.map((product) => (
-                <Product key={product.id} product={product} />
-              ))
-            )}
-          </div>
-        )}
+        <Products
+          products={products?.cosmetics || []}
+          isLoading={isLoadingItems}
+        />
         <Pagination
           totalPages={totalPages}
           currentPage={page}

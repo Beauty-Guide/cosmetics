@@ -68,9 +68,14 @@ const Pagination: React.FC<PaginationProps> = ({
   }
 
   return (
-    <div className="flex items-center justify-center space-x-2 mt-6">
-      <Button onClick={onPrev} disabled={currentPage === 1}>
-        Предыдущая
+    <div className="flex items-center justify-center space-x-2 my-6">
+      <Button
+        onClick={onPrev}
+        disabled={currentPage === 1}
+        size="sm"
+        variant="outline"
+      >
+        {"<"}
       </Button>
 
       {pages.map((page, idx) =>
@@ -83,14 +88,20 @@ const Pagination: React.FC<PaginationProps> = ({
             key={idx}
             variant={page === currentPage ? "default" : "outline"}
             onClick={() => onPageChange(page)}
+            size="sm"
           >
             {page}
           </Button>
         )
       )}
 
-      <Button onClick={onNext} disabled={currentPage === totalPages}>
-        Следующая
+      <Button
+        onClick={onNext}
+        disabled={currentPage === totalPages}
+        variant="outline"
+        size="sm"
+      >
+        {">"}
       </Button>
     </div>
   )

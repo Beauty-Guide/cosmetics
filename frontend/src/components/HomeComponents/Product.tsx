@@ -22,11 +22,12 @@ const Product = ({ product }: ProductProps) => {
   return (
     <div
       key={product.id}
-      className="flex flex-col items-center mt-5 mx-2 w-[400px] border-1 border-gray-400 p-4 rounded-md shadow-sm hover:shadow-md"
+      className="flex flex-col items-center mt-5 w-[450px] border-1 border-gray-400 p-4 rounded-md shadow-sm hover:shadow-md"
     >
       <img
         src={product.imageUrl || "/600x400.svg"}
         alt=""
+        className="h-[300px] w-[450px] rounded-md"
         onClick={navigateToItem}
       />
       <h1>{product.name}</h1>

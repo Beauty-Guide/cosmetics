@@ -17,6 +17,7 @@ type TProductFilters = {
   sortDirection?: string
   page: number
   size: number
+  name?: string | null
 }
 
 const defaultFilters: TProductFilters = {
@@ -28,6 +29,7 @@ const defaultFilters: TProductFilters = {
   actionIds: [],
   skinTypeIds: [],
   sortDirection: "ASC",
+  name: null,
 }
 
 const fetchAllItems = async (
