@@ -26,7 +26,7 @@ export function ImageCarousel({ images }: TImageCarouselProps) {
   }
 
   return (
-    <div className="w-full max-w-xl">
+    <div className="w-full min-w-xl">
       <div className="overflow-hidden rounded-xl" ref={emblaRef}>
         <div className="flex">
           {images.map((img, index) => (
