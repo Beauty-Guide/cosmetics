@@ -11,10 +11,10 @@ type TProductsProps = {
 const Products = ({ products, isLoading }: TProductsProps) => {
   if (isLoading) {
     return (
-      <div className="flex items-start justify-start w-full flex-wrap">
+      <div className="flex items-start justify-start w-full flex-wrap gap-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton
-            className="h-[300px] w-[450px] rounded-xl p-4 my-5 mx-2"
+            className="h-[300px] w-[450px] rounded-xl p-4 my-5"
             key={index}
           />
         ))}
@@ -27,7 +27,7 @@ const Products = ({ products, isLoading }: TProductsProps) => {
   }
 
   return (
-    <div className="flex items-start justify-start w-full flex-wrap">
+    <div className="flex items-start justify-start w-full flex-wrap gap-4">
       {products.map((product) => (
         <Product key={product.id} product={product} />
       ))}
