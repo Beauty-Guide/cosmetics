@@ -48,8 +48,8 @@ public class FileController {
     @GetMapping()
     @Operation(summary = "Получение изображения")
     public ResponseEntity<ByteArrayResource> getFile(@RequestParam("cosmeticId") Long cosmeticId,@RequestParam("fileName") String fileName) throws Exception {
-        String format = "%s/%s_%s.jpg";
-        byte[] fileData = minioService.getFile(String.format(format, cosmeticId,cosmeticId ,fileName));
+        String format = "%s/%s";
+        byte[] fileData = minioService.getFile(String.format(format, cosmeticId ,fileName));
         String contentType = minioService.getContentType(fileName);
 
         return ResponseEntity.ok()

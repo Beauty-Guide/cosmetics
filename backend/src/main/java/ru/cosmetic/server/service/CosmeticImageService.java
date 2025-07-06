@@ -1,10 +1,8 @@
 package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import ru.cosmetic.server.models.CosmeticAction;
+import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.models.CosmeticImage;
 import ru.cosmetic.server.repo.CosmeticImageRepo;
 
@@ -28,6 +26,11 @@ public class CosmeticImageService {
         return true;
     }
 
+    public boolean remove(Cosmetic cosmetic) {
+        cosmeticImageRepo.deleteByCosmetic(cosmetic);
+        return true;
+    }
+
     public CosmeticImage findById(Long id) {
         return cosmeticImageRepo.findById(id).orElse(null);
     }
@@ -39,6 +42,10 @@ public class CosmeticImageService {
 
     public List<CosmeticImage> findAllById(List<Long> ids) {
         return cosmeticImageRepo.findAllById(ids);
+    }
+
+    public List<CosmeticImage> findAllByCosmetic(Cosmetic cosmetic) {
+        return cosmeticImageRepo.findByCosmetic(cosmetic);
     }
 
     public List<CosmeticImage> findAll() {

@@ -23,6 +23,7 @@ export interface Brand {
 
 export interface BrandView extends Brand {
     id: number;
+    name: string;
 }
 
 export type CosmeticActionView = {
@@ -75,6 +76,11 @@ export type CosmeticResponse = {
     actions: CosmeticActionView[];
     skinTypes: SkinTypeView[];
     ingredients: IngredientView[];
+};
+
+export type CosmeticsResponse = {
+    total: number;
+    cosmetics: CosmeticResponse[];
 };
 
 

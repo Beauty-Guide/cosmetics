@@ -11,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class CosmeticsResponse {
-    Long total;
+    Integer total;
     List<CosmeticResponse> cosmetics;
 }

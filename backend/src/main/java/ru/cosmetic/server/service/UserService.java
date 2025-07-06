@@ -37,15 +37,18 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public User createUser(User user) {
+    public boolean createUser(User user) {
         String username = user.getUsername();
         User findUser = findByUsername(username).orElse(null);
         if (findUser == null) {
             if (user.getUsername().equals("admin")) {
                 user.setRoles(Collections.singleton(roleService.getAdminRole()));
+            } else {
+                user.setRoles(Collections.singleton(roleService.getUserRole()));
             }
-            user = userRepository.save(user);
+            userRepository.save(user);
+            return true;
         }
-        return user;
+        return false;
     }
 }

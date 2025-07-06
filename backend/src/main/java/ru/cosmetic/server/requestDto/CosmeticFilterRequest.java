@@ -11,6 +11,7 @@ public class CosmeticFilterRequest {
     private List<Long> actionIds;
     private List<Long> skinTypeIds;
     private List<Long> brandIds;
+    private String name;
 
     // Пагинация
     private Long page = 0L;

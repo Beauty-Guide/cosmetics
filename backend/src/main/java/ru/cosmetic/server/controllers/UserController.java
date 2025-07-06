@@ -75,7 +75,7 @@ public class UserController {
     @Operation(summary = "Получение всех каталогов")
     public ResponseEntity<?> getAllCatalog() {
         try {
-            return ResponseEntity.ok(cosmeticActionService.findAll());
+            return ResponseEntity.ok(catalogService.findAll());
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения всех каталогов", HttpStatus.BAD_REQUEST);
         }

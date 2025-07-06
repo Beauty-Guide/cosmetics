@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -43,7 +45,13 @@ public class AuthenticationService {
 
     public ResponseEntity<?> register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user = userService.createUser(user);
-        return ResponseEntity.ok("User registered successfully");
+        if(userService.createUser(user)){
+            return ResponseEntity.ok("User registered successfully");
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Username is already taken"));
+        }
+
     }
 }

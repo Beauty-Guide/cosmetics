@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.cosmetic.server.exceptions.AppError;
+import ru.cosmetic.server.models.Brand;
 import ru.cosmetic.server.requestDto.CosmeticAddRequest;
 import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
@@ -18,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Tag(name = "Косметика", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/cosmetic")
-//@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class CosmeticController {
 
     private final CosmeticService cosmeticService;
@@ -77,4 +80,44 @@ public class CosmeticController {
         }
     }
 
+    @PutMapping("/updateCosmetic/{id}")
+    @Operation(summary = "Обновление косметики")
+    public ResponseEntity<?> updateCosmetic(@RequestBody CosmeticAddRequest request, @PathVariable Long id) {
+        try {
+            Cosmetic findCosmetic = cosmeticService.findById(id);
+            findCosmetic.setName(request.getName());
+            findCosmetic.setApplicationMethod(request.getApplicationMethod());
+            findCosmetic.setCompatibility(request.getCompatibility());
+            findCosmetic.setUsageRecommendations(request.getUsageRecommendations());
+            findCosmetic.setBrand(brandService.findById(request.getBrandId()));
+            findCosmetic.setIngredients(ingredientService.findById(request.getKeyIngredientIds()));
+            findCosmetic.setCatalog(catalogService.findById(request.getCatalogId()));
+            findCosmetic.setActions(cosmeticActionService.findAllById(request.getActionIds()));
+            findCosmetic.setSkinTypes(skinTypeService.findAllById(request.getSkinTypeIds()));
+            cosmeticService.save(findCosmetic);
+            return new ResponseEntity<>("Косметика обновлена", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary = "Удаление косметики")
+    @DeleteMapping("/deleteCosmetic/{id}")
+    public ResponseEntity<?> deleteCosmetic(@PathVariable Long id) {
+        try {
+            if (cosmeticService.remove(id)) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            if (e.getMessage().contains("fk_cosmetic_brand")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new AppError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Этот бренд используется в косметике"
+                ));
+            }
+            return new ResponseEntity<>("Ошибка удаление бренда", HttpStatus.BAD_REQUEST);
+        }
+    }
 }

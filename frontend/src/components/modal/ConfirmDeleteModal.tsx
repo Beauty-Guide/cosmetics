@@ -16,7 +16,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
     if (!show) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
                 <div className="flex justify-between items-center mb-4">
                     <h5 className="text-lg font-semibold">Подтверждение удаления</h5>
