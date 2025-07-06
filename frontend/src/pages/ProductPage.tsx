@@ -12,8 +12,8 @@ const ProductPage = () => {
 
   if (isLoadingProduct) {
     return (
-      <div className="flex items-center justify-start w-full p-4">
-        <Skeleton className="h-[400px] w-full rounded-xl p-4 my-5" />
+      <div className="flex items-center justify-start w-full p-4 px-sides">
+        <Skeleton className="h-[400px] w-full rounded-md p-4 my-5" />
       </div>
     )
   }
@@ -21,19 +21,21 @@ const ProductPage = () => {
   if (!product) {
     return (
       <div>
-        <h1 className="text-2xl font-bold text-left p-4">Товар не найден</h1>
+        <h1 className="text-2xl font-bold text-left p-4 px-sides">
+          Товар не найден
+        </h1>
       </div>
     )
   }
 
   return (
-    <main className="flex flex-col w-full items-center justify-center gap-5 p-4">
+    <main className="flex flex-col w-full items-start justify-start gap-5 p-4 px-sides">
       <span className="flex flex-col items-start justify-center gap-2 my-2">
         <h1 className="text-3xl font-bold text-left">{product.name}</h1>
         <p className="">{product.brand.name}</p>
       </span>
       <div className="flex gap-15 max-lg:flex-col">
-        <div className="px-2">
+        <div>
           <ImageCarousel
             images={
               product.imageUrls.length === 0
@@ -42,8 +44,8 @@ const ProductPage = () => {
             }
           />
         </div>
-        <div className="flex gap-6">
-          <span className="flex flex-col items-start gap-2">
+        <div className="flex gap-6 flex-wrap">
+          <span className="flex flex-col items-start gap-2 shadow-md p-3 rounded h-min">
             <h2 className="mb-2 text-2xl max-md:text-xl font-bold">Действия</h2>
             {product.actions.map((action) => (
               <Badge
@@ -55,7 +57,7 @@ const ProductPage = () => {
               </Badge>
             ))}
           </span>
-          <span className="flex flex-col gap-2">
+          <span className="flex flex-col gap-2 shadow-md p-3 rounded h-min">
             <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
               Типы кожи
             </h2>
@@ -73,7 +75,7 @@ const ProductPage = () => {
       </div>
       <div className="flex gap-4 flex-wrap">
         {product.compatibility && (
-          <span className="flex flex-col shadow-2xl p-4 rounded-xl">
+          <span className="flex flex-col shadow-md p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               СОВМЕСТИМОСТЬ
             </h2>
@@ -83,7 +85,7 @@ const ProductPage = () => {
           </span>
         )}
         {product.usageRecommendations && (
-          <span className="flex flex-col shadow-2xl p-4 rounded-xl">
+          <span className="flex flex-col shadow-md p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               РЕКОМЕНДАЦИИ ПО ПРИМЕНЕНИЮ
             </h2>
@@ -93,7 +95,7 @@ const ProductPage = () => {
           </span>
         )}
         {product.applicationMethod && (
-          <span className="flex flex-col shadow-2xl p-4 rounded-xl">
+          <span className="flex flex-col shadow-md p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               СПОСОБ ПРИМЕНЕНИЯ
             </h2>

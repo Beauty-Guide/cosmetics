@@ -5,7 +5,7 @@ import Breadcrumbs from "./Breadcrumbs"
 
 const Layout = () => {
   return (
-    <div>
+    <div className="max-w-7xl mx-auto">
       <AppNavbar />
       <Breadcrumbs />
       <Outlet />

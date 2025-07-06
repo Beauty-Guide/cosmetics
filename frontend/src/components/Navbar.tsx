@@ -12,8 +12,8 @@ const AppNavbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-gray-900 text-white shadow-sm">
-      <div className="container mx-auto flex items-center justify-between p-4 flex-wrap gap-2">
+    <nav className="bg-gray-900 text-white shadow-md rounded-b-md px-sides">
+      <div className="container mx-auto flex items-center justify-between py-4 flex-wrap gap-2">
         <Link to="/" className="text-xl font-bold tracking-tight text-white">
           Beauty Guide
         </Link>

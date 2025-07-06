@@ -107,7 +107,7 @@ const HomePage = () => {
   }
 
   return (
-    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 pt-8 max-md:pt-0">
+    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 max-md:pt-0 px-sides">
       <SideBar categoryTree={categoryTree} />
       <div className="flex flex-col items-center justify-center gap-4 w-full mt-1">
         <h2 className="text-md mr-auto">Найдено: {products?.total}</h2>
