@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.exceptions.AppError;
 import ru.cosmetic.server.models.Brand;
@@ -14,7 +15,7 @@ import ru.cosmetic.server.service.BrandService;
 @RequiredArgsConstructor
 @Tag(name = "Бренды", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/brand")
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
 public class BrandController {
 
     private final BrandService brandService;

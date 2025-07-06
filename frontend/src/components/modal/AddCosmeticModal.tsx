@@ -253,7 +253,7 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
             {/* Modal Content */}
             <div className="p-6">
               <h4 className="text-xl font-semibold text-center mb-6">
-                Управление косметикой
+                Добавление косметики
               </h4>
               {/* Показываем ошибку здесь */}
               {error && (

@@ -14,7 +14,6 @@ import { getAllBrands } from "@/services/adminBrandApi.ts"
 import { getAllCatalogs } from "@/services/adminCatalogApi.ts"
 import { getAllSkinType } from "@/services/adminSkinTypeApi.ts"
 import { getAllIngredients } from "@/services/adminIngredientApi.ts"
-import FeedbackModal from "@/components/admin/FeedbackModal"
 import { updateCosmetic } from "@/services/adminCosmeticApi"
 
 interface EditCosmeticModalProps {
@@ -25,8 +24,8 @@ interface EditCosmeticModalProps {
     id: number
     name: string
     description: string
-    brandId: number
-    catalogId: number
+    brandId: number | null
+    catalogId: number | null
     compatibility: string
     usageRecommendations: string
     applicationMethod: string
@@ -53,27 +52,31 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
   const [ingredients, setIngredients] = useState<IngredientView[]>([])
 
   // Локальные данные формы
-  const [name, setName] = useState(initialData.name)
-  const [description, setDescription] = useState(initialData.description)
-  const [brandId, setBrandId] = useState<number | null>(initialData.brandId)
-  const [catalogId, setCatalogId] = useState<number | null>(
-    initialData.catalogId
+  const [name, setName] = useState(initialData?.name || "")
+  const [description, setDescription] = useState(initialData?.description || "")
+  const [brandId, setBrandId] = useState<number | null>(
+    initialData?.brandId || null
   )
-  const [compatibility, setCompatibility] = useState(initialData.compatibility)
+  const [catalogId, setCatalogId] = useState<number | null>(
+    initialData?.catalogId || null
+  )
+  const [compatibility, setCompatibility] = useState(
+    initialData?.compatibility || ""
+  )
   const [usageRecommendations, setUsageRecommendations] = useState(
-    initialData.usageRecommendations
+    initialData?.usageRecommendations || ""
   )
   const [applicationMethod, setApplicationMethod] = useState(
-    initialData.applicationMethod
+    initialData?.applicationMethod || ""
   )
   const [actionIds, setActionIds] = useState<number[]>(
-    initialData.actions.map((a) => a.id)
+    initialData?.actions.map((a) => a.id) || []
   )
   const [skinTypeIdList, setSkinTypeIdList] = useState<number[]>(
-    initialData.skinTypes.map((s) => s.id)
+    initialData?.skinTypes.map((s) => s.id) || []
   )
   const [ingredientIds, setIngredientIds] = useState<number[]>(
-    initialData.ingredients.map((i) => i.id)
+    initialData?.ingredients.map((i) => i.id) || []
   )
 
   useEffect(() => {
@@ -117,7 +120,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
         console.error(err)
       }
     }
-
     if (isOpen) {
       fetchData()
     }
@@ -125,7 +127,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!name.trim()) {
       setError("Название не может быть пустым")
       return
@@ -211,6 +212,20 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                   setBrandId(selected.length > 0 ? parseInt(selected[0]) : null)
                 }
               />
+              <div>
+                <label
+                  htmlFor="editDescription"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Описание
+                </label>
+                <Textarea
+                  id="editDescription"
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
