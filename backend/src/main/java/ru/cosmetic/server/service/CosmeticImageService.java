@@ -14,8 +14,8 @@ public class CosmeticImageService {
 
     private final CosmeticImageRepo cosmeticImageRepo;
 
-    public void save(CosmeticImage cosmeticAction) {
-        cosmeticImageRepo.save(cosmeticAction);
+    public CosmeticImage save(CosmeticImage cosmeticAction) {
+        return cosmeticImageRepo.save(cosmeticAction);
     }
 
     public boolean remove(Long id) {

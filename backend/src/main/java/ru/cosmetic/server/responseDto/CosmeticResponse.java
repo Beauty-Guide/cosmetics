@@ -23,5 +23,5 @@ public class CosmeticResponse {
     private List<ActionResponse> actions;
     private List<SkinTypeResponse> skinTypes;
     private List<IngredientResponse> ingredients;
-    private List<String> imageUrls;
+    private List<ImageResponse> images;
 }

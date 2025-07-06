@@ -21,7 +21,7 @@ public class FavoriteService {
     private final UserRepository userRepo;
     private final CosmeticService cosmeticService;
     private final CosmeticImageService cosmeticImageService;
-    private String IMAGE_URL= "/api/files?cosmeticId=%sfileName=%s";
+    private final String IMAGE_URL = "/api/getFile?cosmeticId=%s&fileName=%s";
 
     public void addToFavorites(String username, Long cosmeticId) {
         User user = userRepo.findByUsername(username).orElseThrow();
@@ -70,7 +70,7 @@ public class FavoriteService {
                 .actions(mapActionsToActionResponses(cosmetic.getActions()))
                 .skinTypes(mapSkinTypesToSkinTypeResponses(cosmetic.getSkinTypes()))
                 .ingredients(mapIngredientsToIngredientResponses(cosmetic.getIngredients()))
-                .imageUrls(getImageUrls(cosmetic)) // предположим, что это метод получения URL изображений
+                .images(getImageUrls(cosmetic)) // предположим, что это метод получения URL изображений
                 .build();
     }
 
@@ -104,10 +104,18 @@ public class FavoriteService {
                 .toList() : List.of();
     }
 
-    private List<String> getImageUrls(Cosmetic cosmetic) {
+    private List<ImageResponse> getImageUrls(Cosmetic cosmetic) {
         // Реализуй свою логику получения URL изображений
         List<CosmeticImage> allByCosmetic = cosmeticImageService.findAllByCosmetic(cosmetic);
         Long cosmeticId = cosmetic.getId();
-        return allByCosmetic.stream().map(cosmeticImage -> String.format(IMAGE_URL, cosmeticId, cosmeticImage.getUrl())).collect(Collectors.toList()); // Заглушка
+        List<ImageResponse> images = new ArrayList<>();
+        for (CosmeticImage cosmeticImage : allByCosmetic) {
+            ImageResponse imageResponse = new ImageResponse();
+            imageResponse.setId(cosmeticImage.getId());
+            imageResponse.setUrl(String.format(IMAGE_URL, cosmeticId, cosmeticImage.getUrl()));
+            imageResponse.setIsMain(cosmeticImage.isMain());
+            images.add(imageResponse);
+        }
+        return images;
     }
 }

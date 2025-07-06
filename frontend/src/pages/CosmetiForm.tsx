@@ -276,6 +276,7 @@ const CosmeticForm: React.FC = () => {
                         actions: editingCosmetic.actions,
                         skinTypes: editingCosmetic.skinTypes,
                         ingredients: editingCosmetic.ingredients,
+                        images: editingCosmetic.images,
                     }}
                 />
             )}

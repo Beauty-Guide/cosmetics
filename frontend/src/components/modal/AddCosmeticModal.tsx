@@ -1,70 +1,75 @@
 // src/components/admin/AddCosmeticModal.tsx
-import React, { useState, useEffect } from "react"
-import FilterCombobox from "@/components/HomeComponents/FilterCombobox"
+import React, { useState, useEffect } from "react";
+import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
 import type {
     BrandView,
-    Catalog, Cosmetic,
+    Catalog,
+    Cosmetic,
     CosmeticActionView,
     IngredientView,
     SkinTypeView,
-} from "@/model/types"
-import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
-import {getAllCosmeticActions} from "@/services/adminCosmeticActionApi.ts";
-import {getAllBrands} from "@/services/adminBrandApi.ts";
-import {getAllCatalogs} from "@/services/adminCatalogApi.ts";
-import {getAllSkinType} from "@/services/adminSkinTypeApi.ts";
-import {getAllIngredients} from "@/services/adminIngredientApi.ts";
-import {useSearchParams} from "react-router";
-import {addCosmetic} from "@/services/adminCosmeticApi.ts";
-import {uploadCosmeticImages} from "@/services/fileApi.ts";
+} from "@/model/types";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { getAllCosmeticActions } from "@/services/adminCosmeticActionApi.ts";
+import { getAllBrands } from "@/services/adminBrandApi.ts";
+import { getAllCatalogs } from "@/services/adminCatalogApi.ts";
+import { getAllSkinType } from "@/services/adminSkinTypeApi.ts";
+import { getAllIngredients } from "@/services/adminIngredientApi.ts";
+import { useSearchParams } from "react-router";
+import { addCosmetic } from "@/services/adminCosmeticApi.ts";
+import { uploadCosmeticImages } from "@/services/fileApi.ts";
 
 interface AddCosmeticModalProps {
-    onAddSuccess: () => void
+    onAddSuccess: () => void;
 }
 
 const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const [message, setMessage] = useState<string | null>(null)
+    const [isOpen, setIsOpen] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     // Справочники
-    const [brands, setBrands] = useState<BrandView[]>([])
-    const [catalogs, setCatalogs] = useState<Catalog[]>([])
-    const [actions, setActions] = useState<CosmeticActionView[]>([])
-    const [skinTypes, setSkinTypes] = useState<SkinTypeView[]>([])
-    const [ingredients, setIngredients] = useState<IngredientView[]>([])
+    const [brands, setBrands] = useState<BrandView[]>([]);
+    const [catalogs, setCatalogs] = useState<Catalog[]>([]);
+    const [actions, setActions] = useState<CosmeticActionView[]>([]);
+    const [skinTypes, setSkinTypes] = useState<SkinTypeView[]>([]);
+    const [ingredients, setIngredients] = useState<IngredientView[]>([]);
 
     // Состояния формы
-    const [name, setName] = useState("")
-    const [description, setDescription] = useState("")
-    const [brandIds, setBrandIds] = useState<number[]>([])
-    const [catalogIds, setCatalogIds] = useState<number[]>([])
-    const [compatibility, setCompatibility] = useState("")
-    const [usageRecommendations, setUsageRecommendations] = useState("")
-    const [applicationMethod, setApplicationMethod] = useState("")
-    const [actionIds, setActionIds] = useState<number[]>([])
-    const [skinTypeIds, setSkinTypeIds] = useState<number[]>([])
-    const [keyIngredientIds, setKeyIngredientIds] = useState<number[]>([])
-    const [imageFiles, setImageFiles] = useState<File[]>([])
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [brandIds, setBrandIds] = useState<number[]>([]);
+    const [catalogIds, setCatalogIds] = useState<number[]>([]);
+    const [compatibility, setCompatibility] = useState("");
+    const [usageRecommendations, setUsageRecommendations] = useState("");
+    const [applicationMethod, setApplicationMethod] = useState("");
+    const [actionIds, setActionIds] = useState<number[]>([]);
+    const [skinTypeIds, setSkinTypeIds] = useState<number[]>([]);
+    const [keyIngredientIds, setKeyIngredientIds] = useState<number[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [mainImageFile, setMainImageFile] = useState<File | null>(null); // Новое состояние для главного изображения
+    const [imageUrls, setImageUrls] = useState<string[]>([]);
+    const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
 
-    const [searchParams, setSearchParams] = useSearchParams()
+
+    const [searchParams, setSearchParams] = useSearchParams();
     const [selectedCatalogs, setSelectedCatalogs] = useState<string[]>(
         searchParams.getAll("catalog")
-    )
+    );
     const [selectedSkinTypes, setSelectedSkinTypes] = useState<string[]>(
         searchParams.getAll("skinType")
-    )
+    );
     const [selectedBrands, setSelectedBrands] = useState<string[]>(
         searchParams.getAll("brand")
-    )
+    );
     const [selectedIngredients, setSelectedIngredients] = useState<string[]>(
         searchParams.getAll("ingredient")
-    )
+    );
     const [selectedActions, setSelectedActions] = useState<string[]>(
         searchParams.getAll("actions")
-    )
+    );
 
     // При открытии модального окна загружаем актуальные данные
     useEffect(() => {
@@ -82,39 +87,39 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                     getAllCosmeticActions(),
                     getAllSkinType(), // ← убедитесь, что эта функция работает
                     getAllIngredients(),
-                ])
-
-                console.log("skinTypes:", skinTypeData) // ← Логируем
-
-                setBrands(brandData)
-                setCatalogs(catalogData)
-                setActions(actionData)
-                setSkinTypes(skinTypeData)
-                setIngredients(ingredientData)
+                ]);
+                console.log("skinTypes:", skinTypeData); // ← Логируем
+                setBrands(brandData);
+                setCatalogs(catalogData);
+                setActions(actionData);
+                setSkinTypes(skinTypeData);
+                setIngredients(ingredientData);
             } catch (err: any) {
-                setError(err.message || "Ошибка загрузки данных")
-                console.error(err)
+                setError(err.message || "Ошибка загрузки данных");
+                console.error(err);
             }
-        }
-
+        };
         if (isOpen) {
-            fetchData()
+            fetchData();
         }
-    }, [isOpen])
+    }, [isOpen]);
 
     const resetForm = () => {
-        setName("")
-        setDescription("")
-        setBrandIds("")
-        setCatalogIds("")
-        setCompatibility("")
-        setUsageRecommendations("")
-        setApplicationMethod("")
-        setActionIds([])
-        setSkinTypeIds([])
-        setKeyIngredientIds([])
-        setImageFiles([])
-    }
+        setName("");
+        setDescription("");
+        setBrandIds([]);
+        setCatalogIds([]);
+        setCompatibility("");
+        setUsageRecommendations("");
+        setApplicationMethod("");
+        setActionIds([]);
+        setSkinTypeIds([]);
+        setKeyIngredientIds([]);
+        setImageFiles([]);
+        setMainImageFile(null); // Сбрасываем главное изображение
+        setMainImageUrl(null)
+        setImageUrls([])
+    };
 
     const handleCloseModal = () => {
         setIsSuccessModalOpen(false);
@@ -122,8 +127,9 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
     };
 
     const handleAddCosmetic = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
         setError("");
+
         // Вызываем валидацию
         if (!validateForm()) {
             return; // Останавливаем выполнение, если форма невалидна
@@ -132,6 +138,7 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
         const actionIds = selectedActions.map(Number);
         const skinTypeIds = selectedSkinTypes.map(Number);
         const keyIngredientIds = selectedIngredients.map(Number);
+
         try {
             const cosmetic = {
                 name,
@@ -146,15 +153,34 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                 keyIngredientIds,
             };
 
-            const response = await addCosmetic(cosmetic)
-            console.log(response)
+            const response = await addCosmetic(cosmetic);
+            console.log(response);
+
             if (!response || !response.data || !response.data.id) {
                 setError("Не удалось получить ID новой косметики");
+                return;
             }
+
             // 2. Загружаем изображения, если они есть
-            if (imageFiles.length > 0) {
-                await uploadCosmeticImages(response.data.id, imageFiles);
+            const imageUploadPromises: Promise<void>[] = [];
+
+            // Главное изображение
+            if (mainImageFile) {
+                imageUploadPromises.push(
+                    uploadCosmeticImages(response.data.id, [mainImageFile], true)
+                );
             }
+
+            // Дополнительные изображения
+            if (imageFiles.length > 0) {
+                imageUploadPromises.push(
+                    uploadCosmeticImages(response.data.id, imageFiles)
+                );
+            }
+
+            // Ожидаем завершения всех загрузок
+            await Promise.all(imageUploadPromises);
+
             setMessage("Косметика успешно добавлена!");
             setError(null);
 
@@ -168,9 +194,9 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
 
             resetForm();
         } catch (err: any) {
-            setError(err.message || "Произошла ошибка при добавлении косметики")
+            setError(err.message || "Произошла ошибка при добавлении косметики");
         }
-    }
+    };
 
     const validateForm = () => {
         // Проверяем текстовые поля
@@ -178,48 +204,40 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
             setError("Поле 'Название' не должно быть пустым");
             return false;
         }
+
         // Проверяем выпадающие списки (массивы)
         if (selectedBrands.length === 0) {
             setError("Выберите бренд");
             return false;
         }
-
         if (selectedCatalogs.length === 0) {
             setError("Выберите каталог");
             return false;
         }
-
         if (selectedSkinTypes.length === 0) {
             setError("Выберите тип кожи");
             return false;
         }
-
         if (selectedActions.length === 0) {
             setError("Выберите действие");
             return false;
         }
-
         if (selectedIngredients.length === 0) {
             setError("Выберите ингредиенты");
             return false;
         }
-
         if (!compatibility.trim()) {
             setError("Поле 'Совместимость' не должно быть пустым");
             return false;
         }
-
         if (!usageRecommendations.trim()) {
             setError("Поле 'Рекомендации по применению' не должно быть пустым");
             return false;
         }
-
         if (!applicationMethod.trim()) {
             setError("Поле 'Способ применения' не должно быть пустым");
             return false;
         }
-
-
 
         // Все проверки пройдены
         return true;
@@ -230,7 +248,8 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
             {/* Кнопка для открытия модального окна */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            >
                 Добавить косметику
             </button>
             {/* Модальное окно */}
@@ -238,7 +257,8 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                     <div
                         className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto"
-                        onClick={(e) => e.stopPropagation()}>
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         {/* Close Button */}
                         <button
                             onClick={() => setIsOpen(false)}
@@ -246,7 +266,6 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                         >
                             &times;
                         </button>
-
                         {/* Modal Content */}
                         <div className="p-6">
                             <h4 className="text-xl font-semibold text-center mb-6">
@@ -262,7 +281,9 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                                 {/* Основные поля */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="formName" className="block text-sm font-medium text-gray-700 mb-1">Название</label>
+                                        <label htmlFor="formName" className="block text-sm font-medium text-gray-700 mb-1">
+                                            Название
+                                        </label>
                                         <Input
                                             id="formName"
                                             type="text"
@@ -302,7 +323,6 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                                         values={selectedActions}
                                         onChange={setSelectedActions}
                                     />
-
                                     <FilterCombobox
                                         label="Ингредиенты"
                                         options={ingredients}
@@ -310,28 +330,86 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                                         onChange={setSelectedIngredients}
                                     />
                                 </div>
-
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="formCompatibility" className="block text-sm font-medium text-gray-700 mb-1">Совместимость</label>
-                                        <Textarea id="formCompatibility" rows={3} placeholder="Пример: Подходит для всех типов кожи" value={compatibility} onChange={(e) => setCompatibility(e.target.value)} className=""/>
+                                        <label htmlFor="formCompatibility" className="block text-sm font-medium text-gray-700 mb-1">
+                                            Совместимость
+                                        </label>
+                                        <Textarea
+                                            id="formCompatibility"
+                                            rows={3}
+                                            placeholder="Пример: Подходит для всех типов кожи"
+                                            value={compatibility}
+                                            onChange={(e) => setCompatibility(e.target.value)}
+                                            className=""
+                                        />
                                     </div>
                                     <div>
-                                        <label htmlFor="formUsage" className="block text-sm font-medium text-gray-700 mb-1">Рекомендации по применению</label>
-                                        <Textarea id="formUsage" rows={3} placeholder="Как использовать средство" value={usageRecommendations} onChange={(e) => setUsageRecommendations(e.target.value)} className=""/>
+                                        <label htmlFor="formUsage" className="block text-sm font-medium text-gray-700 mb-1">
+                                            Рекомендации по применению
+                                        </label>
+                                        <Textarea
+                                            id="formUsage"
+                                            rows={3}
+                                            placeholder="Как использовать средство"
+                                            value={usageRecommendations}
+                                            onChange={(e) => setUsageRecommendations(e.target.value)}
+                                            className=""
+                                        />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="formApplication" className="block text-sm font-medium text-gray-700 mb-1">Способ применения</label>
-                                        <Textarea id="formApplication" rows={3} placeholder="Пример: Нанести утром и вечером" value={applicationMethod} onChange={(e) => setApplicationMethod(e.target.value)} className=""/>
+                                        <label htmlFor="formApplication" className="block text-sm font-medium text-gray-700 mb-1">
+                                            Способ применения
+                                        </label>
+                                        <Textarea
+                                            id="formApplication"
+                                            rows={3}
+                                            placeholder="Пример: Нанести утром и вечером"
+                                            value={applicationMethod}
+                                            onChange={(e) => setApplicationMethod(e.target.value)}
+                                            className=""
+                                        />
+                                    </div>
+
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div>
+                                        <label htmlFor="formMainImage" className="block text-sm font-medium text-gray-700 mb-1">
+                                            Главное изображение
+                                        </label>
+                                        <Input
+                                            id="formMainImage"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    setMainImageFile(e.target.files[0]);
+                                                    const url = URL.createObjectURL(e.target.files[0]);
+                                                    setMainImageUrl(url);
+                                                }
+                                            }}
+                                            className=""
+                                        />
+                                        <small className="text-gray-500 mt-1 block">
+                                            Выберите главное изображение
+                                        </small>
                                     </div>
                                     <div>
-                                        <label htmlFor="formImages" className="block text-sm font-medium text-gray-700 mb-1">Изображения
+                                        <label htmlFor="formImages" className="block text-sm font-medium text-gray-700 mb-1">
+                                            Изображения
                                         </label>
-                                        <Input id="formImages" type="file" multiple accept="image/*" onChange={(e) => {
+                                        <Input
+                                            id="formImages"
+                                            type="file"
+                                            multiple
+                                            accept="image/*"
+                                            onChange={(e) => {
                                                 if (e.target.files) {
-                                                    setImageFiles(Array.from(e.target.files))
+                                                    setImageFiles(Array.from(e.target.files));
+                                                    const urls = Array.from(e.target.files).map((file) => URL.createObjectURL(file));
+                                                    setImageUrls(urls);
                                                 }
                                             }}
                                             className=""
@@ -340,8 +418,28 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                                             Можно выбрать несколько изображений
                                         </small>
                                     </div>
+                                    <div className="mt-6">
+                                        <h5 className="text-lg font-semibold mb-2">Предварительный просмотр:</h5>
+                                        {mainImageUrl && (
+                                            <div className="mb-2">
+                                                <strong>Главное изображение:</strong>
+                                                <img src={mainImageUrl} alt="Главное изображение" className="w-full h-40 object-cover rounded-md" />
+                                            </div>
+                                        )}
+                                        {imageUrls.length > 0 && (
+                                            <div>
+                                                <strong>Дополнительные изображения:</strong>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                                    {imageUrls.map((url, index) => (
+                                                        <div key={index}>
+                                                            <img src={url} alt={`Изображение ${index + 1}`} className="w-full h-40 object-cover rounded-md" />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-
                                 <div className="flex justify-end space-x-3 pt-4">
                                     <button
                                         type="button"
@@ -361,9 +459,11 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
                         </div>
                     </div>
                 </div>
+
+
             )}
         </>
-    )
-}
+    );
+};
 
-export default AddCosmeticModal
+export default AddCosmeticModal;

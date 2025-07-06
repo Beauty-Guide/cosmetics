@@ -76,11 +76,18 @@ export type CosmeticResponse = {
     actions: CosmeticActionView[];
     skinTypes: SkinTypeView[];
     ingredients: IngredientView[];
+    images: ImageResponse[];
 };
 
 export type CosmeticsResponse = {
     total: number;
     cosmetics: CosmeticResponse[];
+};
+
+export type ImageResponse = {
+    id: string;
+    url: string;
+    isMain: boolean;
 };
 
 

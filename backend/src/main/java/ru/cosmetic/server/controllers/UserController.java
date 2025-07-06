@@ -3,7 +3,9 @@ package ru.cosmetic.server.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
@@ -20,6 +22,7 @@ public class UserController {
     private final SkinTypeService skinTypeService;
     private final CosmeticActionService cosmeticActionService;
     private final CatalogService catalogService;
+    private final MinioService minioService;
 
     @PostMapping("/getCosmeticsByFilters")
     @Operation(summary = "Получение косметики по фильтрам")
@@ -80,5 +83,19 @@ public class UserController {
             return new ResponseEntity<>("Ошибка получения всех каталогов", HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping("/getFile")
+    @Operation(summary = "Получение изображения")
+    public ResponseEntity<ByteArrayResource> getFile(@RequestParam("cosmeticId") Long cosmeticId, @RequestParam("fileName") String fileName) throws Exception {
+        String format = "%s/%s";
+        byte[] fileData = minioService.getFile(String.format(format, cosmeticId ,fileName));
+        String contentType = minioService.getContentType(fileName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(new ByteArrayResource(fileData));
+    }
+
 
 }

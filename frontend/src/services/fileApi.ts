@@ -2,7 +2,8 @@ import apiClient from './adminApi';
 
 export const uploadCosmeticImages = async (
     cosmeticId: number,
-    files: File[]
+    files: File[],
+    isMain: boolean = false
 ): Promise<void> => {
     if (!files.length) {
         throw new Error('Нет изображений для загрузки');
@@ -14,7 +15,7 @@ export const uploadCosmeticImages = async (
             const formData = new FormData();
             formData.append('image', file);
             try {
-                await apiClient.post(`/api/files/upload?cosmeticId=${cosmeticId}&number=${index}`, formData);
+                await apiClient.post(`/admin/files/upload?cosmeticId=${cosmeticId}&isMain=${isMain}`, formData);
             } catch (err: any) {
                 const message = err.response?.data?.message
                     || err.message

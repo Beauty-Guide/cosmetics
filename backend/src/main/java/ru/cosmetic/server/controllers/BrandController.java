@@ -15,7 +15,7 @@ import ru.cosmetic.server.service.BrandService;
 @RequiredArgsConstructor
 @Tag(name = "Бренды", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/brand")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class BrandController {
 
     private final BrandService brandService;

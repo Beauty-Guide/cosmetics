@@ -20,12 +20,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CosmeticService {
 
-
     private final CosmeticRepo cosmeticRepo;
-    private final MinioService minioService;
     private final CosmeticImageRepo cosmeticImageRepo;
     private final FavoriteCosmeticRepo favoriteCosmeticRepo;
     private final JdbcTemplate jdbcTemplate;
+    private final String IMAGE_URL = "/api/getFile?cosmeticId=%s&fileName=%s";
 
     public Cosmetic save(Cosmetic cosmetic) {
         return cosmeticRepo.save(cosmetic);
@@ -66,7 +65,9 @@ public class CosmeticService {
                         ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
                         ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
                         ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
-                        ARRAY_AGG(DISTINCT img.url) AS image_urls
+                        ARRAY_AGG(DISTINCT img.id) AS image_ids,
+                        ARRAY_AGG(DISTINCT img.url) AS image_urls,
+                        ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) AS image_is_main
                     FROM cosmetic c
                     JOIN brand b ON c.brand_id = b.id
                     JOIN catalog cat ON c.catalog_id = cat.id
@@ -109,7 +110,9 @@ public class CosmeticService {
                 ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
                 ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
                 ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
-                ARRAY_AGG(DISTINCT img.url) AS image_urls
+                ARRAY_AGG(DISTINCT img.id) AS image_ids,
+                ARRAY_AGG(DISTINCT img.url) AS image_urls,
+                ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) AS image_is_main
             FROM cosmetic c
             JOIN brand b ON c.brand_id = b.id
             JOIN catalog cat ON c.catalog_id = cat.id
@@ -268,8 +271,16 @@ public class CosmeticService {
         }
         response.setIngredients(ingredients);
         // Images
+        List<UUID> imageIds = safeGetUUIDList(row, "image_ids");
         List<String> imageUrls = safeGetStringList(row, "image_urls");
-        response.setImageUrls(imageUrls);
+        List<Boolean> imageIsMains = safeGetBooleanList(row, "image_is_main");
+        List<ImageResponse> images = new ArrayList<>();
+        for (int i = 0; i < Math.min(imageIds.size(), imageIsMains.size()); i++) {
+            if (imageIds.get(i) != null && imageUrls.get(i) != null && imageIsMains.get(i) != null) {
+                images.add(new ImageResponse(imageIds.get(i), String.format(IMAGE_URL,response.getId(),  imageUrls.get(i)), imageIsMains.get(i)));
+            }
+        }
+        response.setImages(images);
         return response;
     }
 
@@ -332,6 +343,55 @@ public class CosmeticService {
                     if (obj != null) {
                         if (obj instanceof String str && !str.isEmpty()) {
                             result.add(str);
+                        }
+                    }
+                }
+                return result;
+            } catch (SQLException e) {
+                throw new RuntimeException("Ошибка при чтении PgArray для ключа: " + key, e);
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private static List<UUID> safeGetUUIDList(Map<String, Object> row, String key) {
+        Object val = row.get(key);
+        if (val == null) return new ArrayList<>();
+        if (val instanceof PgArray pgArray) {
+            try {
+                Object[] array = (Object[]) pgArray.getArray();
+                List<UUID> result = new ArrayList<>(array.length);
+                for (Object obj : array) {
+                    if (obj != null) {
+                        if (obj instanceof UUID str) {
+                            result.add(str);
+                        }
+                    }
+                }
+                return result;
+            } catch (SQLException e) {
+                throw new RuntimeException("Ошибка при чтении PgArray для ключа: " + key, e);
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private static List<Boolean> safeGetBooleanList(Map<String, Object> row, String key) {
+        Object val = row.get(key);
+        if (val == null) return new ArrayList<>();
+        if (val instanceof PgArray pgArray) {
+            try {
+                Object[] array = (Object[]) pgArray.getArray();
+                List<Boolean> result = new ArrayList<>(array.length);
+                for (Object obj : array) {
+                    if (obj != null) {
+                        if (obj instanceof Integer str) {
+                            if (obj.equals(1)){
+                                result.add(true);
+                            }else {
+                                result.add(false);
+                            }
+
                         }
                     }
                 }

@@ -11,7 +11,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGSERIAL
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -23,6 +23,12 @@ databaseChangeLog:
               - column:
                   name: cosmetic_id
                   type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_main
+                  type: BOOLEAN
+                  defaultValueBoolean: false
                   constraints:
                     nullable: false
 

@@ -3,7 +3,7 @@ import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
 import type {
     BrandView,
     Catalog,
-    CosmeticActionView,
+    CosmeticActionView, ImageResponse,
     IngredientView,
     SkinTypeView,
 } from "@/model/types";
@@ -33,6 +33,7 @@ interface EditCosmeticModalProps {
         actions: CosmeticActionView[];
         skinTypes: SkinTypeView[];
         ingredients: IngredientView[];
+        imageUrls: string[]; // Добавлено поле для изображений
     };
 }
 
@@ -51,6 +52,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
     const [actions, setActions] = useState<CosmeticActionView[]>([]);
     const [skinTypes, setSkinTypes] = useState<SkinTypeView[]>([]);
     const [ingredients, setIngredients] = useState<IngredientView[]>([]);
+    const [images, setImages] = useState<ImageResponse[]>([]);
 
     // Локальные данные формы
     const [name, setName] = useState(initialData?.name || "");
@@ -58,12 +60,26 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
     const [brandId, setBrandId] = useState<number | null>(initialData?.brandId || null);
     const [catalogId, setCatalogId] = useState<number | null>(initialData?.catalogId || null);
     const [compatibility, setCompatibility] = useState(initialData?.compatibility || "");
-    const [usageRecommendations, setUsageRecommendations] = useState(initialData?.usageRecommendations || "");
-    const [applicationMethod, setApplicationMethod] = useState(initialData?.applicationMethod || "");
-    const [actionIds, setActionIds] = useState<number[]>(initialData?.actions.map((a) => a.id) || []);
-    const [skinTypeIdList, setSkinTypeIdList] = useState<number[]>(initialData?.skinTypes.map((s) => s.id) || []);
-    const [ingredientIds, setIngredientIds] = useState<number[]>(initialData?.ingredients.map((i) => i.id) || []);
+    const [usageRecommendations, setUsageRecommendations] = useState(
+        initialData?.usageRecommendations || ""
+    );
+    const [applicationMethod, setApplicationMethod] = useState(
+        initialData?.applicationMethod || ""
+    );
+    const [actionIds, setActionIds] = useState<number[]>(
+        initialData?.actions.map((a) => a.id) || []
+    );
+    const [skinTypeIdList, setSkinTypeIdList] = useState<number[]>(
+        initialData?.skinTypes.map((s) => s.id) || []
+    );
+    const [ingredientIds, setIngredientIds] = useState<number[]>(
+        initialData?.ingredients.map((i) => i.id) || []
+    );
 
+    // Состояние для изображений
+    const [imageUrls, setImageUrls] = useState<string[]>(initialData?.imageUrls || []);
+    // const [imageUrls, setImageUrls] = useState<string[]>([]);
+    const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
     useEffect(() => {
         if (isOpen && initialData) {
             setName(initialData.name);
@@ -76,13 +92,37 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
             setActionIds(initialData.actions.map((a) => a.id));
             setSkinTypeIdList(initialData.skinTypes.map((s) => s.id));
             setIngredientIds(initialData.ingredients.map((i) => i.id));
+            // Обработка изображений
+            if (initialData.images && Array.isArray(initialData.images)) {
+                const mainImage = initialData.images.find(img => img.isMain === true);
+                const otherImages = initialData.images.filter(img => img.isMain === false);
+
+                // Добавляем http://localhost:8080 к URL
+                const getFullUrl = (url: string) =>
+                    url.startsWith("http") ? url : `http://localhost:8080${url}`;
+
+                // Устанавливаем главное изображение
+                setMainImageUrl(mainImage ? getFullUrl(mainImage.url) : null);
+
+                // Устанавливаем дополнительные изображения
+                setImageUrls(otherImages.map(img => getFullUrl(img.url)));
+            } else {
+                setImageUrls([]);
+                setMainImageUrl(null);
+            }
         }
     }, [isOpen, initialData]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [brandData, catalogData, actionData, skinTypeData, ingredientData] = await Promise.all([
+                const [
+                    brandData,
+                    catalogData,
+                    actionData,
+                    skinTypeData,
+                    ingredientData,
+                ] = await Promise.all([
                     getAllBrands(),
                     getAllCatalogs(),
                     getAllCosmeticActions(),
@@ -124,12 +164,12 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                 actionIds,
                 skinTypeIds: skinTypeIdList,
                 keyIngredientIds: ingredientIds,
+                imageUrls, // Добавляем изображения
             };
 
             await updateCosmetic(initialData.id, updatedCosmetic);
             setMessage("Косметика успешно обновлена!");
             setError(null);
-
             setTimeout(() => {
                 onEditSuccess();
                 onClose();
@@ -137,6 +177,12 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
         } catch (err: any) {
             setError(err.message || "Ошибка при сохранении изменений");
         }
+    };
+
+    const handleRemoveImage = (index: number) => {
+        const updatedImageUrls = [...imageUrls];
+        updatedImageUrls.splice(index, 1);
+        setImageUrls(updatedImageUrls);
     };
 
     if (!isOpen) return null;
@@ -154,12 +200,17 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                 >
                     &times;
                 </button>
-
                 {/* Modal Content */}
                 <div className="p-6">
-                    <h4 className="text-xl font-semibold text-center mb-6">Редактировать косметику</h4>
-                    {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-                    {message && <div className="text-green-500 text-sm mb-4">{message}</div>}
+                    <h4 className="text-xl font-semibold text-center mb-6">
+                        Редактировать косметику
+                    </h4>
+                    {error && (
+                        <div className="text-red-500 text-sm mb-4">{error}</div>
+                    )}
+                    {message && (
+                        <div className="text-green-500 text-sm mb-4">{message}</div>
+                    )}
 
                     <form onSubmit={handleSave} className="space-y-6">
                         {/* Основные поля */}
@@ -183,18 +234,8 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                                 onChange={(selected) =>
                                     setBrandId(selected.length > 0 ? parseInt(selected[0]) : null)
                                 }
+                                singleSelect
                             />
-                            <div>
-                                <label htmlFor="editDescription" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Описание
-                                </label>
-                                <Textarea
-                                    id="editDescription"
-                                    rows={3}
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                />
-                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -205,6 +246,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                                 onChange={(selected) =>
                                     setCatalogId(selected.length > 0 ? parseInt(selected[0]) : null)
                                 }
+                                singleSelect
                             />
                             <FilterCombobox
                                 label="Тип кожи"
@@ -273,7 +315,72 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                                 />
                             </div>
                         </div>
-
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="formMainImage" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Главное изображение
+                                </label>
+                                <Input
+                                    id="formMainImage"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            setMainImageFile(e.target.files[0]);
+                                            const url = URL.createObjectURL(e.target.files[0]);
+                                            setMainImageUrl(url);
+                                        }
+                                    }}
+                                    className=""
+                                />
+                                <small className="text-gray-500 mt-1 block">
+                                    Выберите главное изображение
+                                </small>
+                            </div>
+                            <div>
+                                <label htmlFor="formImages" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Изображения
+                                </label>
+                                <Input
+                                    id="formImages"
+                                    type="file"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            setImageFiles(Array.from(e.target.files));
+                                            const urls = Array.from(e.target.files).map((file) => URL.createObjectURL(file));
+                                            setImageUrls(urls);
+                                        }
+                                    }}
+                                    className=""
+                                />
+                                <small className="text-gray-500 mt-1 block">
+                                    Можно выбрать несколько изображений
+                                </small>
+                            </div>
+                            <div className="mt-6">
+                                <h5 className="text-lg font-semibold mb-2">Предварительный просмотр:</h5>
+                                {mainImageUrl && (
+                                    <div className="mb-2">
+                                        <strong>Главное изображение:</strong>
+                                        <img src={mainImageUrl} alt="Главное изображение" className="w-full h-40 object-cover rounded-md" />
+                                    </div>
+                                )}
+                                {imageUrls.length > 0 && (
+                                    <div>
+                                        <strong>Дополнительные изображения:</strong>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                            {imageUrls.map((url, index) => (
+                                                <div key={index}>
+                                                    <img src={url} alt={`Изображение ${index + 1}`} className="w-full h-40 object-cover rounded-md" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         <div className="flex justify-end space-x-3 pt-4">
                             <button
                                 type="button"
@@ -290,6 +397,29 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                             </button>
                         </div>
                     </form>
+
+                    {/* Отображение изображений */}
+                    <div className="mt-6">
+                        <h5 className="text-lg font-semibold mb-2">Изображения:</h5>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            {imageUrls.map((imageUrl, index) => (
+                                <div key={index} className="relative">
+                                    <img
+                                        src={imageUrl}
+                                        alt={`Image ${index + 1}`}
+                                        className="w-full h-40 object-cover rounded-md"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveImage(index)}
+                                        className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-sm"
+                                    >
+                                        Удалить
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
