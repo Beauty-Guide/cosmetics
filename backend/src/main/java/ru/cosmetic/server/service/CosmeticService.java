@@ -48,7 +48,50 @@ public class CosmeticService {
 
     public CosmeticResponse getCosmeticById(Long id) {
         StringBuilder sql = new StringBuilder("""
-                    SELECT
+        SELECT
+            c.id AS cosmetic_id,
+            c.name AS cosmetic_name,
+            c.description AS cosmetic_description,
+            c.compatibility,
+            c.usage_recommendations,
+            c.application_method,
+            b.id AS brand_id,
+            b.name AS brand_name,
+            cat.id AS catalog_id,
+            cat.name AS catalog_name,
+            ARRAY_AGG(DISTINCT a.id) AS action_ids,
+            ARRAY_AGG(DISTINCT a.name) AS action_names,
+            ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
+            ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
+            ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
+            ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
+            (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
+            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
+        FROM cosmetic c
+        JOIN brand b ON c.brand_id = b.id
+        JOIN catalog cat ON c.catalog_id = cat.id
+        LEFT JOIN cosmetic_cosmetic_action cca ON c.id = cca.cosmetic_id
+        LEFT JOIN cosmetic_action a ON cca.action_id = a.id
+        LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
+        LEFT JOIN skin_type st ON cst.skin_type_id = st.id
+        LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
+        LEFT JOIN ingredient i ON ci.ingredient_id = i.id
+        WHERE c.id = ?
+        GROUP BY c.id, b.id, cat.id
+    """);
+
+        try {
+            Map<String, Object> row = jdbcTemplate.queryForMap(sql.toString(), id);
+            return mapRowToCosmeticResponse(row);
+        } catch (EmptyResultDataAccessException ex) {
+            return null; // или throw new ResourceNotFoundException("Cosmetic not found")
+        }
+    }
+
+    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter) {
+        List<Object> params = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+            SELECT
                         c.id AS cosmetic_id,
                         c.name AS cosmetic_name,
                         c.description AS cosmetic_description,
@@ -65,9 +108,8 @@ public class CosmeticService {
                         ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
                         ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
                         ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
-                        ARRAY_AGG(DISTINCT img.id) AS image_ids,
-                        ARRAY_AGG(DISTINCT img.url) AS image_urls,
-                        ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) AS image_is_main
+                        (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
+                        (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
                     FROM cosmetic c
                     JOIN brand b ON c.brand_id = b.id
                     JOIN catalog cat ON c.catalog_id = cat.id
@@ -77,52 +119,6 @@ public class CosmeticService {
                     LEFT JOIN skin_type st ON cst.skin_type_id = st.id
                     LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
                     LEFT JOIN ingredient i ON ci.ingredient_id = i.id
-                    LEFT JOIN cosmetic_image img ON c.id = img.cosmetic_id
-                    WHERE c.id = ?
-                    GROUP BY c.id, b.id, cat.id
-                """);
-
-        try {
-            Map<String, Object> row = jdbcTemplate.queryForMap(sql.toString(), id);
-            return mapRowToCosmeticResponse(row);
-        } catch (EmptyResultDataAccessException ex) {
-            return null; // или throw new ResourceNotFoundException("Cosmetic not found");
-        }
-    }
-
-    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter) {
-        List<Object> params = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("""
-            SELECT
-                c.id AS cosmetic_id,
-                c.name AS cosmetic_name,
-                c.description AS cosmetic_description,
-                c.compatibility,
-                c.usage_recommendations,
-                c.application_method,
-                b.id AS brand_id,
-                b.name AS brand_name,
-                cat.id AS catalog_id,
-                cat.name AS catalog_name,
-                ARRAY_AGG(DISTINCT a.id) AS action_ids,
-                ARRAY_AGG(DISTINCT a.name) AS action_names,
-                ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
-                ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
-                ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
-                ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
-                ARRAY_AGG(DISTINCT img.id) AS image_ids,
-                ARRAY_AGG(DISTINCT img.url) AS image_urls,
-                ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) AS image_is_main
-            FROM cosmetic c
-            JOIN brand b ON c.brand_id = b.id
-            JOIN catalog cat ON c.catalog_id = cat.id
-            LEFT JOIN cosmetic_cosmetic_action cca ON c.id = cca.cosmetic_id
-            LEFT JOIN cosmetic_action a ON cca.action_id = a.id
-            LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
-            LEFT JOIN skin_type st ON cst.skin_type_id = st.id
-            LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
-            LEFT JOIN ingredient i ON ci.ingredient_id = i.id
-            LEFT JOIN cosmetic_image img ON c.id = img.cosmetic_id
         """);
 
         // Добавляем WHERE часть
