@@ -75,5 +75,14 @@ public class CatalogController {
         }
     }
 
+    @GetMapping("/getAllCatalogsForAddCosmetic")
+    @Operation(summary = "Получение всех каталогов")
+    public ResponseEntity<?> getAllCatalogsForAddCosmetic() {
+        try {
+            return ResponseEntity.ok(catalogService.getAllCatalogsForAddCosmetic());
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка получения всех каталогов", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

@@ -24,4 +24,5 @@ public class CosmeticResponse {
     private List<SkinTypeResponse> skinTypes;
     private List<IngredientResponse> ingredients;
     private List<ImageResponse> images;
+    private Boolean has_children;
 }

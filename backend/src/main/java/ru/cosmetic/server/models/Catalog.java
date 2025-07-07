@@ -1,10 +1,7 @@
 package ru.cosmetic.server.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
 
 @Entity
 @Data
@@ -24,4 +21,11 @@ public class Catalog {
     @JoinColumn(name = "parent_id")
     private Catalog parent;
 
+    public Catalog() {
+    }
+
+    public Catalog(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

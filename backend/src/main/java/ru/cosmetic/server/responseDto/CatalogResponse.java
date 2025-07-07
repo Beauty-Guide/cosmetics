@@ -6,8 +6,16 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class CatalogResponse {
     private Long id;
     private String name;
+    private Boolean hasChildren;
+
+    public CatalogResponse() {
+    }
+
+    public CatalogResponse(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

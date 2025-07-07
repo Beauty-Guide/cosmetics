@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { getAllCosmeticActions } from "@/services/adminCosmeticActionApi.ts";
 import { getAllBrands } from "@/services/adminBrandApi.ts";
-import { getAllCatalogs } from "@/services/adminCatalogApi.ts";
+import { getAllCatalogsForAddCosmetic} from "@/services/adminCatalogApi.ts";
 import { getAllSkinType } from "@/services/adminSkinTypeApi.ts";
 import { getAllIngredients } from "@/services/adminIngredientApi.ts";
 import { useSearchParams } from "react-router";
@@ -83,7 +83,7 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({ onAddSuccess }) => 
           ingredientData,
         ] = await Promise.all([
           getAllBrands(),
-          getAllCatalogs(),
+          getAllCatalogsForAddCosmetic(),
           getAllCosmeticActions(),
           getAllSkinType(), // ← убедитесь, что эта функция работает
           getAllIngredients(),

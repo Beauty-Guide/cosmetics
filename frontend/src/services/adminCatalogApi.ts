@@ -18,6 +18,15 @@ export const getAllCatalogs = async (): Promise<Catalog[]> => {
   }
 };
 
+export const getAllCatalogsForAddCosmetic = async (): Promise<Catalog[]> => {
+  try {
+    const response = await apiClient.get('/admin/catalog/getAllCatalogsForAddCosmetic');
+    return response.data;
+  } catch (error) {
+    throw new Error('Ошибка при получении данных');
+  }
+};
+
 export const updateCatalog = async (
     id: number,
     data: { name?: string; parentId?: number | null }

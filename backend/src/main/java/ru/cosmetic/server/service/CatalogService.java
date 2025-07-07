@@ -1,10 +1,11 @@
 package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import ru.cosmetic.server.requestDto.CatalogRequest;
 import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.repo.CatalogRepo;
+import ru.cosmetic.server.requestDto.CatalogRequest;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class CatalogService {
 
     private final CatalogRepo catalogRepo;
+    private final JdbcTemplate jdbcTemplate;
 
     public void save(CatalogRequest catalogDto) {
         Catalog catalog = new Catalog();
@@ -45,5 +47,20 @@ public class CatalogService {
 
     public List<Catalog> findAll() {
         return catalogRepo.findAll();
+    }
+
+    public List<Catalog> getAllCatalogsForAddCosmetic() {
+        String sql = """
+        SELECT c.id, c.name
+        FROM catalog c
+        LEFT JOIN catalog child ON c.id = child.parent_id
+        WHERE child.id IS NULL
+    """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                new Catalog(
+                        rs.getLong("id"),
+                        rs.getString("name")
+                ));
     }
 }
