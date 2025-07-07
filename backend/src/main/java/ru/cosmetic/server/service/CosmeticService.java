@@ -65,6 +65,7 @@ public class CosmeticService {
             ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
             ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
             ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
+            (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
             (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
             (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
         FROM cosmetic c
@@ -108,6 +109,7 @@ public class CosmeticService {
                         ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
                         ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
                         ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
+                        (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
                         (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
                         (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
                     FROM cosmetic c
@@ -271,7 +273,7 @@ public class CosmeticService {
         List<String> imageUrls = safeGetStringList(row, "image_urls");
         List<Boolean> imageIsMains = safeGetBooleanList(row, "image_is_main");
         List<ImageResponse> images = new ArrayList<>();
-        for (int i = 0; i < Math.min(imageIds.size(), imageIsMains.size()); i++) {
+        for (int i = 0; i < Math.min(imageUrls.size(), imageIsMains.size()); i++) {
             if (imageIds.get(i) != null && imageUrls.get(i) != null && imageIsMains.get(i) != null) {
                 images.add(new ImageResponse(imageIds.get(i), String.format(IMAGE_URL,response.getId(),  imageUrls.get(i)), imageIsMains.get(i)));
             }
