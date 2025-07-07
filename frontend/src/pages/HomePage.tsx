@@ -11,6 +11,7 @@ import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
 import { Button } from "@/components/ui/button"
 import { Search } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 // import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 
 const HomePage = () => {
@@ -114,7 +115,10 @@ const HomePage = () => {
     <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 max-md:pt-0 px-sides">
       <SideBar categoryTree={categoryTree} />
       <div className="flex flex-col items-center justify-center gap-4 w-full mt-1">
-        <h2 className="text-md mr-auto">Найдено: {products?.total}</h2>
+        <h2 className="flex gap-2 text-md font-semibold mr-auto">
+          Найдено:{" "}
+          {products?.total || <Skeleton className="w-[50px] h-[20px]" />}
+        </h2>
         <form
           onSubmit={handleSearch}
           className="flex w-full items-center justify-start gap-2"

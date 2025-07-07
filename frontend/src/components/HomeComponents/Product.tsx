@@ -2,6 +2,7 @@ import { useNavigate } from "react-router"
 import { Button } from "../ui/button"
 import type { TProduct } from "@/types"
 import { useToggleFavProduct } from "@/hooks/useToggleFavProduct"
+import { getImgUrl } from "@/lib/utils"
 
 type ProductProps = {
   product: TProduct
@@ -24,10 +25,10 @@ const Product = ({ product }: ProductProps) => {
   return (
     <div
       key={product.id}
-      className="flex flex-col items-center mt-5 w-[450px] border-1 border-gray-400 p-4 rounded-md shadow-sm hover:shadow-md"
+      className="flex flex-col items-center mt-5 w-[450px] border-gray-400 p-4 rounded-md shadow-md hover:shadow-xl"
     >
       <img
-        src={product.images.find((img) => img.isMain)?.url || "/600x400.svg"}
+        src={getImgUrl(product.images.find((img) => img.isMain)?.url)}
         alt=""
         className="h-[300px] w-[450px] rounded-md"
         onClick={navigateToItem}

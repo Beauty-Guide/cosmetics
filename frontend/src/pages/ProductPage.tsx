@@ -39,7 +39,7 @@ const ProductPage = () => {
           <ImageCarousel
             images={
               product.images.length === 0
-                ? [{ id: "12312", url: "/600x400.svg", isMain: true }]
+                ? [{ id: "12312", url: "", isMain: true }]
                 : product.images
             }
           />
