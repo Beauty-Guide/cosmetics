@@ -1,11 +1,6 @@
 import type { TUser } from "@/types"
 import { createContext, useContext } from "react"
 
-const defaultValue = {
-  username: "guest",
-  role: "guest",
-}
-
-export const AuthContext = createContext<TUser>(defaultValue)
+export const AuthContext = createContext<TUser | null>(null)
 
 export const useAuth = () => useContext(AuthContext)

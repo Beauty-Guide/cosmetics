@@ -1,10 +1,10 @@
 import { API_BASE_URL } from "@/config/consts"
+import apiClient from "@/services/adminApi"
 import type { TUser } from "@/types"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
 
 const fetchCurrentUser = async (): Promise<TUser> => {
-  const response = await axios.get(`${API_BASE_URL}/api/getUserInfo`)
+  const response = await apiClient.get(`${API_BASE_URL}/api/getUserInfo`)
   return response.data
 }
 

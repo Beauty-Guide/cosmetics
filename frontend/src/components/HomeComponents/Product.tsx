@@ -14,6 +14,7 @@ const Product = ({ product }: ProductProps) => {
   const user = useAuth()
   const isAdmin = user?.role.includes(ROLES.ADMIN)
   const isUser = user?.role.includes(ROLES.USER)
+  const isAuthenticated = isAdmin || isUser
 
   const navigateToItem = () => {
     navigate(`/product/${product.id}`)
@@ -32,12 +33,11 @@ const Product = ({ product }: ProductProps) => {
       />
       <h1>{product.name}</h1>
       <p>{product.description}</p>
-      {isAdmin ||
-        (isUser && (
-          <span className="flex absolute top-8 right-5">
-            <FavoriteButton productId={String(product.id)} />
-          </span>
-        ))}
+      {isAuthenticated && (
+        <span className="flex absolute top-8 right-5">
+          <FavoriteButton productId={String(product.id)} />
+        </span>
+      )}
     </div>
   )
 }

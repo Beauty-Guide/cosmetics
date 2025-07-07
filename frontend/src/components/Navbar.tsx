@@ -1,4 +1,3 @@
-import React from "react"
 import { Link, useNavigate } from "react-router"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,17 +18,18 @@ const AppNavbar: React.FC = () => {
   const user = useAuth()
   const navigate = useNavigate()
 
-  const isAuthenticated = user?.role !== ROLES.GUEST
   const isAdmin = user?.role.includes(ROLES.ADMIN)
   const isUser = user?.role.includes(ROLES.USER)
+  const isAuthenticated = isAdmin || isUser
 
   const { data: favourites } = useGetAllFavProducts({
-    enabled: user?.role !== ROLES.GUEST,
+    enabled: !!isAuthenticated,
   })
 
   const handleLogout = () => {
     localStorage.removeItem("token")
-    navigate("/login")
+    navigate("/")
+    window.location.reload()
   }
 
   const handleNagivate = (path: string) => {
@@ -94,22 +94,19 @@ const AppNavbar: React.FC = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="start">
             <DropdownMenuLabel className="font-bold select-none">
-              Мой аккаунт
+              Мой аккаунт {isAdmin && "(ADMIN)"}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {isAdmin ||
-              (isUser && (
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => handleNagivate("/favorites")}
-                  >
-                    Избранное
-                    <DropdownMenuShortcut>
-                      {favourites?.length}
-                    </DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              ))}
+            {isAuthenticated && (
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={() => handleNagivate("/favorites")}>
+                  Избранное
+                  <DropdownMenuShortcut>
+                    {favourites?.length}
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            )}
             <DropdownMenuSeparator />
             {isAuthenticated ? (
               <DropdownMenuItem onClick={handleLogout}>Выйти</DropdownMenuItem>
