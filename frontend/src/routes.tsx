@@ -31,11 +31,17 @@ const AppRoutes = () => {
 
         <Route path="/product/:productId" element={<ProductPage />} />
 
-        <Route path="/favorites" element={<Favorites />} />
-
         <Route path="*" element={<h1>404</h1>} />
 
         {/* Защищённые маршруты */}
+        <Route
+          path="/favorites"
+          element={
+            <PrivateRoute>
+              <Favorites />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/admin"
           element={

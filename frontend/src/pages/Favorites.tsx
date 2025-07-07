@@ -1,3 +1,4 @@
+import FavoriteItem from "@/components/FavoritesPageComponents/FavoriteItem"
 import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 
 const Favorites = () => {
@@ -6,10 +7,12 @@ const Favorites = () => {
   if (isLoading) return <div>Loading...</div>
 
   return (
-    <div>
-      <h1>Favorites</h1>
+    <div className="flex flex-col items-start justify-start w-full p-4 px-sides">
+      <h1 className="text-2xl font-semibold text-left select-none my-2">
+        Избранное
+      </h1>
       {favourites?.map((product) => (
-        <div key={product.id}>{product.name}</div>
+        <FavoriteItem key={product.id} product={product} />
       ))}
     </div>
   )
