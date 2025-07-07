@@ -31,6 +31,11 @@ export default function Breadcrumbs() {
             name: "Товары",
             to: "/",
           }
+        case "favorites":
+          return {
+            name: "Избранное",
+            to: "/favorites",
+          }
       }
 
       return {
