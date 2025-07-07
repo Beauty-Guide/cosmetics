@@ -14,6 +14,7 @@ import IngredientForm from "./pages/IngredientForm"
 import Sandbox from "./pages/Sandbox"
 import ProductPage from "./pages/ProductPage"
 import Layout from "./components/Layout"
+import Favorites from "./pages/Favorites"
 
 const AppRoutes = () => {
   return (
@@ -29,6 +30,8 @@ const AppRoutes = () => {
         </Route>
 
         <Route path="/product/:productId" element={<ProductPage />} />
+
+        <Route path="/favorites" element={<Favorites />} />
 
         <Route path="*" element={<h1>404</h1>} />
 

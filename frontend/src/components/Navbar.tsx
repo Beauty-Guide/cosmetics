@@ -2,6 +2,16 @@ import React from "react"
 import { Link, useNavigate } from "react-router"
 import { Button } from "@/components/ui/button"
 import { jwtDecode, type JwtPayload } from "jwt-decode"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const AppNavbar: React.FC = () => {
   const navigate = useNavigate()
@@ -25,6 +35,10 @@ const AppNavbar: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem("token")
     navigate("/login")
+  }
+
+  const handleNagivate = (path: string) => {
+    navigate(path)
   }
 
   return (
@@ -77,16 +91,33 @@ const AppNavbar: React.FC = () => {
           )}
         </div>
 
-        {/* Условная кнопка входа/выхода */}
-        {isAuthenticated ? (
-          <Button variant="secondary" onClick={handleLogout}>
-            Выйти
-          </Button>
-        ) : (
-          <Button variant="secondary" asChild>
-            <Link to="/login">Войти</Link>
-          </Button>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="sm">
+              Меню
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="start">
+            <DropdownMenuLabel className="font-bold select-none">
+              Мой аккаунт
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => handleNagivate("/favorites")}>
+                Избранное
+                <DropdownMenuShortcut>1</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            {isAuthenticated ? (
+              <DropdownMenuItem onClick={handleLogout}>Выйти</DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem>
+                <Link to="/login">Войти</Link>
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   )

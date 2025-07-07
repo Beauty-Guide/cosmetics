@@ -45,7 +45,7 @@ const ProductPage = () => {
           />
         </div>
         <div className="flex gap-6 flex-wrap">
-          <span className="flex flex-col items-start gap-2 shadow-md p-3 rounded h-min">
+          <span className="flex flex-col items-start gap-2 bg-white p-3 rounded h-min">
             <h2 className="mb-2 text-2xl max-md:text-xl font-bold">Действия</h2>
             {product.actions.map((action) => (
               <Badge
@@ -57,7 +57,7 @@ const ProductPage = () => {
               </Badge>
             ))}
           </span>
-          <span className="flex flex-col gap-2 shadow-md p-3 rounded h-min">
+          <span className="flex flex-col gap-2 bg-white p-3 rounded-md h-min">
             <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
               Типы кожи
             </h2>
@@ -75,7 +75,7 @@ const ProductPage = () => {
       </div>
       <div className="flex gap-4 flex-wrap">
         {product.compatibility && (
-          <span className="flex flex-col shadow-md p-4 rounded-md">
+          <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               СОВМЕСТИМОСТЬ
             </h2>
@@ -85,7 +85,7 @@ const ProductPage = () => {
           </span>
         )}
         {product.usageRecommendations && (
-          <span className="flex flex-col shadow-md p-4 rounded-md">
+          <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               РЕКОМЕНДАЦИИ ПО ПРИМЕНЕНИЮ
             </h2>
@@ -95,7 +95,7 @@ const ProductPage = () => {
           </span>
         )}
         {product.applicationMethod && (
-          <span className="flex flex-col shadow-md p-4 rounded-md">
+          <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               СПОСОБ ПРИМЕНЕНИЯ
             </h2>

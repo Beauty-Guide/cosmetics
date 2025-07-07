@@ -11,7 +11,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AppRoutes />
+        <div className="min-h-screen">
+          <AppRoutes />
+        </div>
       </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>

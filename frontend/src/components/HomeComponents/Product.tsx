@@ -3,6 +3,9 @@ import { Button } from "../ui/button"
 import type { TProduct } from "@/types"
 import { useToggleFavProduct } from "@/hooks/useToggleFavProduct"
 import { getImgUrl } from "@/lib/utils"
+import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
+import { useMemo } from "react"
+import { Skeleton } from "../ui/skeleton"
 
 type ProductProps = {
   product: TProduct
@@ -10,8 +13,9 @@ type ProductProps = {
 
 const Product = ({ product }: ProductProps) => {
   const navigate = useNavigate()
-
-  const { mutate: toggleFav } = useToggleFavProduct()
+  const { data: favourites, isLoading } = useGetAllFavProducts()
+  const { mutate: toggleFav, isPending: isToggleLoading } =
+    useToggleFavProduct()
 
   const navigateToItem = () => {
     navigate(`/product/${product.id}`)
@@ -19,7 +23,33 @@ const Product = ({ product }: ProductProps) => {
 
   const handleAddToFavorite = () => {
     toggleFav({ productId: String(product.id), action: "add" })
-    console.log("Добавлено в избранное")
+  }
+
+  const handleRemoveFromFavorite = () => {
+    toggleFav({ productId: String(product.id), action: "remove" })
+  }
+
+  const isFavorite = useMemo(() => {
+    return favourites?.some((fav) => fav.id === product.id)
+  }, [favourites, product.id])
+
+  const favoriteBtn = () => {
+    if (isLoading) {
+      return <Skeleton className="h-[36px] w-[160px] rounded-md" />
+    }
+    if (isFavorite) {
+      return (
+        <Button onClick={handleRemoveFromFavorite} disabled={isToggleLoading}>
+          Удалить из избранного
+        </Button>
+      )
+    } else {
+      return (
+        <Button onClick={handleAddToFavorite} disabled={isToggleLoading}>
+          Добавить в избранное
+        </Button>
+      )
+    }
   }
 
   return (
@@ -36,7 +66,7 @@ const Product = ({ product }: ProductProps) => {
       <h1>{product.name}</h1>
       <p>{product.description}</p>
       <span className="flex gap-4 items-center justify-center mt-5">
-        <Button onClick={handleAddToFavorite}>Добавить в избранное</Button>
+        {favoriteBtn()}
       </span>
     </div>
   )
