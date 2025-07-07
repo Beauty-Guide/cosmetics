@@ -8,8 +8,15 @@ const fetchAllFavProducts = async (): Promise<TProduct[]> => {
   return response.data
 }
 
-export const useGetAllFavProducts = () =>
+type TUseGetAllFavProductsOptions = {
+  enabled?: boolean
+}
+
+export const useGetAllFavProducts = ({
+  enabled = true,
+}: TUseGetAllFavProductsOptions = {}) =>
   useQuery({
     queryKey: ["getAllFavProducts"],
     queryFn: fetchAllFavProducts,
+    enabled,
   })

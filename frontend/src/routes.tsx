@@ -37,7 +37,7 @@ const AppRoutes = () => {
         <Route
           path="/favorites"
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
               <Favorites />
             </PrivateRoute>
           }
@@ -45,7 +45,7 @@ const AppRoutes = () => {
         <Route
           path="/admin"
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
               <Cosmetic />
             </PrivateRoute>
           }
@@ -53,7 +53,7 @@ const AppRoutes = () => {
         <Route
           path="/admin/catalog"
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
               <CatalogForm />
             </PrivateRoute>
           }
@@ -61,7 +61,7 @@ const AppRoutes = () => {
         <Route
           path="/admin/brand"
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
               <BrandForm />
             </PrivateRoute>
           }
@@ -69,7 +69,7 @@ const AppRoutes = () => {
         <Route
           path="/admin/action"
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
               <ActionForm />
             </PrivateRoute>
           }
@@ -77,7 +77,7 @@ const AppRoutes = () => {
         <Route
           path="/admin/skinType"
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
               <SkinTypeForm />
             </PrivateRoute>
           }
@@ -85,7 +85,7 @@ const AppRoutes = () => {
         <Route
           path="/admin/ingredient"
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
               <IngredientForm />
             </PrivateRoute>
           }
