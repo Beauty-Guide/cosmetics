@@ -14,6 +14,7 @@ import IngredientForm from "./pages/IngredientForm"
 import Sandbox from "./pages/Sandbox"
 import ProductPage from "./pages/ProductPage"
 import Layout from "./components/Layout"
+import Favorites from "./pages/Favorites"
 
 const AppRoutes = () => {
   return (
@@ -33,6 +34,14 @@ const AppRoutes = () => {
         <Route path="*" element={<h1>404</h1>} />
 
         {/* Защищённые маршруты */}
+        <Route
+          path="/favorites"
+          element={
+            <PrivateRoute>
+              <Favorites />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/admin"
           element={

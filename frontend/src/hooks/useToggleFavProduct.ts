@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
 import { API_BASE_URL } from "@/config/consts"
 import { toast } from "sonner"
+import apiClient from "@/services/adminApi"
 
 type ToggleFavParams = {
   productId: string
@@ -12,10 +12,10 @@ const toggleFavProduct = async ({ productId, action }: ToggleFavParams) => {
   const url = `${API_BASE_URL}/api/favorites/${productId}/${action}`
 
   if (action === "add") {
-    const response = await axios.post(url)
+    const response = await apiClient.post(url)
     return response.data
   } else {
-    const response = await axios.delete(url)
+    const response = await apiClient.delete(url)
     return response.data
   }
 }

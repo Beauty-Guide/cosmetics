@@ -1,8 +1,9 @@
+import { API_BASE_URL } from "@/config/consts"
 import axios, { type AxiosInstance } from "axios"
 
 // Создаем общий экземпляр Axios
 const apiClient: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8080", // URL Spring Boot backend
+  baseURL: API_BASE_URL, // URL Spring Boot backend
 })
 
 // Перехватчик запросов — добавляем токен из localStorage
