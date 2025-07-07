@@ -7,9 +7,10 @@ import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.models.CosmeticImage;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface CosmeticImageRepo extends JpaRepository<CosmeticImage, Long> {
+public interface CosmeticImageRepo extends JpaRepository<CosmeticImage, UUID> {
     Integer countByCosmetic_Id(Long cosmeticId);
 
     List<CosmeticImage> findByCosmetic(Cosmetic cosmetic);

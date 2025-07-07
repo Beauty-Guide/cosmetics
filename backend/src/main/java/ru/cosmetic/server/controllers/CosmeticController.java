@@ -16,6 +16,7 @@ import ru.cosmetic.server.service.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +31,8 @@ public class CosmeticController {
     private final CatalogService catalogService;
     private final IngredientService ingredientService;
     private final SkinTypeService skinTypeService;
+    private final CosmeticImageService cosmeticImageService;
+    private final MinioService minioService;
 
     @PostMapping("/addCosmetic")
     @Operation(summary = "Добавление косметики без изображений")
@@ -94,6 +97,11 @@ public class CosmeticController {
             findCosmetic.setCatalog(catalogService.findById(request.getCatalogId()));
             findCosmetic.setActions(cosmeticActionService.findAllById(request.getActionIds()));
             findCosmetic.setSkinTypes(skinTypeService.findAllById(request.getSkinTypeIds()));
+            for (String imageId : request.getImagesForDeletion()) {
+                cosmeticImageService.remove(UUID.fromString(imageId));
+                minioService.deleteFile(findCosmetic.getId() + "/" + findCosmetic.getId() + "_" + imageId);
+            }
+
             cosmeticService.save(findCosmetic);
             return new ResponseEntity<>("Косметика обновлена", HttpStatus.OK);
         } catch (Exception e) {

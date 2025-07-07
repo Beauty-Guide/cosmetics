@@ -8,8 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
+import ru.cosmetic.server.responseDto.UserResponse;
 import ru.cosmetic.server.service.*;
+
+import java.security.Principal;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class UserController {
     private final CosmeticActionService cosmeticActionService;
     private final CatalogService catalogService;
     private final MinioService minioService;
+    private final UserService userService;
 
     @PostMapping("/getCosmeticsByFilters")
     @Operation(summary = "Получение косметики по фильтрам")
@@ -41,6 +47,18 @@ public class UserController {
             return ResponseEntity.ok(cosmeticService.getCosmeticById(id));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики с id = " + id, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getUserInfo")
+    @Operation(summary = "Получение косметики по id")
+    public ResponseEntity<?> getCosmeticsById(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.ok(UserResponse.builder().name("guest").role("guest").build());
+        } else {
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElse(null);
+            return ResponseEntity.ok(UserResponse.builder().name(user.getUsername()).role(user.getRoles().stream().collect(Collectors.toList()).get(0).getName()).build());
         }
     }
 

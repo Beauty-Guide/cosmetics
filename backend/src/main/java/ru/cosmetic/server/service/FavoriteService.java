@@ -1,7 +1,6 @@
 package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.cosmetic.server.models.*;
@@ -11,7 +10,6 @@ import ru.cosmetic.server.responseDto.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

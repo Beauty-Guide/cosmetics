@@ -7,6 +7,7 @@ import ru.cosmetic.server.models.CosmeticImage;
 import ru.cosmetic.server.repo.CosmeticImageRepo;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class CosmeticImageService {
         return cosmeticImageRepo.save(cosmeticAction);
     }
 
-    public boolean remove(Long id) {
+    public boolean remove(UUID id) {
         if (!cosmeticImageRepo.existsById(id)) {
             return false;
         }
@@ -31,7 +32,7 @@ public class CosmeticImageService {
         return true;
     }
 
-    public CosmeticImage findById(Long id) {
+    public CosmeticImage findById(UUID id) {
         return cosmeticImageRepo.findById(id).orElse(null);
     }
 
@@ -40,7 +41,7 @@ public class CosmeticImageService {
     }
 
 
-    public List<CosmeticImage> findAllById(List<Long> ids) {
+    public List<CosmeticImage> findAllById(List<UUID> ids) {
         return cosmeticImageRepo.findAllById(ids);
     }
 

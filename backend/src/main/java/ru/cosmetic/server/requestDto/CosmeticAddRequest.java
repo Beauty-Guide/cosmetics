@@ -16,4 +16,5 @@ public class CosmeticAddRequest {
     private String compatibility;
     private String usageRecommendations;
     private String applicationMethod;
+    private List<String> imagesForDeletion;
 }
