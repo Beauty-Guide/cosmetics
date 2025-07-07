@@ -28,7 +28,7 @@ const FavoriteItem = ({ product }: TFavoriteItemProps) => {
         <img
           src={getImgUrl(product.images.find((img) => img.isMain)?.url)}
           alt=""
-          className="h-[300px] w-[450px] rounded-md cursor-pointer"
+          className="h-[200px] w-auto rounded-md cursor-pointer"
           onClick={navigateToItem}
         />
         <h1 className="text-2xl font-bold">{product.name}</h1>

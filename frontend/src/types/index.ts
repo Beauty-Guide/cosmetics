@@ -43,3 +43,8 @@ export type TImage = {
 type TIngredient = {
   any
 }
+
+export type TUser = {
+  username: string
+  role: string
+}

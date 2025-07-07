@@ -1,7 +1,6 @@
 import React from "react"
 import { Link, useNavigate } from "react-router"
 import { Button } from "@/components/ui/button"
-import { jwtDecode, type JwtPayload } from "jwt-decode"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,25 +11,21 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
+import { useAuth } from "@/config/auth-context"
+import { ROLES } from "@/config/consts"
 
 const AppNavbar: React.FC = () => {
+  const user = useAuth()
   const navigate = useNavigate()
-  const token = localStorage.getItem("token")
-  const isAuthenticated = !!token
 
-  // Получаем роли из токена
-  const userRoles = React.useMemo(() => {
-    if (!token) return []
-    try {
-      const decoded = jwtDecode<JwtPayload & { roles: string[] }>(token)
-      return decoded.roles || []
-    } catch (error) {
-      console.error("Ошибка декодирования токена", error)
-      return []
-    }
-  }, [token])
+  const isAuthenticated = user?.role !== ROLES.GUEST
+  const isAdmin = user?.role.includes(ROLES.ADMIN)
+  const isUser = user?.role.includes(ROLES.USER)
 
-  const isAdmin = userRoles.includes("ROLE_ADMIN")
+  const { data: favourites } = useGetAllFavProducts({
+    enabled: user?.role !== ROLES.GUEST,
+  })
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -102,12 +97,19 @@ const AppNavbar: React.FC = () => {
               Мой аккаунт
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => handleNagivate("/favorites")}>
-                Избранное
-                <DropdownMenuShortcut>1</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+            {isAdmin ||
+              (isUser && (
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={() => handleNagivate("/favorites")}
+                  >
+                    Избранное
+                    <DropdownMenuShortcut>
+                      {favourites?.length}
+                    </DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              ))}
             <DropdownMenuSeparator />
             {isAuthenticated ? (
               <DropdownMenuItem onClick={handleLogout}>Выйти</DropdownMenuItem>
