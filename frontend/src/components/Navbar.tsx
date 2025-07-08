@@ -6,8 +6,12 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
@@ -16,7 +20,7 @@ import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
 
 const AppNavbar: React.FC = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const user = useAuth()
   const navigate = useNavigate()
 
@@ -109,6 +113,19 @@ const AppNavbar: React.FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             )}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>{t("lang")}</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem onClick={() => i18n.changeLanguage("en")}>
+                    EN
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => i18n.changeLanguage("ru")}>
+                    RU
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
             <DropdownMenuSeparator />
             {isAuthenticated ? (
               <DropdownMenuItem onClick={handleLogout}>
