@@ -4,13 +4,15 @@ import { deleteCosmetic, getAllCosmetics, updateCosmetic } from "../services/adm
 // Типы
 import type {
     CosmeticsResponse,
-    CosmeticResponse,
+    CosmeticResponse, Catalog1,
 } from "../model/types"
 // Компоненты
 import ConfirmDeleteModal from "../components/admin/ConfirmDeleteModal"
 import FeedbackModal from "../components/admin/FeedbackModal"
 import AddCosmeticModal from "@/components/modal/AddCosmeticModal.tsx"
 import EditCosmeticModal from "@/components/modal/EditCosmeticModal.tsx";
+import {getAllCatalogsForAddCosmetic} from "@/services/adminCatalogApi.ts";
+import MoveCosmeticModal from "@/components/modal/MoveCosmeticModal.tsx";
 
 const CosmeticForm: React.FC = () => {
     const [message, setMessage] = useState<string | null>(null)
@@ -32,6 +34,11 @@ const CosmeticForm: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [currentPage, setCurrentPage] = useState<number>(1)
     const itemsPerPage = 10
+
+    const [showMoveModal, setShowMoveModal] = useState(false);
+    const [selectedCatalogId, setSelectedCatalogId] = useState<number | null>(null);
+    const [catalogs, setCatalogs] = useState<Catalog1[]>([]);
+    const [currentCosmetic, setCurrentCosmetic] = useState<{ id: number; name: string } | null>(null);
 
     // Загрузка данных
     useEffect(() => {
@@ -110,6 +117,28 @@ const CosmeticForm: React.FC = () => {
             console.error("Ошибка при загрузке косметики:", err)
         }
     }
+
+    // Загрузка каталогов и открытие модалки
+    const handleMove = async (id: number, name: string) => {
+        try {
+            const catalogsData = await getAllCatalogsForAddCosmetic();
+            setCurrentCosmetic({ id: id, name: name });
+            setCatalogs(catalogsData);
+            setSelectedCatalogId(null);
+            setShowMoveModal(true);
+        } catch (error) {
+            alert('Не удалось загрузить каталоги');
+            console.error(error);
+        }
+    };
+
+    const handleConfirmMove = () => {
+        if (selectedCatalogId && currentCosmetic) {
+            console.log(`Косметика ${currentCosmetic.id} будет перенесена в каталог ${selectedCatalogId}`);
+            // Здесь можно вызвать API для фактического переноса
+            setShowMoveModal(false);
+        }
+    };
 
     return (
         <div className="p-4 max-w-7xl mx-auto">
@@ -194,6 +223,18 @@ const CosmeticForm: React.FC = () => {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
+                                            {/* Кнопка Перенести (отображается только если catalog.hasChildren) */}
+                                            {cosmetic.catalog.hasChildren && (
+                                                <button
+                                                    onClick={() => handleMove(cosmetic.id, cosmetic.name)}
+                                                    title="Перенести"
+                                                    className="text-green-600 hover:text-green-800"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12l4-4m0 0l-4-4m4 4H8m8 4l4 4m0 0l-4 4m4-4H8" />
+                                                    </svg>
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -280,6 +321,18 @@ const CosmeticForm: React.FC = () => {
                     }}
                 />
             )}
+
+            {/* Модальное окно */}
+
+            <MoveCosmeticModal
+                isOpen={showMoveModal}
+                catalogs={catalogs}
+                currentCosmeticName={currentCosmetic?.name || null}
+                selectedCatalogId={selectedCatalogId}
+                onChange={(e) => setSelectedCatalogId(Number(e.target.value))}
+                onConfirm={handleConfirmMove}
+                onClose={() => setShowMoveModal(false)}
+            />
 
             {/* Модальное окно сообщений */}
             <FeedbackModal

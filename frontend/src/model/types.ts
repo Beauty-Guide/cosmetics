@@ -42,6 +42,7 @@ export interface Catalog1 {
     id: number;
     name: string;
     parent: Catalog | null;
+    hasChildren : boolean
     children?: Catalog[];
 }
 

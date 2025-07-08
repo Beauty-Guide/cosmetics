@@ -6,10 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.service.*;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,8 +53,12 @@ public class TestDataController {
 
                 // Установка связи
                 cosmetic.setBrand(brandService.findById(getRandomId(1, 153)));
-                cosmetic.setCatalog(catalogService.findById(getRandomId(1, 20)));
 
+                List<Catalog> leafCatalogs = catalogService.getAllCatalogsForAddCosmetic();
+                if (!leafCatalogs.isEmpty()) {
+                    int randomIndex = ThreadLocalRandom.current().nextInt(leafCatalogs.size());
+                    cosmetic.setCatalog(leafCatalogs.get(randomIndex));
+                }
                 // Рандомные действия
                 cosmetic.setActions(getRandomList(cosmeticActionService::findById, 1, 9, 1, 3));
 

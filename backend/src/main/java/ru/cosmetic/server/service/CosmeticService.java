@@ -23,6 +23,7 @@ public class CosmeticService {
     private final CosmeticRepo cosmeticRepo;
     private final CosmeticImageRepo cosmeticImageRepo;
     private final FavoriteCosmeticRepo favoriteCosmeticRepo;
+    private final CatalogService catalogService;
     private final JdbcTemplate jdbcTemplate;
     private final String IMAGE_URL = "/api/getFile?cosmeticId=%s&fileName=%s";
 
@@ -103,6 +104,9 @@ public class CosmeticService {
                         b.name AS brand_name,
                         cat.id AS catalog_id,
                         cat.name AS catalog_name,
+                        (SELECT EXISTS (
+                            SELECT 1 FROM catalog sub_cat WHERE sub_cat.parent_id = cat.id
+                        )) AS has_children,
                         ARRAY_AGG(DISTINCT a.id) AS action_ids,
                         ARRAY_AGG(DISTINCT a.name) AS action_names,
                         ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
@@ -170,12 +174,30 @@ public class CosmeticService {
         return jdbcTemplate.queryForObject(countSql, Integer.class, countParams.toArray());
     }
 
+    public List<Long> getAllChildIdsRecursively(Long parentId) {
+        String sql = """
+        WITH RECURSIVE catalog_tree AS (
+            SELECT id FROM catalog WHERE parent_id = ?
+            UNION ALL
+            SELECT c.id FROM catalog c
+            INNER JOIN catalog_tree t ON c.parent_id = t.id
+        )
+        SELECT id FROM catalog_tree;
+    """;
+
+        return jdbcTemplate.queryForList(sql, Long.class, parentId);
+    }
+
     private String buildWhereClause(CosmeticFilterRequest filter, List<Object> params) {
         StringBuilder whereSql = new StringBuilder(" WHERE 1=1 ");
 
         if (filter.getCatalogId() != null) {
-            whereSql.append(" AND c.catalog_id = ?");
-            params.add(filter.getCatalogId());
+            List<Long> catalogIds = getAllChildIdsRecursively(filter.getCatalogId());
+            catalogIds.add(filter.getCatalogId());
+            whereSql.append(" AND c.catalog_id IN (")
+                    .append(String.join(",", Collections.nCopies(catalogIds.size(), "?")))
+                    .append(")");
+            params.addAll(catalogIds);
         }
 
         if (filter.getBrandIds() != null && !filter.getBrandIds().isEmpty()) {
@@ -235,6 +257,7 @@ public class CosmeticService {
         CatalogResponse catalog = new CatalogResponse();
         catalog.setId(safeGetLong(row, "catalog_id"));
         catalog.setName(safeGetString(row, "catalog_name"));
+        catalog.setHasChildren((Boolean) row.get("has_children"));
         response.setCatalog(catalog);
 
         // Actions
