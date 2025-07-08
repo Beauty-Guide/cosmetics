@@ -487,27 +487,8 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                       <img
                         src={mainImageUrl}
                         alt="Главное изображение"
-                        className={`w-full h-40 object-cover rounded-md ${
-                          imagesMarkedForDeletion.some(
-                            (img) => img.id === mainImageId
-                          )
-                            ? "opacity-50 grayscale"
-                            : ""
-                        }`}
+                        className="w-full h-40 object-cover rounded-md"
                       />
-                      {mainImageId && (
-                        <button
-                          type="button"
-                          onClick={() => toggleMainImageMarkForDeletion()}
-                          className="absolute top-0 right-0 text-white bg-red-500 rounded-full px-2 py-1 text-xs"
-                        >
-                          {imagesMarkedForDeletion.some(
-                            (img) => img.id === mainImageId
-                          )
-                            ? "Восстановить"
-                            : "Удалить"}
-                        </button>
-                      )}
                     </div>
                   </div>
                 )}
