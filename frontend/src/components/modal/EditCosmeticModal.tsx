@@ -98,10 +98,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
     }[]
   >([]) // Изображения, помеченные на удаление
 
-  console.log("mainImageUrl", mainImageUrl)
-
-  console.log("imageUrls", imageUrls)
-
   // Загрузка справочников
   useEffect(() => {
     const fetchData = async () => {
@@ -190,44 +186,29 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
         keyIngredientIds: ingredientIds,
         imagesForDeletion: imagesMarkedForDeletion.map((img) => img.id),
       }
+      console.log("updatedCosmetic", updatedCosmetic)
+
       await updateCosmetic(initialData.id, updatedCosmetic)
 
       // Загрузка новых изображений
-      const imageUploadPromises: Promise<void>[] = []
-      if (mainImageFile) {
-        imageUploadPromises.push(
-          uploadCosmeticImages(initialData.id, [mainImageFile], true)
-        )
-      }
       if (imageFiles.length > 0) {
-        imageUploadPromises.push(
-          uploadCosmeticImages(initialData.id, imageFiles)
-        )
+        await uploadCosmeticImages(initialData.id, imageFiles)
+        setImageFiles([])
       }
-      await Promise.all(imageUploadPromises)
+      if (mainImageFile) {
+        await uploadCosmeticImages(initialData.id, [mainImageFile], true)
+        setMainImageFile(null)
+      }
 
       setMessage("Косметика успешно обновлена!")
       setTimeout(() => {
         onEditSuccess()
         onClose()
+        setMainImageUrl(null)
+        setImageUrls([])
       }, 500)
     } catch (err: any) {
       setError(err.message || "Ошибка при сохранении изменений")
-    }
-  }
-
-  const removeMainImage = () => {
-    setMainImageFile(null)
-    setMainImageUrl(null)
-
-    if (initialData.images) {
-      const mainImageId = initialData.images.find((img) => img.isMain)?.id
-      if (mainImageId) {
-        setImagesMarkedForDeletion([
-          ...imagesMarkedForDeletion,
-          { id: mainImageId, url: mainImageUrl || "" },
-        ])
-      }
     }
   }
 
@@ -250,7 +231,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
 
   const toggleMainImageMarkForDeletion = () => {
     if (!mainImageId) return
-    console.log("mainImageId", mainImageId)
 
     const isMarkedForDeletion = imagesMarkedForDeletion.some(
       (img) => img.id === mainImageId
