@@ -4,13 +4,14 @@ import LanguageDetector from "i18next-browser-languagedetector"
 
 import en from "./locales/en.json"
 import ru from "./locales/ru.json"
+import ko from "./locales/ko.json"
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     fallbackLng: "ru",
-    supportedLngs: ["en", "ru"],
+    supportedLngs: ["en", "ru", "ko"],
     detection: {
       order: ["navigator", "localStorage", "htmlTag"],
       caches: ["localStorage"],
@@ -18,6 +19,7 @@ i18n
     resources: {
       en: { translation: en },
       ru: { translation: ru },
+      ko: { translation: ko },
     },
     interpolation: {
       escapeValue: false,

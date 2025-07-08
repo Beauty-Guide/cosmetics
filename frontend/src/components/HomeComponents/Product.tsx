@@ -23,7 +23,7 @@ const Product = ({ product }: ProductProps) => {
   return (
     <div
       key={product.id}
-      className="flex flex-col relative items-center mt-5 h-[400px] w-[450px] p-4 rounded-md shadow-md hover:shadow-xl"
+      className="flex flex-col relative items-start justify-start mt-5 h-[400px] w-[450px] p-4 rounded-md shadow-md hover:shadow-xl"
     >
       <img
         src={getImgUrl(product.images.find((img) => img.isMain)?.url)}
@@ -31,7 +31,10 @@ const Product = ({ product }: ProductProps) => {
         className="h-[300px] w-[450px] rounded-md"
         onClick={navigateToItem}
       />
-      <h1>{product.name}</h1>
+      <span className="flex flex-col items-start justify-center mt-2">
+        <h1 className="text-xl font-bold text-left">{product.name}</h1>
+        <p className="">{product.brand.name}</p>
+      </span>
       {isAuthenticated && (
         <span className="flex absolute top-8 right-5 max-md:top-2 max-md:right-2">
           <FavoriteButton productId={String(product.id)} />
