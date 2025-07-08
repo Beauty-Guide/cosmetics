@@ -47,6 +47,7 @@ const FavoriteButton = ({ productId }: { productId: string }) => {
         onClick={handleAddToFavorite}
         disabled={isToggleLoading}
         variant="ghost"
+        size="icon"
         className={cn(
           "rounded-full hover:bg-accent",
           isFavorite ? "text-red-500" : "text-muted-foreground"

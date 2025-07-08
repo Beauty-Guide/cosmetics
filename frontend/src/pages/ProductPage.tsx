@@ -74,6 +74,18 @@ const ProductPage = () => {
         </div>
       </div>
       <div className="flex gap-4 flex-wrap">
+        {product.ingredients && (
+          <span className="flex flex-col bg-white p-4 rounded-md">
+            <h2 className="mb-1 text-xl max-md:text-lg font-bold">
+              КЛЮЧЕВЫЕ ИНГРИДИЕНТЫ
+            </h2>
+            <ul className="font-semibold max-md:text-sm">
+              {product.ingredients.map((ingredient) => (
+                <li key={ingredient.id}>- {ingredient.name}</li>
+              ))}
+            </ul>
+          </span>
+        )}
         {product.compatibility && (
           <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">

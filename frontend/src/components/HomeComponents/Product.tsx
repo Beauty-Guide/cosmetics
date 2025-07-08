@@ -32,9 +32,8 @@ const Product = ({ product }: ProductProps) => {
         onClick={navigateToItem}
       />
       <h1>{product.name}</h1>
-      <p>{product.description}</p>
       {isAuthenticated && (
-        <span className="flex absolute top-8 right-5">
+        <span className="flex absolute top-8 right-5 max-md:top-2 max-md:right-2">
           <FavoriteButton productId={String(product.id)} />
         </span>
       )}
