@@ -11,6 +11,8 @@ export type SkinType = {
 export type SkinTypeView = {
     id: number;
     name: string;
+    nameEN: string;
+    nameKR: string;
 };
 
 export type CosmeticActionAdd = {
@@ -29,6 +31,8 @@ export interface BrandView extends Brand {
 export type CosmeticActionView = {
     id: number;
     name: string;
+    nameEN: string;
+    nameKR: string;
 };
 
 export interface Catalog {

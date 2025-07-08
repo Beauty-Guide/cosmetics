@@ -16,6 +16,13 @@ public class Catalog {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "name_en")
+    private String nameEN;
+
+    @Column(name = "name_kr")
+    private String nameKR;
+
+
     // Родительский каталог (для иерархии)
     @ManyToOne
     @JoinColumn(name = "parent_id")

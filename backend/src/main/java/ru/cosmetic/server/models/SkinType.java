@@ -16,4 +16,10 @@ public class SkinType {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "name_en")
+    private String nameEN;
+
+    @Column(name = "name_kr")
+    private String nameKR;
+
 }

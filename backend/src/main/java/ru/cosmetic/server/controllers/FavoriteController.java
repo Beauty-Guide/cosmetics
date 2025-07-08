@@ -108,7 +108,7 @@ public class FavoriteController {
             @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
                     content = @Content(schema = @Schema(implementation = AppError.class)))
     })
-    public ResponseEntity<?> getFavorites(Principal principal) {
+    public ResponseEntity<?> getFavorites(@RequestParam(required = false) String lang, Principal principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new AppError(HttpStatus.UNAUTHORIZED.value(), "Пользователь не авторизован"));
@@ -116,7 +116,7 @@ public class FavoriteController {
 
         try {
             String username = principal.getName();
-            var favorites = favoriteService.getFavoritesByUser(username);
+            var favorites = favoriteService.getFavoritesByUser(username, lang);
             return ResponseEntity.ok(favorites);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

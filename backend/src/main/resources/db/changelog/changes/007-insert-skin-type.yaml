@@ -10,34 +10,69 @@ databaseChangeLog:
               - column:
                   name: name
                   value: Нормальный
+              - column:
+                  name: name_en
+                  value: Normal
+              - column:
+                  name: name_kr
+                  value: 정상
         - insert:
             tableName: skin_type
             columns:
               - column:
                   name: name
                   value: Жирный
+              - column:
+                  name: name_en
+                  value: Oily
+              - column:
+                  name: name_kr
+                  value: 지성
         - insert:
             tableName: skin_type
             columns:
               - column:
                   name: name
                   value: Сухой
+              - column:
+                  name: name_en
+                  value: Dry
+              - column:
+                  name: name_kr
+                  value: 건성
         - insert:
             tableName: skin_type
             columns:
               - column:
                   name: name
                   value: Чувствительный
+              - column:
+                  name: name_en
+                  value: Sensitive
+              - column:
+                  name: name_kr
+                  value: 민감성
         - insert:
             tableName: skin_type
             columns:
               - column:
                   name: name
                   value: Комбинированный
+              - column:
+                  name: name_en
+                  value: Combination
+              - column:
+                  name: name_kr
+                  value: 복합성
         - insert:
             tableName: skin_type
             columns:
               - column:
                   name: name
                   value: Возрастной
-
+              - column:
+                  name: name_en
+                  value: Mature
+              - column:
+                  name: name_kr
+                  value: 노화

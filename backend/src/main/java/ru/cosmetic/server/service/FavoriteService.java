@@ -44,18 +44,18 @@ public class FavoriteService {
         }
     }
 
-    public List<CosmeticResponse> getFavoritesByUser(String username) {
+    public List<CosmeticResponse> getFavoritesByUser(String username, String lang) {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
         List<FavoriteCosmetic> favorites = favoriteRepo.findByUser(user);
 
         return favorites.stream()
-                .map(fav -> mapToCosmeticResponse(fav.getCosmetic()))
+                .map(fav -> mapToCosmeticResponse(fav.getCosmetic(), lang))
                 .toList();
     }
 
-    private CosmeticResponse mapToCosmeticResponse(Cosmetic cosmetic) {
+    private CosmeticResponse mapToCosmeticResponse(Cosmetic cosmetic, String lang) {
         return CosmeticResponse.builder()
                 .id(cosmetic.getId())
                 .name(cosmetic.getName())
@@ -64,35 +64,51 @@ public class FavoriteService {
                 .usageRecommendations(cosmetic.getUsageRecommendations())
                 .applicationMethod(cosmetic.getApplicationMethod())
                 .brand(mapBrandToBrandResponse(cosmetic.getBrand()))
-                .catalog(mapCatalogToCatalogResponse(cosmetic.getCatalog()))
-                .actions(mapActionsToActionResponses(cosmetic.getActions()))
-                .skinTypes(mapSkinTypesToSkinTypeResponses(cosmetic.getSkinTypes()))
+                .catalog(mapCatalogToCatalogResponse(cosmetic.getCatalog(), lang))
+                .actions(mapActionsToActionResponses(cosmetic.getActions(), lang))
+                .skinTypes(mapSkinTypesToSkinTypeResponses(cosmetic.getSkinTypes(), lang))
                 .ingredients(mapIngredientsToIngredientResponses(cosmetic.getIngredients()))
                 .images(getImageUrls(cosmetic)) // предположим, что это метод получения URL изображений
                 .build();
     }
 
-// Примеры простых мапперов (можно вынести в отдельный Mapper класс)
+    private String getLocalizedString(String defaultName, String enName, String krName, String lang) {
+        if ("en".equals(lang)) {
+            return enName != null ? enName : defaultName;
+        } else if ("kr".equals(lang)) {
+            return krName != null ? krName : defaultName;
+        }
+        return defaultName;
+    }
 
     private BrandResponse mapBrandToBrandResponse(Brand brand) {
         if (brand == null) return null;
         return new BrandResponse(brand.getId(), brand.getName());
     }
 
-    private CatalogResponse mapCatalogToCatalogResponse(Catalog catalog) {
+    private CatalogResponse mapCatalogToCatalogResponse(Catalog catalog, String lang) {
         if (catalog == null) return null;
-        return new CatalogResponse(catalog.getId(), catalog.getName());
+        return new CatalogResponse(
+                catalog.getId(),
+                getLocalizedString(catalog.getName(), catalog.getNameEN(), catalog.getNameKR(), lang)
+        );
     }
 
-    private List<ActionResponse> mapActionsToActionResponses(List<CosmeticAction> actions) {
+    private List<ActionResponse> mapActionsToActionResponses(List<CosmeticAction> actions, String lang) {
         return actions != null ? actions.stream()
-                .map(a -> new ActionResponse(a.getId(), a.getName()))
+                .map(a -> new ActionResponse(
+                        a.getId(),
+                        getLocalizedString(a.getName(), a.getNameEN(), a.getNameKR(), lang)
+                ))
                 .toList() : List.of();
     }
 
-    private List<SkinTypeResponse> mapSkinTypesToSkinTypeResponses(List<SkinType> skinTypes) {
+    private List<SkinTypeResponse> mapSkinTypesToSkinTypeResponses(List<SkinType> skinTypes, String lang) {
         return skinTypes != null ? skinTypes.stream()
-                .map(s -> new SkinTypeResponse(s.getId(), s.getName()))
+                .map(s -> new SkinTypeResponse(
+                        s.getId(),
+                        getLocalizedString(s.getName(), s.getNameEN(), s.getNameKR(), lang)
+                ))
                 .toList() : List.of();
     }
 

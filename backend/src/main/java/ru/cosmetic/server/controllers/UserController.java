@@ -74,9 +74,9 @@ public class UserController {
 
     @GetMapping("/getAllSkinType")
     @Operation(summary = "Получение всех брендов")
-    public ResponseEntity<?> getAllSkinType() {
+    public ResponseEntity<?> getAllSkinType(@RequestParam(required = false) String lang) {
         try {
-            return ResponseEntity.ok(skinTypeService.findAll());
+            return ResponseEntity.ok(skinTypeService.findAll(lang));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения всех типов кожи", HttpStatus.BAD_REQUEST);
         }
@@ -84,9 +84,9 @@ public class UserController {
 
     @GetMapping("/getAllCosmeticAction")
     @Operation(summary = "Получение всех брендов")
-    public ResponseEntity<?> getAllCosmeticAction() {
+    public ResponseEntity<?> getAllCosmeticAction(@RequestParam(required = false) String lang) {
         try {
-            return ResponseEntity.ok(cosmeticActionService.findAll());
+            return ResponseEntity.ok(cosmeticActionService.findAll(lang));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения всех действий косметики", HttpStatus.BAD_REQUEST);
         }
@@ -94,9 +94,9 @@ public class UserController {
 
     @GetMapping("/getAllCatalog")
     @Operation(summary = "Получение всех каталогов")
-    public ResponseEntity<?> getAllCatalog() {
+    public ResponseEntity<?> getAllCatalog(@RequestParam(required = false) String lang) {
         try {
-            return ResponseEntity.ok(catalogService.findAll());
+            return ResponseEntity.ok(catalogService.findAll(lang));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения всех каталогов", HttpStatus.BAD_REQUEST);
         }

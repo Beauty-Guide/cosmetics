@@ -18,9 +18,12 @@ export const getAllSkinType = async (): Promise<SkinTypeView[]> => {
   }
 };
 
-export const updateSkinType = async (id: number, data: { name?: string }) => {
-  const response = await apiClient.put(`/admin/skin-type/updateSkinType/${id}`, data);
-  return response.data;
+export const updateSkinType = async (id: number, data: { name?: string; nameEN?: string; nameKR?: string }): Promise<void> => {
+  try {
+    await apiClient.put(`/admin/skin-type/updateSkinType/${id}`, data);
+  } catch (error) {
+    throw new Error('Ошибка обновления типа кожи');
+  }
 };
 
 export const deleteSkinType = async (id: number): Promise<boolean> => {

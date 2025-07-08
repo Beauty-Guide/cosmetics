@@ -37,6 +37,8 @@ public class SkinTypeController {
         try {
             SkinType findSkinType = skinTypeService.findById(id);
             findSkinType.setName(skinType.getName());
+            findSkinType.setNameEN(skinType.getNameEN());
+            findSkinType.setNameKR(skinType.getNameKR());
             skinTypeService.save(findSkinType);
             return new ResponseEntity<>("Типа кожи добавлен", HttpStatus.OK);
         } catch (Exception e) {

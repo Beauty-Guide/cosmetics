@@ -113,8 +113,6 @@ public class CosmeticController {
     public ResponseEntity<Void> updateCosmeticCatalog(
             @PathVariable Long cosmeticId,
             @RequestBody CosmeticUpdateCatalogRequest request) {
-
-        cosmeticService.updateCosmeticCatalog(cosmeticId, request.getCatalogId());
         Cosmetic cosmetic = cosmeticService.findById(cosmeticId);
         if (cosmetic != null) {
             Catalog catalog = catalogService.findById(request.getCatalogId());

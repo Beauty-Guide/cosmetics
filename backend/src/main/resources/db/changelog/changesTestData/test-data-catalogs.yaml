@@ -10,6 +10,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Косметика"
+              - column:
+                  name: name_en
+                  value: "Cosmetics"
+              - column:
+                  name: name_kr
+                  value: "화장품"
 
         # --- Дочерние категории ---
         # Уход за кожей
@@ -20,6 +26,12 @@ databaseChangeLog:
                   name: name
                   value: "Уход за кожей"
               - column:
+                  name: name_en
+                  value: "Skincare"
+              - column:
+                  name: name_kr
+                  value: "스킨케어"
+              - column:
                   name: parent_id
                   valueNumeric: 1
         - insert:
@@ -28,6 +40,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Очищение"
+              - column:
+                  name: name_en
+                  value: "Cleansing"
+              - column:
+                  name: name_kr
+                  value: "클렌징"
               - column:
                   name: parent_id
                   valueNumeric: 2
@@ -38,6 +56,12 @@ databaseChangeLog:
                   name: name
                   value: "Тонизирование"
               - column:
+                  name: name_en
+                  value: "Toning"
+              - column:
+                  name: name_kr
+                  value: "토닝"
+              - column:
                   name: parent_id
                   valueNumeric: 2
         - insert:
@@ -47,6 +71,12 @@ databaseChangeLog:
                   name: name
                   value: "Увлажнение"
               - column:
+                  name: name_en
+                  value: "Moisturizing"
+              - column:
+                  name: name_kr
+                  value: "보습"
+              - column:
                   name: parent_id
                   valueNumeric: 2
         - insert:
@@ -55,6 +85,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Антивозрастной уход"
+              - column:
+                  name: name_en
+                  value: "Anti-Aging Care"
+              - column:
+                  name: name_kr
+                  value: "에이징 케어"
               - column:
                   name: parent_id
                   valueNumeric: 2
@@ -67,6 +103,12 @@ databaseChangeLog:
                   name: name
                   value: "Макияж"
               - column:
+                  name: name_en
+                  value: "Makeup"
+              - column:
+                  name: name_kr
+                  value: "메이크업"
+              - column:
                   name: parent_id
                   valueNumeric: 1
         - insert:
@@ -75,6 +117,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Лицо"
+              - column:
+                  name: name_en
+                  value: "Face"
+              - column:
+                  name: name_kr
+                  value: "페이스"
               - column:
                   name: parent_id
                   valueNumeric: 6
@@ -85,6 +133,12 @@ databaseChangeLog:
                   name: name
                   value: "Основа"
               - column:
+                  name: name_en
+                  value: "Base Makeup"
+              - column:
+                  name: name_kr
+                  value: "베이스 메이크업"
+              - column:
                   name: parent_id
                   valueNumeric: 7
         - insert:
@@ -93,6 +147,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Румяна"
+              - column:
+                  name: name_en
+                  value: "Blush"
+              - column:
+                  name: name_kr
+                  value: "블러셔"
               - column:
                   name: parent_id
                   valueNumeric: 7
@@ -103,6 +163,12 @@ databaseChangeLog:
                   name: name
                   value: "Глаза"
               - column:
+                  name: name_en
+                  value: "Eyes"
+              - column:
+                  name: name_kr
+                  value: "아이즈"
+              - column:
                   name: parent_id
                   valueNumeric: 6
         - insert:
@@ -111,6 +177,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Тушь"
+              - column:
+                  name: name_en
+                  value: "Mascara"
+              - column:
+                  name: name_kr
+                  value: "마스카라"
               - column:
                   name: parent_id
                   valueNumeric: 9
@@ -121,6 +193,12 @@ databaseChangeLog:
                   name: name
                   value: "Подводка"
               - column:
+                  name: name_en
+                  value: "Eyeliner"
+              - column:
+                  name: name_kr
+                  value: "아이라이너"
+              - column:
                   name: parent_id
                   valueNumeric: 9
         - insert:
@@ -129,6 +207,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Губы"
+              - column:
+                  name: name_en
+                  value: "Lips"
+              - column:
+                  name: name_kr
+                  value: "립스"
               - column:
                   name: parent_id
                   valueNumeric: 6
@@ -139,6 +223,12 @@ databaseChangeLog:
                   name: name
                   value: "Помада"
               - column:
+                  name: name_en
+                  value: "Lipstick"
+              - column:
+                  name: name_kr
+                  value: "립스틱"
+              - column:
                   name: parent_id
                   valueNumeric: 11
         - insert:
@@ -147,6 +237,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Бальзамы"
+              - column:
+                  name: name_en
+                  value: "Lip Balms"
+              - column:
+                  name: name_kr
+                  value: "립밤"
               - column:
                   name: parent_id
                   valueNumeric: 11
@@ -159,6 +255,12 @@ databaseChangeLog:
                   name: name
                   value: "Парфюмерия"
               - column:
+                  name: name_en
+                  value: "Perfumes"
+              - column:
+                  name: name_kr
+                  value: "향수"
+              - column:
                   name: parent_id
                   valueNumeric: 1
         - insert:
@@ -167,6 +269,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Для женщин"
+              - column:
+                  name: name_en
+                  value: "For Women"
+              - column:
+                  name: name_kr
+                  value: "여성용"
               - column:
                   name: parent_id
                   valueNumeric: 13
@@ -177,6 +285,12 @@ databaseChangeLog:
                   name: name
                   value: "Для мужчин"
               - column:
+                  name: name_en
+                  value: "For Men"
+              - column:
+                  name: name_kr
+                  value: "남성용"
+              - column:
                   name: parent_id
                   valueNumeric: 13
         - insert:
@@ -185,6 +299,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Унисекс"
+              - column:
+                  name: name_en
+                  value: "Unisex"
+              - column:
+                  name: name_kr
+                  value: "유니섹스"
               - column:
                   name: parent_id
                   valueNumeric: 13
@@ -197,6 +317,12 @@ databaseChangeLog:
                   name: name
                   value: "Уход за волосами"
               - column:
+                  name: name_en
+                  value: "Hair Care"
+              - column:
+                  name: name_kr
+                  value: "헤어케어"
+              - column:
                   name: parent_id
                   valueNumeric: 1
         - insert:
@@ -206,6 +332,12 @@ databaseChangeLog:
                   name: name
                   value: "Шампуни"
               - column:
+                  name: name_en
+                  value: "Shampoos"
+              - column:
+                  name: name_kr
+                  value: "샴푸"
+              - column:
                   name: parent_id
                   valueNumeric: 16
         - insert:
@@ -214,6 +346,12 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Кондиционеры"
+              - column:
+                  name: name_en
+                  value: "Conditioners"
+              - column:
+                  name: name_kr
+                  value: "컨디셔너"
               - column:
                   name: parent_id
                   valueNumeric: 16

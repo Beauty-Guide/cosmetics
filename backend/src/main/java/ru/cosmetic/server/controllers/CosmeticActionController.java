@@ -15,7 +15,6 @@ import ru.cosmetic.server.service.CosmeticActionService;
 @RequiredArgsConstructor
 @Tag(name = "Действия косметики", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/admin/cosmetic-action")
-//@PreAuthorize("hasRole('ADMIN')")
 public class CosmeticActionController {
 
     private final CosmeticActionService cosmeticActionService;
@@ -37,6 +36,8 @@ public class CosmeticActionController {
         try {
             CosmeticAction findCosmeticAction = cosmeticActionService.findById(id);
             findCosmeticAction.setName(cosmeticAction.getName());
+            findCosmeticAction.setNameEN(cosmeticAction.getNameEN());
+            findCosmeticAction.setNameKR(cosmeticAction.getNameKR());
             cosmeticActionService.save(findCosmeticAction);
             return new ResponseEntity<>("Типа кожи добавлен", HttpStatus.OK);
         } catch (Exception e) {

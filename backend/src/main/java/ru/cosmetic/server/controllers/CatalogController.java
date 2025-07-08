@@ -37,6 +37,8 @@ public class CatalogController {
         try {
             Catalog findCatalog = catalogService.findById(id);
             findCatalog.setName(catalog.getName());
+            findCatalog.setNameEN(catalog.getNameEN());
+            findCatalog.setNameKR(catalog.getNameKR());
             if (catalog.getParentId() != null) {
                 Catalog findParentCatalog = catalogService.findById(catalog.getParentId());
                 findCatalog.setParent(findParentCatalog);

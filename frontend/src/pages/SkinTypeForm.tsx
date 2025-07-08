@@ -21,6 +21,8 @@ const SkinTypeForm: React.FC = () => {
     null
   )
   const [editName, setEditName] = useState<string>("")
+  const [editNameEN, setEditNameEN] = useState<string>("")
+  const [editNameKR, setEditNameKR] = useState<string>("")
 
   // Удаление
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] =
@@ -42,6 +44,8 @@ const SkinTypeForm: React.FC = () => {
 
   // Форма добавления
   const [name, setName] = useState<string>("")
+  const [nameEN, setNameEN] = useState<string>("")
+  const [nameKR, setNameKR] = useState<string>("")
 
   useEffect(() => {
     const fetchSkinTypes = async () => {
@@ -62,7 +66,9 @@ const SkinTypeForm: React.FC = () => {
   // Логика поиска
   useEffect(() => {
     const filtered = skinTypes.filter((type) =>
-      type.name.toLowerCase().includes(searchQuery.toLowerCase())
+        type.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        type.nameEN.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        type.nameKR.toLowerCase().includes(searchQuery.toLowerCase())
     )
     setFilteredSkinTypes(filtered)
     setCurrentPage(1) // Сброс страницы при изменении поискового запроса
@@ -79,20 +85,27 @@ const SkinTypeForm: React.FC = () => {
   // Обработчики событий
   const handleAddSkinType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     if (!name.trim()) {
-      setError("Введите тип кожи")
+      setError("Введите тип кожи (RU)")
       return
     }
-
+    if (!nameEN.trim()) {
+      setError("Введите тип кожи (EN)")
+      return
+    }
+    if (!nameKR.trim()) {
+      setError("Введите тип кожи (KR)")
+      return
+    }
     try {
-      await addSkinType({ name })
+      await addSkinType({ name, nameEN, nameKR }) // Передаем все три поля
       setMessage("Тип кожи успешно добавлен!")
       setError("")
-
       const updatedTypes = await getAllSkinType()
       setSkinTypes(updatedTypes)
       setName("")
+      setNameEN("")
+      setNameKR("")
     } catch (err: any) {
       setError(err.message || "Произошла ошибка при добавлении")
       setMessage("")
@@ -102,14 +115,19 @@ const SkinTypeForm: React.FC = () => {
   const handleEditClick = (type: SkinTypeView) => {
     setEditingSkinType(type)
     setEditName(type.name)
+    setEditNameEN(type.nameEN)
+    setEditNameKR(type.nameKR)
     setShowEditModal(true)
   }
 
   const handleSaveEdit = async () => {
-    if (!editingSkinType || !editName.trim()) return
-
+    if (!editingSkinType || !editName.trim() || !editNameEN.trim() || !editNameKR.trim()) return
     try {
-      await updateSkinType(editingSkinType.id, { name: editName })
+      await updateSkinType(editingSkinType.id, {
+        name: editName,
+        nameEN: editNameEN,
+        nameKR: editNameKR
+      })
       setMessage("Тип кожи успешно обновлён")
       setError("")
       const updatedTypes = await getAllSkinType()
@@ -133,20 +151,6 @@ const SkinTypeForm: React.FC = () => {
         <h4 className="text-xl font-semibold text-center mb-4">
           Управление типами кожи
         </h4>
-
-        {/*/!* Поиск *!/*/}
-        {/*<div className="mb-4 flex justify-between items-center">*/}
-        {/*    <div className="w-full md:w-1/2">*/}
-        {/*        <input*/}
-        {/*            type="text"*/}
-        {/*            placeholder="Поиск по типам кожи..."*/}
-        {/*            value={searchQuery}*/}
-        {/*            onChange={(e) => setSearchQuery(e.target.value)}*/}
-        {/*            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"*/}
-        {/*        />*/}
-        {/*    </div>*/}
-        {/*</div>*/}
-
         {/* Форма добавления */}
         <form
           onSubmit={handleAddSkinType}
@@ -157,7 +161,7 @@ const SkinTypeForm: React.FC = () => {
               htmlFor="formSkinTypeName"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Название типа кожи
+              Тип кожи (RU)
             </label>
             <input
               id="formSkinTypeName"
@@ -167,6 +171,40 @@ const SkinTypeForm: React.FC = () => {
               onChange={(e) => setName(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="md:col-span-3">
+            <label
+                htmlFor="formSkinTypeName"
+                className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Тип кожи (EN)
+            </label>
+            <input
+                id="formSkinTypeName"
+                type="text"
+                placeholder="Введите тип кожи"
+                value={nameEN}
+                onChange={(e) => setNameEN(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="md:col-span-3">
+            <label
+                htmlFor="formSkinTypeName"
+                className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Тип кожи (KR)
+            </label>
+            <input
+                id="formSkinTypeName"
+                type="text"
+                placeholder="Введите тип кожи"
+                value={nameKR}
+                onChange={(e) => setNameKR(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -207,7 +245,13 @@ const SkinTypeForm: React.FC = () => {
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="border border-gray-300 px-4 py-2 text-left">
-                      Название
+                      Тип кожи (RU)
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2 text-left">
+                      Тип кожи (EN)
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2 text-left">
+                      Тип кожи (KR)
                     </th>
                     <th className="border border-gray-300 px-4 py-2 text-right">
                       Действия
@@ -219,6 +263,12 @@ const SkinTypeForm: React.FC = () => {
                     <tr key={type.id}>
                       <td className="border border-gray-300 px-4 py-2">
                         {type.name}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {type.nameEN}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {type.nameKR}
                       </td>
                       <td className="border border-gray-300 px-4 py-2 text-right">
                         <div className="flex justify-end gap-2">
@@ -300,46 +350,70 @@ const SkinTypeForm: React.FC = () => {
 
       {/* Модальное окно редактирования */}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h5 className="text-lg font-semibold">Редактировать тип кожи</h5>
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="text-gray-500 hover:text-gray-800"
-              >
-                &times;
-              </button>
-            </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h5 className="text-lg font-semibold">Редактировать тип кожи</h5>
+                <button
+                    onClick={() => setShowEditModal(false)}
+                    className="text-gray-500 hover:text-gray-800"
+                >
+                  &times;
+                </button>
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Название
-              </label>
-              <input
-                type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Тип кожи (RU)
+                </label>
+                <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-              >
-                Отмена
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Сохранить
-              </button>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Тип кожи (EN)
+                </label>
+                <input
+                    type="text"
+                    value={editNameEN}
+                    onChange={(e) => setEditNameEN(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Тип кожи (KR)
+                </label>
+                <input
+                    type="text"
+                    value={editNameKR}
+                    onChange={(e) => setEditNameKR(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                    onClick={() => setShowEditModal(false)}
+                    className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+                >
+                  Отмена
+                </button>
+                <button
+                    onClick={handleSaveEdit}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Сохранить
+                </button>
+              </div>
             </div>
           </div>
-        </div>
       )}
 
       {/* Модальное окно подтверждения удаления */}

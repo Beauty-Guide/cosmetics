@@ -20,3 +20,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
+              - column:
+                  name: name_en
+                  type: VARCHAR
+                  constraints:
+                    nullable: true
+                    unique: true
+              - column:
+                  name: name_kr
+                  type: VARCHAR
+                  constraints:
+                    nullable: true
+                    unique: true

@@ -2,7 +2,6 @@ databaseChangeLog:
   - changeSet:
       id: 005-insert-cosmetic-action
       author: yourname
-
       changes:
         # --- Действия косметики ---
         - insert:
@@ -11,51 +10,113 @@ databaseChangeLog:
               - column:
                   name: name
                   value: Увлажнение
+              - column:
+                  name: name_en
+                  value: Moisturizing
+              - column:
+                  name: name_kr
+                  value: 보습
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
                   value: Восстановление
+              - column:
+                  name: name_en
+                  value: Restoration
+              - column:
+                  name: name_kr
+                  value: 회복
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
                   value: Успокаивающее
+              - column:
+                  name: name_en
+                  value: Soothing
+              - column:
+                  name: name_kr
+                  value: 진정
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
                   value: Себорегуляция
+              - column:
+                  name: name_en
+                  value: Seborrhea Control
+              - column:
+                  name: name_kr
+                  value: 피지조절
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
                   value: Осветление
+              - column:
+                  name: name_en
+                  value: Brightening
+              - column:
+                  name: name_kr
+                  value: 화이트닝
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
                   value: Противоспалительное
+              - column:
+                  name: name_en
+                  value: Anti-inflammatory
+              - column:
+                  name: name_kr
+                  value: 항염증
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
-                  value: Отшулушивание
+                  value: Отшелушивание
+              - column:
+                  name: name_en
+                  value: Exfoliating
+              - column:
+                  name: name_kr
+                  value: 각질제거
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
                   value: Повышение упругости
+              - column:
+                  name: name_en
+                  value: Firming
+              - column:
+                  name: name_kr
+                  value: 탄력개선
+
         - insert:
             tableName: cosmetic_action
             columns:
               - column:
                   name: name
                   value: Очищение
+              - column:
+                  name: name_en
+                  value: Cleansing
+              - column:
+                  name: name_kr
+                  value: 클렌징
