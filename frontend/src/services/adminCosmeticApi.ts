@@ -23,3 +23,10 @@ export const updateCosmetic = async (id: number, data: { name: string }) => {
 export const deleteCosmetic = async (id: number): Promise<void> => {
   await apiClient.delete(`/admin/cosmetic/deleteCosmetic/${id}`);
 };
+
+export const updateCosmeticCatalog = async (cosmeticId: number, catalogId: number): Promise<void> => {
+  const response = await apiClient.put(`/admin/cosmetic/updateCosmeticCatalog/${cosmeticId}`, {
+    catalogId,
+  });
+  return response.data;
+};

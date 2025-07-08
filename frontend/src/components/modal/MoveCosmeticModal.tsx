@@ -1,6 +1,6 @@
-// components/MoveCosmeticModal.tsx
+// MoveCosmeticModal.tsx
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
 import type { Catalog1 } from "@/model/types";
 
@@ -8,16 +8,18 @@ interface MoveCosmeticModalProps {
     isOpen: boolean;
     catalogs: Catalog1[];
     currentCosmeticName: string | null;
+    cosmeticId: number;
+    onConfirm: (catalogId: number, cosmeticId: number) => void;
     onClose: () => void;
-    onConfirm: (catalogId: number) => void;
 }
 
 const MoveCosmeticModal: React.FC<MoveCosmeticModalProps> = ({
                                                                  isOpen,
                                                                  catalogs,
                                                                  currentCosmeticName,
-                                                                 onClose,
+                                                                 cosmeticId,
                                                                  onConfirm,
+                                                                 onClose,
                                                              }) => {
     const [selectedCatalogIds, setSelectedCatalogIds] = useState<string[]>([]);
 
@@ -31,7 +33,6 @@ const MoveCosmeticModal: React.FC<MoveCosmeticModalProps> = ({
                 <h2 className="text-xl font-semibold mb-4">Выберите новый каталог</h2>
                 <p className="mb-4">Перенести косметику "{currentCosmeticName}" в:</p>
 
-                {/* Адаптация под типы FilterCombobox */}
                 <FilterCombobox
                     label=""
                     options={catalogs.map(cat => ({ name: cat.name, id: String(cat.id) }))}
@@ -50,7 +51,7 @@ const MoveCosmeticModal: React.FC<MoveCosmeticModalProps> = ({
                     <button
                         onClick={() => {
                             if (selectedCatalog) {
-                                onConfirm(selectedCatalog.id);
+                                onConfirm(selectedCatalog.id, cosmeticId); // ← отправляем оба аргумента
                             }
                         }}
                         disabled={!selectedCatalog}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 // API
-import { deleteCosmetic, getAllCosmetics, updateCosmetic } from "../services/adminCosmeticApi"
+import {deleteCosmetic, getAllCosmetics, updateCosmetic, updateCosmeticCatalog} from "../services/adminCosmeticApi"
 // Типы
 import type {
     CosmeticsResponse,
@@ -39,7 +39,7 @@ const CosmeticForm: React.FC = () => {
     const [selectedCatalogId, setSelectedCatalogId] = useState<number | null>(null);
     const [catalogs, setCatalogs] = useState<Catalog1[]>([]);
     const [currentCosmetic, setCurrentCosmetic] = useState<{ id: number; name: string } | null>(null);
-
+    const [selectedCatalogIds, setSelectedCatalogIds] = useState<string[]>([]);
     // Загрузка данных
     useEffect(() => {
         const fetchData = async () => {
@@ -132,11 +132,28 @@ const CosmeticForm: React.FC = () => {
         }
     };
 
-    const handleConfirmMove = () => {
-        if (selectedCatalogId && currentCosmetic) {
-            console.log(`Косметика ${currentCosmetic.id} будет перенесена в каталог ${selectedCatalogId}`);
-            // Здесь можно вызвать API для фактического переноса
-            setShowMoveModal(false);
+    const handleConfirmMove = async () => {
+        if (selectedCatalogIds.length > 0 && currentCosmetic) {
+            const catalogId = Number(selectedCatalogIds[0]);
+
+            try {
+                await updateCosmetic(currentCosmetic.id, {
+                    ...editingCosmetic,
+                    catalogId: catalogId
+                });
+
+                setMessage("Косметика успешно перемещена");
+                setError(null);
+
+                const updatedData = await getAllCosmetics();
+                setCosmeticsResponse(updatedData);
+                setCosmetics(updatedData.cosmetics);
+
+                setShowMoveModal(false);
+            } catch (err: any) {
+                setError(err.message || "Ошибка при перемещении косметики");
+                setMessage(null);
+            }
         }
     };
 
@@ -322,15 +339,25 @@ const CosmeticForm: React.FC = () => {
                 />
             )}
 
-            {/* Модальное окно */}
-
             <MoveCosmeticModal
                 isOpen={showMoveModal}
                 catalogs={catalogs}
                 currentCosmeticName={currentCosmetic?.name || null}
-                selectedCatalogId={selectedCatalogId}
-                onChange={(e) => setSelectedCatalogId(Number(e.target.value))}
-                onConfirm={handleConfirmMove}
+                cosmeticId={currentCosmetic?.id || -1} // ← передаем ID косметики
+                onConfirm={async (catalogId, cosmeticId) => {
+                    try {
+                        await updateCosmeticCatalog(cosmeticId, catalogId);
+                        setMessage("Косметика успешно перемещена");
+                        setError(null);
+                        const updatedData = await getAllCosmetics();
+                        setCosmeticsResponse(updatedData);
+                        setCosmetics(updatedData.cosmetics);
+                        setShowMoveModal(false);
+                    } catch (err: any) {
+                        setError(err.message || "Ошибка при перемещении");
+                        setMessage(null);
+                    }
+                }}
                 onClose={() => setShowMoveModal(false)}
             />
 

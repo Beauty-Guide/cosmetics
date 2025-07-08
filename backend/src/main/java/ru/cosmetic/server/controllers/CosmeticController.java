@@ -5,13 +5,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.exceptions.AppError;
-import ru.cosmetic.server.models.Brand;
-import ru.cosmetic.server.requestDto.CosmeticAddRequest;
+import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.models.Cosmetic;
+import ru.cosmetic.server.requestDto.CosmeticAddRequest;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
+import ru.cosmetic.server.requestDto.CosmeticUpdateCatalogRequest;
 import ru.cosmetic.server.service.*;
 
 import java.util.HashMap;
@@ -107,6 +107,23 @@ public class CosmeticController {
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PutMapping("/updateCosmeticCatalog/{cosmeticId}")
+    public ResponseEntity<Void> updateCosmeticCatalog(
+            @PathVariable Long cosmeticId,
+            @RequestBody CosmeticUpdateCatalogRequest request) {
+
+        cosmeticService.updateCosmeticCatalog(cosmeticId, request.getCatalogId());
+        Cosmetic cosmetic = cosmeticService.findById(cosmeticId);
+        if (cosmetic != null) {
+            Catalog catalog = catalogService.findById(request.getCatalogId());
+            if (catalog != null) {
+                cosmetic.setCatalog(catalog);
+                cosmeticService.save(cosmetic);
+            }
+        }
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Удаление косметики")
