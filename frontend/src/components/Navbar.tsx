@@ -123,6 +123,9 @@ const AppNavbar: React.FC = () => {
                   <DropdownMenuItem onClick={() => i18n.changeLanguage("ru")}>
                     RU
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => i18n.changeLanguage("ko")}>
+                    KO
+                  </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>

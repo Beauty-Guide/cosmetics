@@ -113,7 +113,7 @@ export default function MultiSelectCombobox({
       </Popover>
 
       {!singleSelect && values.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
+        <div className="flex flex-wrap gap-1 mt-2 max-h-[100px] overflow-y-auto">
           {selectedLabels.map((label, index) => (
             <Badge key={index} variant="secondary">
               {label}

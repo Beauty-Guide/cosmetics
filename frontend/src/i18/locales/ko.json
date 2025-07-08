@@ -1,0 +1,48 @@
+{
+  "product.actions": "동작",
+  "product.skinTypes": "피부 타입",
+  "product.ingredients": "주요 성분",
+  "product.compatibility": "호환성",
+  "product.usageRecommendations": "사용 권장사항",
+  "product.applicationMethod": "사용 방법",
+  "product.notFound": "상품을 찾을 수 없습니다",
+  "product.found": "찾았습니다",
+  "product.nothingFound": "검색 결과가 없습니다",
+  "product.description": "설명",
+
+  "search": "검색",
+  "categories": "카테고리",
+  "main": "메인",
+  "favorites": "즐겨찾기",
+  "menu": "메뉴",
+  "my_account": "내 계정",
+  "close": "닫기",
+  "login": "로그인",
+  "logout": "로그아웃",
+  "lang": "언어",
+
+  "nav.cosmetic": "화장품",
+  "nav.catalogs": "카탈로그",
+  "nav.brands": "브랜드",
+  "nav.skinTypes": "피부 타입",
+  "nav.actions": "동작",
+  "nav.ingredients": "성분",
+
+  "breadcrumb.product": "상품",
+  "breadcrumb.favorites": "즐겨찾기",
+  "breadcrumb.category": "카탈로그",
+
+  "filter.brand": "브랜드",
+  "filter.skinType": "피부 타입",
+  "filter.action": "동작",
+  "filter.select_brand": "브랜드 선택",
+  "filter.select_skin_type": "피부 타입 선택",
+  "filter.select_action": "동작 선택",
+  "filter.not_found": "검색 결과가 없습니다",
+  "filter.select": "선택",
+
+  "product.add_to_fav": "즐겨찾기에 추가",
+  "product.added_to_fav": "즐겨찾기에 추가됨",
+  "product.removed_from_fav": "즐겨찾기에서 제거됨",
+  "product.remove_from_fav": "즐겨찾기에서 제거"
+}
