@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useTranslation } from "react-i18next"
 
 type Option = {
   name: string
@@ -36,6 +37,7 @@ export default function MultiSelectCombobox({
   onChange,
   singleSelect = false,
 }: MultiSelectComboboxProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState<boolean>(false)
 
   const toggleValue = (value: string) => {
@@ -78,14 +80,16 @@ export default function MultiSelectCombobox({
               ? singleSelect
                 ? selectedLabels[0]
                 : selectedLabels.join(", ")
-              : `Выбрать ${label.toLowerCase()}`}
+              : `${t("filter.select")} ${label.toLowerCase()}`}
             <ChevronsUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command>
-            <CommandInput placeholder={`Поиск ${label.toLowerCase()}...`} />
-            <CommandEmpty>Ничего не найдено.</CommandEmpty>
+            <CommandInput
+              placeholder={`${t("search")} ${label.toLowerCase()}...`}
+            />
+            <CommandEmpty>{t("filter.not_found")}</CommandEmpty>
             <CommandGroup className="max-h-60 overflow-y-auto">
               {options.map((opt) => (
                 <CommandItem

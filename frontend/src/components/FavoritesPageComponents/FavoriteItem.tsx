@@ -4,12 +4,14 @@ import { useNavigate } from "react-router"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
 import { useToggleFavProduct } from "@/hooks/useToggleFavProduct"
+import { useTranslation } from "react-i18next"
 
 type TFavoriteItemProps = {
   product: TProduct
 }
 
 const FavoriteItem = ({ product }: TFavoriteItemProps) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { mutate: toggleFav, isPending: isToggleLoading } =
     useToggleFavProduct()
@@ -32,19 +34,21 @@ const FavoriteItem = ({ product }: TFavoriteItemProps) => {
           onClick={navigateToItem}
         />
         <h1 className="text-2xl font-bold">{product.name}</h1>
-        <p className="text-muted-foreground">{product.description}</p>
+        <p className="text-muted-foreground my-2">{product.description}</p>
         <Button
           variant="outline"
           size="sm"
           disabled={isToggleLoading}
           onClick={handleRemoveFromFavorite}
         >
-          Убрать из избранного
+          {t("product.remove_from_fav")}
         </Button>
       </div>
       <div className="flex gap-6 flex-wrap">
         <span className="flex flex-col items-start gap-2 bg-white p-3 rounded h-min">
-          <h2 className="mb-2 text-2xl max-md:text-xl font-bold">Действия</h2>
+          <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
+            {t("product.actions")}
+          </h2>
           {product.actions.map((action) => (
             <Badge
               key={action.id}
@@ -56,7 +60,9 @@ const FavoriteItem = ({ product }: TFavoriteItemProps) => {
           ))}
         </span>
         <span className="flex flex-col gap-2 bg-white p-3 rounded-md h-min">
-          <h2 className="mb-2 text-2xl max-md:text-xl font-bold">Типы кожи</h2>
+          <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
+            {t("product.skinTypes")}
+          </h2>
           {product.skinTypes.map((skinType) => (
             <Badge
               key={skinType.id}

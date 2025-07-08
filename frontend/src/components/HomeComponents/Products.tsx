@@ -2,6 +2,7 @@ import type { TProduct } from "@/types"
 import { memo } from "react"
 import Product from "./Product"
 import { Skeleton } from "../ui/skeleton"
+import { useTranslation } from "react-i18next"
 
 type TProductsProps = {
   products: TProduct[]
@@ -9,6 +10,7 @@ type TProductsProps = {
 }
 
 const Products = ({ products, isLoading }: TProductsProps) => {
+  const { t } = useTranslation()
   if (isLoading) {
     return (
       <div className="flex items-start justify-start w-full flex-wrap gap-4">
@@ -23,7 +25,9 @@ const Products = ({ products, isLoading }: TProductsProps) => {
   }
 
   if (products.length === 0) {
-    return <p className="p-4 text-muted-foreground">Ничего не найдено</p>
+    return (
+      <p className="p-4 text-muted-foreground">{t("product.nothingFound")}</p>
+    )
   }
 
   return (

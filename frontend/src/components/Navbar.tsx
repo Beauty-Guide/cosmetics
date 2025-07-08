@@ -13,8 +13,10 @@ import {
 import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
+import { useTranslation } from "react-i18next"
 
 const AppNavbar: React.FC = () => {
+  const { t } = useTranslation()
   const user = useAuth()
   const navigate = useNavigate()
 
@@ -22,7 +24,7 @@ const AppNavbar: React.FC = () => {
   const isUser = user?.role.includes(ROLES.USER)
   const isAuthenticated = isAdmin || isUser
 
-  const { data: favourites } = useGetAllFavProducts({
+  const { data: favorites } = useGetAllFavProducts({
     enabled: !!isAuthenticated,
   })
 
@@ -50,37 +52,37 @@ const AppNavbar: React.FC = () => {
                 to="/admin"
                 className="hover:text-blue-300 transition-colors"
               >
-                Косметика
+                {t("nav.cosmetic")}
               </Link>
               <Link
                 to="/admin/catalog"
                 className="hover:text-blue-300 transition-colors"
               >
-                Каталоги
+                {t("nav.catalogs")}
               </Link>
               <Link
                 to="/admin/brand"
                 className="hover:text-blue-300 transition-colors"
               >
-                Бренды
+                {t("nav.brands")}
               </Link>
               <Link
                 to="/admin/skinType"
                 className="hover:text-blue-300 transition-colors"
               >
-                Типы кожи
+                {t("nav.skinTypes")}
               </Link>
               <Link
                 to="/admin/action"
                 className="hover:text-blue-300 transition-colors"
               >
-                Действия
+                {t("nav.actions")}
               </Link>
               <Link
                 to="/admin/ingredient"
                 className="hover:text-blue-300 transition-colors"
               >
-                Ингредиенты
+                {t("nav.ingredients")}
               </Link>
             </>
           )}
@@ -89,30 +91,32 @@ const AppNavbar: React.FC = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="sm">
-              Меню
+              {t("menu")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="start">
             <DropdownMenuLabel className="font-bold select-none">
-              Мой аккаунт {isAdmin && "(ADMIN)"}
+              {t("my_account")} {isAdmin && "(ADMIN)"}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {isAuthenticated && (
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={() => handleNagivate("/favorites")}>
-                  Избранное
+                  {t("favorites")}
                   <DropdownMenuShortcut>
-                    {favourites?.length}
+                    {favorites?.length}
                   </DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             )}
             <DropdownMenuSeparator />
             {isAuthenticated ? (
-              <DropdownMenuItem onClick={handleLogout}>Выйти</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                {t("logout")}
+              </DropdownMenuItem>
             ) : (
               <DropdownMenuItem>
-                <Link to="/login">Войти</Link>
+                <Link to="/login">{t("login")}</Link>
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

@@ -2,9 +2,11 @@ import { ImageCarousel } from "@/components/ImageCarousel"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useItemById } from "@/hooks/getItemById"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router"
 
 const ProductPage = () => {
+  const { t } = useTranslation()
   const { productId } = useParams()
   const { data: product, isLoading: isLoadingProduct } = useItemById(
     productId || ""
@@ -22,7 +24,7 @@ const ProductPage = () => {
     return (
       <div>
         <h1 className="text-2xl font-bold text-left p-4 px-sides">
-          Товар не найден
+          {t("product.notFound")}
         </h1>
       </div>
     )
@@ -46,7 +48,9 @@ const ProductPage = () => {
         </div>
         <div className="flex gap-6 flex-wrap">
           <span className="flex flex-col items-start gap-2 bg-white p-3 rounded h-min">
-            <h2 className="mb-2 text-2xl max-md:text-xl font-bold">Действия</h2>
+            <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
+              {t("product.actions")}
+            </h2>
             {product.actions.map((action) => (
               <Badge
                 key={action.id}
@@ -59,7 +63,7 @@ const ProductPage = () => {
           </span>
           <span className="flex flex-col gap-2 bg-white p-3 rounded-md h-min">
             <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
-              Типы кожи
+              {t("product.skinTypes")}
             </h2>
             {product.skinTypes.map((skinType) => (
               <Badge
@@ -77,7 +81,7 @@ const ProductPage = () => {
         {product.ingredients && (
           <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
-              КЛЮЧЕВЫЕ ИНГРИДИЕНТЫ
+              {t("product.ingredients")}
             </h2>
             <ul className="font-semibold max-md:text-sm">
               {product.ingredients.map((ingredient) => (
@@ -89,7 +93,7 @@ const ProductPage = () => {
         {product.compatibility && (
           <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
-              СОВМЕСТИМОСТЬ
+              {t("product.compatibility")}
             </h2>
             <p className="font-semibold max-md:text-sm">
               {product.compatibility}
@@ -99,7 +103,7 @@ const ProductPage = () => {
         {product.usageRecommendations && (
           <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
-              РЕКОМЕНДАЦИИ ПО ПРИМЕНЕНИЮ
+              {t("product.usageRecommendations")}
             </h2>
             <p className="font-semibold max-md:text-sm">
               {product.usageRecommendations}
@@ -109,7 +113,7 @@ const ProductPage = () => {
         {product.applicationMethod && (
           <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
-              СПОСОБ ПРИМЕНЕНИЯ
+              {t("product.applicationMethod")}
             </h2>
             <p className="font-semibold max-md:text-sm">
               {product.applicationMethod}

@@ -7,8 +7,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Fragment } from "react"
+import { useTranslation } from "react-i18next"
 
 export default function Breadcrumbs() {
+  const { t } = useTranslation()
   const location = useLocation()
 
   const pathnames = location.pathname
@@ -16,24 +18,24 @@ export default function Breadcrumbs() {
     .filter((segment) => segment !== "")
 
   const breadcrumbs = [
-    { name: "Главная", to: "/" },
+    { name: t("main"), to: "/" },
     ...pathnames.map((segment, index) => {
       const to = "/" + pathnames.slice(0, index + 1).join("/")
 
       switch (segment) {
         case "category":
           return {
-            name: "Каталог",
+            name: t("breadcrumb.category"),
             to: "/",
           }
         case "product":
           return {
-            name: "Товары",
+            name: t("breadcrumb.product"),
             to: "/",
           }
         case "favorites":
           return {
-            name: "Избранное",
+            name: t("breadcrumb.favorites"),
             to: "/favorites",
           }
       }

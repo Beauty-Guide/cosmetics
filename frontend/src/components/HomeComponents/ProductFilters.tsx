@@ -4,6 +4,7 @@ import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { useGetAllSkinType } from "@/hooks/getAllSkinType"
 import { memo } from "react"
 import { Skeleton } from "../ui/skeleton"
+import { useTranslation } from "react-i18next"
 
 type TProductFiltersProps = {
   selectedBrands: string[]
@@ -22,6 +23,7 @@ const ProductFilters = ({
   setSelectedSkinTypes,
   setSelectedAction,
 }: TProductFiltersProps) => {
+  const { t } = useTranslation()
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
   const { data: skinTypes, isLoading: isLoadingSkinTypes } = useGetAllSkinType()
   const { data: actions, isLoading: isLoadingActions } = useGetAllAction()
@@ -38,19 +40,19 @@ const ProductFilters = ({
     <div className="flex py-5 w-full">
       <div className="flex gap-5 max-md:flex-wrap p-3 shadow-md rounded-md">
         <FilterCombobox
-          label="Бренд"
+          label={t("filter.brand")}
           options={brands}
           values={selectedBrands}
           onChange={setSelectedBrands}
         />
         <FilterCombobox
-          label="Тип кожи"
+          label={t("filter.skinType")}
           options={skinTypes}
           values={selectedSkinTypes}
           onChange={setSelectedSkinTypes}
         />
         <FilterCombobox
-          label="Действие"
+          label={t("filter.action")}
           options={actions}
           values={selectedAction}
           onChange={setSelectedAction}

@@ -1,0 +1,47 @@
+{
+  "product.actions": "Действия",
+  "product.skinTypes": "Типы кожи",
+  "product.ingredients": "КЛЮЧЕВЫЕ ИНГРЕДИЕНТЫ",
+  "product.compatibility": "СОВМЕСТИМОСТЬ",
+  "product.usageRecommendations": "РЕКОМЕНДАЦИИ ПО ПРИМЕНЕНИЮ",
+  "product.applicationMethod": "СПОСОБ ПРИМЕНЕНИЯ",
+  "product.notFound": "Товар не найден",
+  "product.found": "Найдено",
+  "product.nothingFound": "Ничего не найдено",
+  "product.description": "Описание",
+
+  "search": "Поиск",
+  "categories": "Категории",
+  "main": "Главная",
+  "favorites": "Избранное",
+  "menu": "Меню",
+  "my_account": "Мой аккаунт",
+  "close": "Закрыть",
+  "login": "Войти",
+  "logout": "Выйти",
+
+  "nav.cosmetic": "Косметика",
+  "nav.catalogs": "Каталоги",
+  "nav.brands": "Бренды",
+  "nav.skinTypes": "Тип кожи",
+  "nav.actions": "Действия",
+  "nav.ingredients": "Ингредиенты",
+
+  "breadcrumb.product": "Товар",
+  "breadcrumb.favorites": "Избранное",
+  "breadcrumb.category": "Каталог",
+
+  "filter.brand": "Бренд",
+  "filter.skinType": "Тип кожи",
+  "filter.action": "Действие",
+  "filter.select_brand": "Выбрать бренд",
+  "filter.select_skin_type": "Выбрать тип кожи",
+  "filter.select_action": "Выбрать действие",
+  "filter.not_found": "Ничего не найдено",
+  "filter.select": "Выбрать",
+
+  "product.add_to_fav": "Добавить в избранное",
+  "product.added_to_fav": "Добавлено в избранное",
+  "product.removed_from_fav": "Удалено из избранного",
+  "product.remove_from_fav": "Удалить из избранного"
+}

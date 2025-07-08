@@ -12,9 +12,11 @@ import { PAGE_SIZE } from "@/config/consts"
 import { Button } from "@/components/ui/button"
 import { Search } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useTranslation } from "react-i18next"
 
 const HomePage = () => {
   const { pathname } = useLocation()
+  const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
@@ -116,7 +118,7 @@ const HomePage = () => {
             {isLoadingItems ? (
               <Skeleton className="w-[100px] h-[24px]" />
             ) : (
-              `Найдено: ${products?.total || 0}`
+              `${t("product.found")}: ${products?.total || 0}`
             )}
           </h2>
         }
@@ -126,7 +128,7 @@ const HomePage = () => {
         >
           <Input
             type="search"
-            placeholder="Поиск"
+            placeholder={t("search")}
             className="max-w-[450px]"
             ref={searchInputRef}
           />
