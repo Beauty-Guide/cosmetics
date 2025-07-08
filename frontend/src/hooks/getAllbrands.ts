@@ -8,5 +8,9 @@ const fetchAllBrands = async () => {
 }
 
 export const useGetAllBrands = () => {
-  return useQuery({ queryKey: ["brands"], queryFn: fetchAllBrands })
+  return useQuery({
+    queryKey: ["brands"],
+    queryFn: fetchAllBrands,
+    staleTime: Infinity,
+  })
 }

@@ -9,5 +9,9 @@ const fetchCategories = async (): Promise<TCategory[]> => {
 }
 
 export const useGetCategories = () => {
-  return useQuery({ queryKey: ["categories"], queryFn: fetchCategories })
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+    staleTime: Infinity,
+  })
 }

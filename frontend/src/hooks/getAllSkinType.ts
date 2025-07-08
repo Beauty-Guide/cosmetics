@@ -8,4 +8,8 @@ const fetchAllSkinType = async () => {
 }
 
 export const useGetAllSkinType = () =>
-  useQuery({ queryKey: ["skinType"], queryFn: fetchAllSkinType })
+  useQuery({
+    queryKey: ["skinType"],
+    queryFn: fetchAllSkinType,
+    staleTime: Infinity,
+  })

@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { API_BASE_URL } from "@/config/consts"
 import { toast } from "sonner"
 import apiClient from "@/services/adminApi"
+import type { AxiosError } from "axios"
+import { useNavigate } from "react-router"
 
 type ToggleFavParams = {
   productId: string
@@ -22,6 +24,7 @@ const toggleFavProduct = async ({ productId, action }: ToggleFavParams) => {
 
 export const useToggleFavProduct = () => {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   return useMutation({
     mutationFn: toggleFavProduct,
@@ -35,8 +38,13 @@ export const useToggleFavProduct = () => {
       }
     },
 
-    onError: (error) => {
+    onError: (error: AxiosError) => {
       toast.error(error.message)
+      const status = error.status
+
+      if (status === 401) {
+        navigate("/login", { replace: true })
+      }
     },
   })
 }

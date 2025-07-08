@@ -8,4 +8,8 @@ const fetchAllAction = async () => {
 }
 
 export const useGetAllAction = () =>
-  useQuery({ queryKey: ["action"], queryFn: fetchAllAction })
+  useQuery({
+    queryKey: ["action"],
+    queryFn: fetchAllAction,
+    staleTime: Infinity,
+  })

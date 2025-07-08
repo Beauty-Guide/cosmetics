@@ -12,5 +12,5 @@ export const useCurrentUser = () =>
   useQuery({
     queryKey: ["currentUser"],
     queryFn: fetchCurrentUser,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 5,
   })

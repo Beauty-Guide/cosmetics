@@ -19,4 +19,5 @@ export const useGetAllFavProducts = ({
     queryKey: ["getAllFavProducts"],
     queryFn: fetchAllFavProducts,
     enabled,
+    staleTime: Infinity,
   })

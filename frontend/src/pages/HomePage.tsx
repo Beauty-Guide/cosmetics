@@ -111,10 +111,15 @@ const HomePage = () => {
     <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 max-md:pt-0 px-sides">
       <SideBar categoryTree={categoryTree} />
       <div className="flex flex-col items-center justify-center gap-4 w-full mt-1">
-        <h2 className="flex gap-2 text-md font-semibold mr-auto">
-          Найдено:{" "}
-          {products?.total || <Skeleton className="w-[50px] h-[20px]" />}
-        </h2>
+        {
+          <h2 className="flex gap-2 text-md font-semibold mr-auto">
+            {isLoadingItems ? (
+              <Skeleton className="w-[100px] h-[24px]" />
+            ) : (
+              `Найдено: ${products?.total || 0}`
+            )}
+          </h2>
+        }
         <form
           onSubmit={handleSearch}
           className="flex w-full items-center justify-start gap-2"
