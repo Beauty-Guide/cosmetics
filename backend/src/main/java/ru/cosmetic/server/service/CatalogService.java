@@ -90,7 +90,7 @@ public class CatalogService {
     private String getNameByLang(Catalog catalog, String lang) {
         if ("en".equals(lang)) {
             return catalog.getNameEN();
-        } else if ("kr".equals(lang)) {
+        } else if ("ko".equals(lang)) {
             return catalog.getNameKR();
         } else {
             return catalog.getName(); // "ru" или дефолт

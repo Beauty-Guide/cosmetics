@@ -75,7 +75,7 @@ public class FavoriteService {
     private String getLocalizedString(String defaultName, String enName, String krName, String lang) {
         if ("en".equals(lang)) {
             return enName != null ? enName : defaultName;
-        } else if ("kr".equals(lang)) {
+        } else if ("ko".equals(lang)) {
             return krName != null ? krName : defaultName;
         }
         return defaultName;

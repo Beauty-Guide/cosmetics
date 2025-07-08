@@ -47,7 +47,7 @@ public class CosmeticService {
         return cosmeticRepo.findAll();
     }
 
-    public CosmeticResponse getCosmeticById(Long id) {
+    public CosmeticResponse getCosmeticById(Long id, String lang) {
         StringBuilder sql = new StringBuilder("""
         SELECT
             c.id AS cosmetic_id,
@@ -60,10 +60,16 @@ public class CosmeticService {
             b.name AS brand_name,
             cat.id AS catalog_id,
             cat.name AS catalog_name,
+            cat.name_EN AS catalog_name_en,
+            cat.name_KR AS catalog_name_ko,
             ARRAY_AGG(DISTINCT a.id) AS action_ids,
             ARRAY_AGG(DISTINCT a.name) AS action_names,
+            ARRAY_AGG(DISTINCT a.name_EN) AS action_names_en,
+            ARRAY_AGG(DISTINCT a.name_KR) AS action_names_ko,
             ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
             ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
+            ARRAY_AGG(DISTINCT st.name_EN) AS skin_type_names_en,
+            ARRAY_AGG(DISTINCT st.name_KR) AS skin_type_names_ko,
             ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
             ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
             (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
@@ -84,13 +90,13 @@ public class CosmeticService {
 
         try {
             Map<String, Object> row = jdbcTemplate.queryForMap(sql.toString(), id);
-            return mapRowToCosmeticResponse(row);
+            return mapRowToCosmeticResponse(row, lang);
         } catch (EmptyResultDataAccessException ex) {
             return null; // или throw new ResourceNotFoundException("Cosmetic not found")
         }
     }
 
-    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter) {
+    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang) {
         List<Object> params = new ArrayList<>();
         StringBuilder sql = new StringBuilder("""
             SELECT
@@ -104,13 +110,19 @@ public class CosmeticService {
                         b.name AS brand_name,
                         cat.id AS catalog_id,
                         cat.name AS catalog_name,
+                        cat.name_EN AS catalog_name_en,
+                        cat.name_KR AS catalog_name_ko,
                         (SELECT EXISTS (
                             SELECT 1 FROM catalog sub_cat WHERE sub_cat.parent_id = cat.id
                         )) AS has_children,
                         ARRAY_AGG(DISTINCT a.id) AS action_ids,
                         ARRAY_AGG(DISTINCT a.name) AS action_names,
+                        ARRAY_AGG(DISTINCT a.name_EN) AS action_names_en,
+                        ARRAY_AGG(DISTINCT a.name_KR) AS action_names_ko,
                         ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
                         ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
+                        ARRAY_AGG(DISTINCT st.name_EN) AS skin_type_names_en,
+                        ARRAY_AGG(DISTINCT st.name_KR) AS skin_type_names_ko,
                         ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
                         ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
                         (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
@@ -148,7 +160,7 @@ public class CosmeticService {
         // Выполняем запрос
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
 
-        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows);
+        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang);
         CosmeticsResponse cosmeticsResponse = new CosmeticsResponse();
         cosmeticsResponse.setCosmetics(cosmeticResponses);
         cosmeticsResponse.setTotal(getCountOfCosmetics(filter)); // теперь передаем filter
@@ -230,15 +242,15 @@ public class CosmeticService {
     }
 
     // Группируем результаты по косметике
-    private List<CosmeticResponse> groupCosmeticResponses(List<Map<String, Object>> rows) {
+    private List<CosmeticResponse> groupCosmeticResponses(List<Map<String, Object>> rows, String lang) {
         List<CosmeticResponse> result = new ArrayList<>();
         for (Map<String, Object> row : rows) {
-            result.add(mapRowToCosmeticResponse(row));
+            result.add(mapRowToCosmeticResponse(row, lang));
         }
         return result;
     }
 
-    private CosmeticResponse mapRowToCosmeticResponse(Map<String, Object> row) {
+    private CosmeticResponse mapRowToCosmeticResponse(Map<String, Object> row, String lang) {
         CosmeticResponse response = new CosmeticResponse();
         response.setId(safeGetLong(row, "cosmetic_id"));
         response.setName(safeGetString(row, "cosmetic_name"));
@@ -256,13 +268,27 @@ public class CosmeticService {
         // Catalog
         CatalogResponse catalog = new CatalogResponse();
         catalog.setId(safeGetLong(row, "catalog_id"));
-        catalog.setName(safeGetString(row, "catalog_name"));
+        if ("en".equals(lang)) {
+            catalog.setName(safeGetString(row, "catalog_name_en"));
+        } else if ("ko".equals(lang)) {
+            catalog.setName(safeGetString(row, "catalog_name_ko"));
+        } else {
+            catalog.setName(safeGetString(row, "catalog_name")); // "ru" или дефолт
+        }
         catalog.setHasChildren((Boolean) row.get("has_children"));
         response.setCatalog(catalog);
 
         // Actions
         List<Long> actionIds = safeGetLongList(row, "action_ids");
-        List<String> actionNames = safeGetStringList(row, "action_names");
+        List<String> actionNames;
+        if ("en".equals(lang)) {
+            actionNames = safeGetStringList(row, "action_names_en");
+        } else if ("ko".equals(lang)) {
+            actionNames = safeGetStringList(row, "action_names_ko");
+        } else {
+            actionNames = safeGetStringList(row, "action_names");
+        }
+
         List<ActionResponse> actions = new ArrayList<>();
         for (int i = 0; i < Math.min(actionIds.size(), actionNames.size()); i++) {
             if (actionIds.get(i) != null && actionNames.get(i) != null) {
@@ -273,7 +299,14 @@ public class CosmeticService {
 
         // Skin Types
         List<Long> skinTypeIds = safeGetLongList(row, "skin_type_ids");
-        List<String> skinTypeNames = safeGetStringList(row, "skin_type_names");
+        List<String> skinTypeNames;
+        if ("en".equals(lang)) {
+            skinTypeNames = safeGetStringList(row, "skin_type_names_en");
+        } else if ("ko".equals(lang)) {
+            skinTypeNames = safeGetStringList(row, "skin_type_names_ko");
+        } else {
+            skinTypeNames = safeGetStringList(row, "skin_type_names");
+        }
         List<SkinTypeResponse> skinTypes = new ArrayList<>();
         for (int i = 0; i < Math.min(skinTypeIds.size(), skinTypeNames.size()); i++) {
             if (skinTypeIds.get(i) != null && skinTypeNames.get(i) != null) {

@@ -32,9 +32,9 @@ public class UserController {
 
     @PostMapping("/getCosmeticsByFilters")
     @Operation(summary = "Получение косметики по фильтрам")
-    public ResponseEntity<?> getCosmeticsByFilters(@RequestBody CosmeticFilterRequest request) {
+    public ResponseEntity<?> getCosmeticsByFilters(@RequestBody CosmeticFilterRequest request, @RequestParam(required = false) String lang) {
         try {
-            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request));
+            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request, lang));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики", HttpStatus.BAD_REQUEST);
         }
@@ -42,9 +42,9 @@ public class UserController {
 
     @GetMapping("/getCosmeticsById/{id}")
     @Operation(summary = "Получение косметики по id")
-    public ResponseEntity<?> getCosmeticsById(@PathVariable Long id) {
+    public ResponseEntity<?> getCosmeticsById(@PathVariable Long id, @RequestParam(required = false) String lang) {
         try {
-            return ResponseEntity.ok(cosmeticService.getCosmeticById(id));
+            return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики с id = " + id, HttpStatus.BAD_REQUEST);
         }

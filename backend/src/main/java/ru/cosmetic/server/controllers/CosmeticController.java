@@ -70,14 +70,14 @@ public class CosmeticController {
 
     @GetMapping("/getAllCosmetic")
     @Operation(summary = "Получение всей косметики")
-    public ResponseEntity<?> getAllCosmetic() {
+    public ResponseEntity<?> getAllCosmetic(@RequestParam(required = false) String lang) {
         try {
             CosmeticFilterRequest cosmeticFilterRequest = new CosmeticFilterRequest();
             cosmeticFilterRequest.setSortBy("id");
             cosmeticFilterRequest.setSortDirection("ASC");
             Long countOfCosmetics = cosmeticService.getCountOfCosmetics();
             cosmeticFilterRequest.setSize(countOfCosmetics);
-            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(cosmeticFilterRequest));
+            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(cosmeticFilterRequest, lang));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения брендов", HttpStatus.BAD_REQUEST);
         }

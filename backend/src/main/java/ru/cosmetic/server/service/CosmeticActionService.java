@@ -46,7 +46,7 @@ public class CosmeticActionService {
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             String nameToUse = switch (lang == null ? "ru" : lang.toLowerCase()) {
                 case "en" -> rs.getString("name_en");
-                case "kr" -> rs.getString("name_kr");
+                case "ko" -> rs.getString("name_kr");
                 default -> rs.getString("name");
             };
             return new ActionResponse(rs.getLong("id"), nameToUse);
