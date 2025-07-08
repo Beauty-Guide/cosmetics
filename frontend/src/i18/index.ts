@@ -11,6 +11,10 @@ i18n
   .init({
     fallbackLng: "ru",
     supportedLngs: ["en", "ru"],
+    detection: {
+      order: ["navigator", "localStorage", "htmlTag"],
+      caches: ["localStorage"],
+    },
     resources: {
       en: { translation: en },
       ru: { translation: ru },
