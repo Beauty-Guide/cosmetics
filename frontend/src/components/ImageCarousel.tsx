@@ -36,7 +36,7 @@ export function ImageCarousel({ images }: TImageCarouselProps) {
               <img
                 src={getImgUrl(img.url)}
                 alt={`Image ${index + 1}`}
-                className="w-full h-auto object-cover rounded-md"
+                className="w-full h-auto object-cover rounded-md max-md:h-[300px]"
               />
             </div>
           ))}
@@ -50,7 +50,7 @@ export function ImageCarousel({ images }: TImageCarouselProps) {
             key={img.id}
             onClick={() => scrollTo(index)}
             alt={`Thumbnail ${index + 1}`}
-            className={`w-25 select-none object-cover cursor-pointer rounded-md border-2 transition
+            className={`w-25 select-none object-cover cursor-pointer rounded-md border-2 transition max-md:w-16
               ${
                 selectedIndex === index
                   ? "border-primary"
