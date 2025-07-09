@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router"
+import { Link, useNavigate, useSearchParams } from "react-router"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -18,12 +18,17 @@ import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
-import { User2Icon } from "lucide-react"
+import { Search, User2Icon } from "lucide-react"
+import { Input } from "./ui/input"
+import { useRef } from "react"
 
 const AppNavbar: React.FC = () => {
   const { t, i18n } = useTranslation()
   const user = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchValue = searchParams.get("search")
 
   const isAdmin = user?.role.includes(ROLES.ADMIN)
   const isUser = user?.role.includes(ROLES.USER)
@@ -43,9 +48,24 @@ const AppNavbar: React.FC = () => {
     navigate(path)
   }
 
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const params = new URLSearchParams()
+    const searchValue = searchInputRef.current?.value.trim()
+
+    if (searchValue && searchValue.length > 2) {
+      params.append("search", searchValue)
+    } else if (!searchValue) {
+      params.delete("search")
+    }
+
+    setSearchParams(params, { replace: false })
+  }
+
   return (
-    <nav className="text-white shadow-md px-sides border-b-1">
-      <div className="container mx-auto flex items-center justify-between py-4 max-md:py-3 flex-wrap gap-2">
+    <nav className="flex flex-col w-full shadow-md px-sides border-b-1">
+      <div className="flex items-center justify-between py-4 max-md:py-3 flex-wrap gap-2">
         <Link to="/" className="text-xl font-bold tracking-tight text-blue-900">
           Beauty Guide
         </Link>
@@ -149,6 +169,21 @@ const AppNavbar: React.FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <form
+        onSubmit={handleSearch}
+        className="flex w-full items-center justify-start gap-2 mb-4"
+      >
+        <Input
+          type="search"
+          placeholder={t("search")}
+          className="max-w-[550px]"
+          defaultValue={searchValue || ""}
+          ref={searchInputRef}
+        />
+        <Button type="submit" variant="outline" size="icon">
+          <Search />
+        </Button>
+      </form>
     </nav>
   )
 }

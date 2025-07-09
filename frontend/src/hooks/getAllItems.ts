@@ -10,14 +10,14 @@ type TGetAllItemsResponse = {
 }
 
 type TProductFilters = {
-  sortBy: string
+  sortBy?: string
   brandIds?: string[]
   catalogId?: string | null
   actionIds?: string[]
   skinTypeIds?: string[]
   sortDirection?: string
-  page: number
-  size: number
+  page?: number
+  size?: number
   name?: string | null
 }
 
