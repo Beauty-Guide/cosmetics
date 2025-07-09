@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "../ui/button"
 import { useTranslation } from "react-i18next"
+import { List } from "lucide-react"
 
 type SideBarProps = {
   categoryTree: TCategory[]
@@ -21,7 +22,7 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
   return (
     <>
       <div className="flex flex-col gap-4 w-[300px] max-md:hidden">
-        <h1 className="text-3xl text-blue-500 font-bold">{t("categories")}</h1>
+        <h1 className="text-3xl text-blue-900 font-bold">{t("categories")}</h1>
         <div>
           {categoryTree.map((cat) => (
             <CategoryItem key={cat.id} category={cat} />
@@ -32,7 +33,7 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
         <Drawer>
           <DrawerTrigger asChild>
             <Button variant="outline" className="my-2">
-              {t("categories")}
+              <List />
             </Button>
           </DrawerTrigger>
           <DrawerContent aria-describedby={undefined}>

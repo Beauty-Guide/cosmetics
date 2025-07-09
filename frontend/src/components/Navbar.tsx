@@ -50,49 +50,6 @@ const AppNavbar: React.FC = () => {
           Beauty Guide
         </Link>
 
-        <div className="flex flex-wrap gap-5 max-md:gap-2 items-center text-sm py-2">
-          {isAdmin && (
-            <>
-              <Link
-                to="/admin"
-                className="hover:text-blue-300 transition-colors"
-              >
-                {t("nav.cosmetic")}
-              </Link>
-              <Link
-                to="/admin/catalog"
-                className="hover:text-blue-300 transition-colors"
-              >
-                {t("nav.catalogs")}
-              </Link>
-              <Link
-                to="/admin/brand"
-                className="hover:text-blue-300 transition-colors"
-              >
-                {t("nav.brands")}
-              </Link>
-              <Link
-                to="/admin/skinType"
-                className="hover:text-blue-300 transition-colors"
-              >
-                {t("nav.skinTypes")}
-              </Link>
-              <Link
-                to="/admin/action"
-                className="hover:text-blue-300 transition-colors"
-              >
-                {t("nav.actions")}
-              </Link>
-              <Link
-                to="/admin/ingredient"
-                className="hover:text-blue-300 transition-colors"
-              >
-                {t("nav.ingredients")}
-              </Link>
-            </>
-          )}
-        </div>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -107,6 +64,51 @@ const AppNavbar: React.FC = () => {
             <DropdownMenuLabel className="font-bold select-none">
               {t("my_account")} {isAdmin && "(ADMIN)"}
             </DropdownMenuLabel>
+            {isAdmin && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>{t("ADMIN")}</DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent className="flex flex-col p-2 gap-2">
+                    <Link
+                      to="/admin"
+                      className="text-black hover:text-blue-900 transition-colors"
+                    >
+                      {t("nav.cosmetic")}
+                    </Link>
+                    <Link
+                      to="/admin/catalog"
+                      className="text-black hover:text-blue-900 transition-colors"
+                    >
+                      {t("nav.catalogs")}
+                    </Link>
+                    <Link
+                      to="/admin/brand"
+                      className="text-black hover:text-blue-900 transition-colors"
+                    >
+                      {t("nav.brands")}
+                    </Link>
+                    <Link
+                      to="/admin/skinType"
+                      className="text-black hover:text-blue-900 transition-colors"
+                    >
+                      {t("nav.skinTypes")}
+                    </Link>
+                    <Link
+                      to="/admin/action"
+                      className="text-black hover:text-blue-900 transition-colors"
+                    >
+                      {t("nav.actions")}
+                    </Link>
+                    <Link
+                      to="/admin/ingredient"
+                      className="text-black hover:text-blue-900 transition-colors"
+                    >
+                      {t("nav.ingredients")}
+                    </Link>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+            )}
             <DropdownMenuSeparator />
             {isAuthenticated && (
               <DropdownMenuGroup>
