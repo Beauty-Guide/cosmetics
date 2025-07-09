@@ -28,6 +28,9 @@ interface MultiSelectComboboxProps {
   values: string[]
   onChange: (values: string[]) => void
   singleSelect?: boolean
+  labels?: boolean
+  badges?: boolean
+  className?: string
 }
 
 export default function MultiSelectCombobox({
@@ -36,6 +39,9 @@ export default function MultiSelectCombobox({
   values,
   onChange,
   singleSelect = false,
+  labels = true,
+  badges = true,
+  className,
 }: MultiSelectComboboxProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState<boolean>(false)
@@ -64,10 +70,12 @@ export default function MultiSelectCombobox({
   }, [options, values])
 
   return (
-    <div className="w-full max-w-[200px]">
-      <label className="block mb-1 text-sm font-medium text-gray-700">
-        {label}
-      </label>
+    <div className={cn("w-full max-w-[200px]", className)}>
+      {labels && (
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -112,7 +120,7 @@ export default function MultiSelectCombobox({
         </PopoverContent>
       </Popover>
 
-      {!singleSelect && values.length > 0 && (
+      {badges && !singleSelect && values.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2 max-h-[100px] overflow-y-auto">
           {selectedLabels.map((label, index) => (
             <Badge key={index} variant="secondary">

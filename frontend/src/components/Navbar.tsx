@@ -1,4 +1,5 @@
-import { Link, useNavigate, useSearchParams } from "react-router"
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router"
+import FilterCombobox from "@/components/HomeComponents/FilterCombobox"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -20,15 +21,21 @@ import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
 import { Search, User2Icon } from "lucide-react"
 import { Input } from "./ui/input"
-import { useRef } from "react"
+import { memo, useEffect, useRef, useState } from "react"
+import { useGetAllBrands } from "@/hooks/getAllbrands"
+import { Skeleton } from "./ui/skeleton"
 
 const AppNavbar: React.FC = () => {
+  const { pathname } = useLocation()
   const { t, i18n } = useTranslation()
   const user = useAuth()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchValue = searchParams.get("search")
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(
+    searchParams.getAll("brand")
+  )
 
   const isAdmin = user?.role.includes(ROLES.ADMIN)
   const isUser = user?.role.includes(ROLES.USER)
@@ -37,6 +44,21 @@ const AppNavbar: React.FC = () => {
   const { data: favorites } = useGetAllFavProducts({
     enabled: !!isAuthenticated,
   })
+  const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
+
+  useEffect(() => {
+    setSelectedBrands(searchParams.getAll("brand"))
+  }, [pathname, searchParams])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+
+    selectedBrands.forEach((b) => {
+      params.append("brand", b)
+    })
+
+    setSearchParams(params, { replace: false })
+  }, [selectedBrands, setSearchParams])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -173,6 +195,19 @@ const AppNavbar: React.FC = () => {
         onSubmit={handleSearch}
         className="flex w-full items-center justify-start gap-2 mb-4"
       >
+        {!isLoadingBrands ? (
+          <FilterCombobox
+            label={t("filter.brand")}
+            options={brands}
+            values={selectedBrands}
+            onChange={setSelectedBrands}
+            labels={false}
+            badges={false}
+            className="max-w-[50px]"
+          />
+        ) : (
+          <Skeleton className="h-[35px] w-[45px] rounded-md" />
+        )}
         <Input
           type="search"
           placeholder={t("search")}
@@ -188,4 +223,4 @@ const AppNavbar: React.FC = () => {
   )
 }
 
-export default AppNavbar
+export default memo(AppNavbar)
