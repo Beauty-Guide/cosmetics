@@ -70,7 +70,7 @@ function CategoryItem({
 
         <span
           className={cn(
-            "text-sm text-gray-800 hover:underline",
+            "text-sm text-gray-800 cursor-pointer",
             isSelected && "text-blue-500"
           )}
           onClick={handleClick}

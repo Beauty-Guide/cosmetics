@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@/config/consts"
 import type { TProduct } from "@/types"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
+import { useTranslation } from "react-i18next"
 
 type TGetAllItemsResponse = {
   cosmetics: TProduct[]
@@ -33,19 +34,27 @@ const defaultFilters: TProductFilters = {
 }
 
 const fetchAllItems = async (
-  filters: TProductFilters
+  filters: TProductFilters,
+  lang: string
 ): Promise<TGetAllItemsResponse> => {
   const response = await axios.post(
     `${API_BASE_URL}/api/getCosmeticsByFilters`,
-    filters
+    filters,
+    {
+      params: {
+        lang,
+      },
+    }
   )
   return response.data
 }
 
 export const useGetAllItems = (filters: TProductFilters) => {
+  const { i18n } = useTranslation()
   return useQuery({
-    queryKey: ["items", filters],
-    queryFn: () => fetchAllItems({ ...defaultFilters, ...filters }),
+    queryKey: ["items", filters, i18n.language],
+    queryFn: () =>
+      fetchAllItems({ ...defaultFilters, ...filters }, i18n.language),
     staleTime: 30000,
   })
 }
