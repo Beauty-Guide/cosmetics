@@ -30,6 +30,8 @@ interface MultiSelectComboboxProps {
   singleSelect?: boolean
   labels?: boolean
   badges?: boolean
+  showOnlyLabel?: boolean
+  variant?: "default" | "ghost" | "outline"
   className?: string
 }
 
@@ -41,6 +43,8 @@ export default function MultiSelectCombobox({
   singleSelect = false,
   labels = true,
   badges = true,
+  variant = "outline",
+  showOnlyLabel = false,
   className,
 }: MultiSelectComboboxProps) {
   const { t } = useTranslation()
@@ -80,23 +84,21 @@ export default function MultiSelectCombobox({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant={variant}
             role="combobox"
             className="w-full justify-between overflow-hidden"
           >
-            {selectedLabels.length > 0
+            {selectedLabels.length > 0 && !showOnlyLabel
               ? singleSelect
                 ? selectedLabels[0]
                 : selectedLabels.join(", ")
-              : `${t("filter.select")} ${label.toLowerCase()}`}
-            <ChevronsUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
+              : `${label}`}
+            <ChevronsUpDown className="ml-2 max-md:ml-0 h-4 w-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command>
-            <CommandInput
-              placeholder={`${t("search")} ${label.toLowerCase()}...`}
-            />
+            <CommandInput placeholder={`${t("search")} ${label}...`} />
             <CommandEmpty>{t("filter.not_found")}</CommandEmpty>
             <CommandGroup className="max-h-60 overflow-y-auto">
               {options.map((opt) => (
