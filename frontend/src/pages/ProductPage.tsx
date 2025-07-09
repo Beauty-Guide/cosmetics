@@ -36,7 +36,7 @@ const ProductPage = () => {
         <h1 className="text-3xl font-bold text-left">{product.name}</h1>
         <p className="">{product.brand.name}</p>
       </span>
-      <div className="flex gap-15 max-lg:flex-col">
+      <div className="flex gap-15 max-lg:flex-col max-md:gap-2">
         <div>
           <ImageCarousel
             images={
@@ -46,7 +46,7 @@ const ProductPage = () => {
             }
           />
         </div>
-        <div className="flex gap-6 flex-wrap">
+        <div className="flex gap-6 flex-wrap max-md:gap-1">
           <span className="flex flex-col items-start gap-2 bg-white p-3 rounded h-min">
             <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
               {t("product.actions")}
@@ -77,7 +77,7 @@ const ProductPage = () => {
           </span>
         </div>
       </div>
-      <div className="flex gap-4 flex-wrap">
+      <div className="flex gap-4 flex-wrap max-md:gap-1">
         {product.ingredients && (
           <span className="flex flex-col bg-white p-4 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">

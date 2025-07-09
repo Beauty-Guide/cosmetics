@@ -18,6 +18,7 @@ import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
+import { User2Icon } from "lucide-react"
 
 const AppNavbar: React.FC = () => {
   const { t, i18n } = useTranslation()
@@ -43,9 +44,9 @@ const AppNavbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-gray-900 text-white shadow-md rounded-b-md px-sides">
-      <div className="container mx-auto flex items-center justify-between py-4 flex-wrap gap-2">
-        <Link to="/" className="text-xl font-bold tracking-tight text-white">
+    <nav className="text-white shadow-md px-sides border-b-1">
+      <div className="container mx-auto flex items-center justify-between py-4 max-md:py-3 flex-wrap gap-2">
+        <Link to="/" className="text-xl font-bold tracking-tight text-blue-900">
           Beauty Guide
         </Link>
 
@@ -94,8 +95,12 @@ const AppNavbar: React.FC = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="sm">
-              {t("menu")}
+            <Button
+              variant="secondary"
+              size="icon"
+              className="rounded-full p-0"
+            >
+              <User2Icon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="start">

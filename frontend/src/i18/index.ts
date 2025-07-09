@@ -13,7 +13,7 @@ i18n
     fallbackLng: "ru",
     supportedLngs: ["en", "ru", "ko"],
     detection: {
-      order: ["navigator", "localStorage", "htmlTag"],
+      order: ["localStorage", "navigator", "htmlTag"],
       caches: ["localStorage"],
     },
     resources: {
