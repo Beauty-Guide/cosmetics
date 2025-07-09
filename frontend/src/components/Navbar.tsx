@@ -31,7 +31,7 @@ const AppNavbar: React.FC = () => {
   const { t, i18n } = useTranslation()
   const user = useAuth()
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchValue = searchParams.get("search")
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
@@ -46,20 +46,11 @@ const AppNavbar: React.FC = () => {
     enabled: !!isAuthenticated,
   })
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
+  const showFilter = pathname === "/"
 
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
   }, [pathname, searchParams])
-
-  useEffect(() => {
-    const params = new URLSearchParams()
-
-    selectedBrands.forEach((b) => {
-      params.append("brand", b)
-    })
-
-    setSearchParams(params, { replace: false })
-  }, [selectedBrands, setSearchParams])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -83,7 +74,15 @@ const AppNavbar: React.FC = () => {
       params.delete("search")
     }
 
-    setSearchParams(params, { replace: false })
+    if (selectedBrands.length > 0) {
+      selectedBrands.forEach((b) => {
+        params.append("brand", b)
+      })
+    } else {
+      params.delete("brand")
+    }
+
+    navigate(`/?${params.toString()}`)
   }
 
   return (
@@ -209,7 +208,8 @@ const AppNavbar: React.FC = () => {
               variant="ghost"
               className={cn(
                 "max-w-[86px]",
-                selectedBrands.length > 0 && "bg-blue-50"
+                selectedBrands.length > 0 && "bg-blue-50",
+                showFilter && "hidden"
               )}
             />
           </div>
@@ -219,7 +219,10 @@ const AppNavbar: React.FC = () => {
         <Input
           type="search"
           placeholder={t("search")}
-          className="max-w-[550px] rounded-none border-l-0"
+          className={cn(
+            "max-w-[550px] border-r-0 rounded-r-none focus-visible:ring-[0px]",
+            !showFilter && "border-l-0 rounded-l-none"
+          )}
           defaultValue={searchValue || ""}
           ref={searchInputRef}
         />
