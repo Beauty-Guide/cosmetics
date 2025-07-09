@@ -46,7 +46,7 @@ const AppNavbar: React.FC = () => {
     enabled: !!isAuthenticated,
   })
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
-  const showFilter = pathname === "/"
+  const showFilter = pathname === "/" || pathname.startsWith("/category")
 
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
