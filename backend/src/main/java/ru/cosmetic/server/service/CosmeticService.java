@@ -148,7 +148,7 @@ public class CosmeticService {
     """);
 
         if (isFavoriteJoinNeeded) {
-            sql.append(", COUNT(fc.id) AS favorite_count");
+            sql.append(", fav.favorite_count");
         }
 
         sql.append("""
@@ -164,7 +164,13 @@ public class CosmeticService {
     """);
 
         if (isFavoriteJoinNeeded) {
-            sql.append(" LEFT JOIN favorite_cosmetics fc ON c.id = fc.cosmetic_id");
+            sql.append("""
+            LEFT JOIN (
+                SELECT cosmetic_id, COUNT(*) AS favorite_count
+                FROM favorite_cosmetics
+                GROUP BY cosmetic_id
+            ) fav ON c.id = fav.cosmetic_id
+        """);
         }
 
         // Добавляем WHERE часть
@@ -173,25 +179,26 @@ public class CosmeticService {
         // GROUP BY
         sql.append(" GROUP BY c.id, b.id, cat.id");
 
-        // Сортировка
-        sql.append(" ORDER BY ");
-        if (filter.isByPopularity()) {
-            sql.append("c.rating ");
-        } else if (filter.isByDate()) {
-            sql.append("c.created_date ");
-        } else if (filter.isByFavourite()) {
-            sql.append("favorite_count ");
-        } else if ("name".equalsIgnoreCase(filter.getSortBy())) {
-            sql.append("c.name ");
-        } else {
-            sql.append("c.id ");
+        if (isFavoriteJoinNeeded) {
+            sql.append(", fav.favorite_count");
         }
 
-        String direction = "ASC";
-        if ("desc".equalsIgnoreCase(filter.getSortDirection())) {
-            direction = "DESC";
+        // ORDER BY
+        sql.append(" ORDER BY ");
+        if (filter.isByPopularity()) {
+            sql.append("COALESCE(c.rating, 0) DESC");
+        } else if (filter.isByDate()) {
+            sql.append("c.created_date DESC");
+        } else if (filter.isByFavourite()) {
+            sql.append("COALESCE(fav.favorite_count, 0) DESC, c.rating, c.id ASC");
+        } else if ("name".equalsIgnoreCase(filter.getSortBy())) {
+            sql.append("c.name ");
+            String dir = "desc".equalsIgnoreCase(filter.getSortDirection()) ? "DESC" : "ASC";
+            sql.append(dir);
+        } else {
+            sql.append("c.id ASC");
         }
-        sql.append(direction);
+
         // Пагинация
         sql.append(" LIMIT ? OFFSET ?");
         params.add(filter.getSize());
@@ -203,7 +210,7 @@ public class CosmeticService {
         List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang);
         CosmeticsResponse cosmeticsResponse = new CosmeticsResponse();
         cosmeticsResponse.setCosmetics(cosmeticResponses);
-        cosmeticsResponse.setTotal(getCountOfCosmetics(filter)); // теперь передаем filter
+        cosmeticsResponse.setTotal(getCountOfCosmetics(filter));
 
         return cosmeticsResponse;
     }
