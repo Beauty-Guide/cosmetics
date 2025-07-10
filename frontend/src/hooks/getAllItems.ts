@@ -19,6 +19,9 @@ type TProductFilters = {
   page?: number
   size?: number
   name?: string | null
+  byDate?: boolean
+  byFavourite?: boolean
+  byPopularity?: boolean
 }
 
 const defaultFilters: TProductFilters = {

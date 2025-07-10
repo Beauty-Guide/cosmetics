@@ -31,6 +31,7 @@ const HomePage = () => {
   const [searchValue, setSearchValue] = useState<string | null>(
     searchParams.get("search")
   )
+  const [sortBy, setSortBy] = useState<string[]>([])
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
 
   const { data: products, isLoading: isLoadingItems } = useGetAllItems({
@@ -42,6 +43,9 @@ const HomePage = () => {
     skinTypeIds: selectedSkinTypes,
     actionIds: selectedAction,
     catalogId: categoryId,
+    byDate: sortBy.includes("byDate"),
+    byFavourite: sortBy.includes("byFavourite"),
+    byPopularity: sortBy.includes("byPopularity"),
     name: searchValue,
   })
 
@@ -143,9 +147,11 @@ const HomePage = () => {
           selectedBrands={selectedBrands}
           selectedSkinTypes={selectedSkinTypes}
           selectedAction={selectedAction}
+          selectedSortBy={sortBy}
           setSelectedBrands={setSelectedBrands}
           setSelectedSkinTypes={setSelectedSkinTypes}
           setSelectedAction={setSelectedAction}
+          setSelectedSortBy={setSortBy}
         />
         <Products
           products={products?.cosmetics || []}

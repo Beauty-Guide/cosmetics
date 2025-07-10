@@ -10,23 +10,32 @@ type TProductFiltersProps = {
   selectedBrands: string[]
   selectedSkinTypes: string[]
   selectedAction: string[]
+  selectedSortBy: string[]
   setSelectedBrands: (brands: string[]) => void
   setSelectedSkinTypes: (skinTypes: string[]) => void
   setSelectedAction: (actions: string[]) => void
+  setSelectedSortBy: (actions: string[]) => void
 }
 
 const ProductFilters = ({
   selectedBrands,
   selectedSkinTypes,
   selectedAction,
+  selectedSortBy,
   setSelectedBrands,
   setSelectedSkinTypes,
   setSelectedAction,
+  setSelectedSortBy,
 }: TProductFiltersProps) => {
   const { t } = useTranslation()
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
   const { data: skinTypes, isLoading: isLoadingSkinTypes } = useGetAllSkinType()
   const { data: actions, isLoading: isLoadingActions } = useGetAllAction()
+  const sortByOptions = [
+    { name: "По дате", id: "byDate" },
+    { name: "По популярности", id: "byPopularity" },
+    { name: "По избранному", id: "byFavourite" },
+  ]
 
   if (isLoadingBrands || isLoadingSkinTypes || isLoadingActions) {
     return (
@@ -62,6 +71,15 @@ const ProductFilters = ({
           onChange={setSelectedAction}
           labels={false}
           className="max-md:max-w-[150px]"
+        />
+        <FilterCombobox
+          label="Топ 10"
+          options={sortByOptions}
+          values={selectedSortBy}
+          onChange={setSelectedSortBy}
+          labels={false}
+          className="max-md:max-w-[150px]"
+          singleSelect={true}
         />
       </div>
     </div>
