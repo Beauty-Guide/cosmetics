@@ -5,12 +5,9 @@ import Pagination from "@/components/Pagination"
 import { useGetAllItems } from "@/hooks/getAllItems"
 import { useGetCategories } from "@/hooks/getCategories"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { Input } from "@/components/ui/input"
+import { useEffect, useMemo, useState } from "react"
 import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
-import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTranslation } from "react-i18next"
 
@@ -29,8 +26,9 @@ const HomePage = () => {
     searchParams.getAll("cosmeticAction")
   )
   const [categoryId, setCategoryId] = useState<string | null>(null)
-  const [searchValue, setSearchValue] = useState<string | null>(null)
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const [searchValue, setSearchValue] = useState<string | null>(
+    searchParams.get("search")
+  )
 
   const { data: products, isLoading: isLoadingItems } = useGetAllItems({
     page: page - 1,
@@ -64,6 +62,7 @@ const HomePage = () => {
     setSelectedBrands(searchParams.getAll("brand"))
     setSelectedSkinTypes(searchParams.getAll("skinType"))
     setSelectedAction(searchParams.getAll("cosmeticAction"))
+    setSearchValue(searchParams.get("search"))
 
     setPage(1)
   }, [pathname, searchParams])
@@ -75,8 +74,18 @@ const HomePage = () => {
     selectedSkinTypes.forEach((s) => params.append("skinType", s))
     selectedAction.forEach((a) => params.append("cosmeticAction", a))
 
+    if (searchValue) {
+      params.append("search", searchValue)
+    }
+
     setSearchParams(params, { replace: false })
-  }, [selectedBrands, selectedSkinTypes, selectedAction, setSearchParams])
+  }, [
+    selectedBrands,
+    selectedSkinTypes,
+    selectedAction,
+    searchValue,
+    setSearchParams,
+  ])
 
   const categoryTree = useMemo(
     () => buildCategoryTree(isLoadingCategories ? [] : categories),
@@ -98,21 +107,10 @@ const HomePage = () => {
     }
   }
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    const searchValue = searchInputRef.current?.value
-    if (searchValue && searchValue.length > 2) {
-      setSearchValue(searchValue.trim())
-    } else if (!searchValue) {
-      setSearchValue(null)
-    }
-  }
-
   return (
-    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 max-md:pt-0 px-sides">
+    <main className="w-full flex max-md:flex-col items-start justify-center p-4 mt-2 max-md:pt-0 px-sides">
       <SideBar categoryTree={categoryTree} />
-      <div className="flex flex-col items-center justify-center gap-4 w-full mt-1">
+      <div className="flex flex-col items-center justify-center w-full mt-1">
         {
           <h2 className="flex gap-2 text-md font-semibold mr-auto">
             {isLoadingItems ? (
@@ -122,20 +120,6 @@ const HomePage = () => {
             )}
           </h2>
         }
-        <form
-          onSubmit={handleSearch}
-          className="flex w-full items-center justify-start gap-2"
-        >
-          <Input
-            type="search"
-            placeholder={t("search")}
-            className="max-w-[450px]"
-            ref={searchInputRef}
-          />
-          <Button type="submit" variant="outline" size="icon">
-            <Search />
-          </Button>
-        </form>
         <ProductFilters
           selectedBrands={selectedBrands}
           selectedSkinTypes={selectedSkinTypes}

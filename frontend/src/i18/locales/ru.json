@@ -9,9 +9,10 @@
   "product.found": "Найдено",
   "product.nothingFound": "Ничего не найдено",
   "product.description": "Описание",
+  "product.linkCopied": "Ссылка скопирована",
 
   "search": "Поиск",
-  "categories": "Категории",
+  "categories": "Каталог",
   "main": "Главная",
   "favorites": "Избранное",
   "menu": "Меню",

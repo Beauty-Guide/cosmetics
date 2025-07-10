@@ -4,6 +4,7 @@ import { toast } from "sonner"
 import apiClient from "@/services/adminApi"
 import type { AxiosError } from "axios"
 import { useNavigate } from "react-router"
+import { useTranslation } from "react-i18next"
 
 type ToggleFavParams = {
   productId: string
@@ -25,6 +26,7 @@ const toggleFavProduct = async ({ productId, action }: ToggleFavParams) => {
 export const useToggleFavProduct = () => {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: toggleFavProduct,
@@ -32,9 +34,9 @@ export const useToggleFavProduct = () => {
       queryClient.invalidateQueries({ queryKey: ["getAllFavProducts"] })
 
       if (variables.action === "add") {
-        toast.success("Добавлено в избранное")
+        toast.success(t("product.added_to_fav"))
       } else {
-        toast.success("Удалено из избранного")
+        toast.success(t("product.removed_from_fav"))
       }
     },
 

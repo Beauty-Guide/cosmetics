@@ -38,24 +38,30 @@ const ProductFilters = ({
 
   return (
     <div className="flex py-5 w-full">
-      <div className="flex gap-5 max-md:flex-wrap p-3 shadow-md rounded-md">
+      <div className="flex gap-5 overflow-x-auto p-3 shadow-md rounded-md">
         <FilterCombobox
-          label={t("filter.brand")}
+          label={t("filter.select_brand")}
           options={brands}
           values={selectedBrands}
           onChange={setSelectedBrands}
+          labels={false}
+          className="max-md:max-w-[150px]"
         />
         <FilterCombobox
-          label={t("filter.skinType")}
+          label={t("filter.select_skin_type")}
           options={skinTypes}
           values={selectedSkinTypes}
           onChange={setSelectedSkinTypes}
+          labels={false}
+          className="max-md:max-w-[150px]"
         />
         <FilterCombobox
-          label={t("filter.action")}
+          label={t("filter.select_action")}
           options={actions}
           values={selectedAction}
           onChange={setSelectedAction}
+          labels={false}
+          className="max-md:max-w-[150px]"
         />
       </div>
     </div>

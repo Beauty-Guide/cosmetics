@@ -28,6 +28,11 @@ interface MultiSelectComboboxProps {
   values: string[]
   onChange: (values: string[]) => void
   singleSelect?: boolean
+  labels?: boolean
+  badges?: boolean
+  showOnlyLabel?: boolean
+  variant?: "default" | "ghost" | "outline"
+  className?: string
 }
 
 export default function MultiSelectCombobox({
@@ -36,6 +41,11 @@ export default function MultiSelectCombobox({
   values,
   onChange,
   singleSelect = false,
+  labels = true,
+  badges = true,
+  variant = "outline",
+  showOnlyLabel = false,
+  className,
 }: MultiSelectComboboxProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState<boolean>(false)
@@ -64,31 +74,31 @@ export default function MultiSelectCombobox({
   }, [options, values])
 
   return (
-    <div className="w-full max-w-[200px]">
-      <label className="block mb-1 text-sm font-medium text-gray-700">
-        {label}
-      </label>
+    <div className={cn("w-full max-w-[200px]", className)}>
+      {labels && (
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant={variant}
             role="combobox"
             className="w-full justify-between overflow-hidden"
           >
-            {selectedLabels.length > 0
+            {selectedLabels.length > 0 && !showOnlyLabel
               ? singleSelect
                 ? selectedLabels[0]
                 : selectedLabels.join(", ")
-              : `${t("filter.select")} ${label.toLowerCase()}`}
-            <ChevronsUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
+              : `${label}`}
+            <ChevronsUpDown className="ml-2 max-md:ml-0 h-4 w-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command>
-            <CommandInput
-              placeholder={`${t("search")} ${label.toLowerCase()}...`}
-            />
+            <CommandInput placeholder={`${t("search")} ${label}...`} />
             <CommandEmpty>{t("filter.not_found")}</CommandEmpty>
             <CommandGroup className="max-h-60 overflow-y-auto">
               {options.map((opt) => (
@@ -112,8 +122,8 @@ export default function MultiSelectCombobox({
         </PopoverContent>
       </Popover>
 
-      {!singleSelect && values.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2 max-h-[100px] overflow-y-auto">
+      {badges && !singleSelect && values.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2 max-h-[100px] max-md:max-h-[50px] overflow-y-auto">
           {selectedLabels.map((label, index) => (
             <Badge key={index} variant="secondary">
               {label}
