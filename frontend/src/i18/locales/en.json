@@ -41,6 +41,10 @@
   "filter.select_action": "Select Action",
   "filter.not_found": "Nothing found",
   "filter.select": "Select",
+  "filter.sort_by": "Sort by",
+  "filter.sort_by_popularity": "Popularity",
+  "fliter.sort_by_date": "Date",
+  "filter.sort_by_favorites": "Favorites",
 
   "product.add_to_fav": "Add to favorites",
   "product.added_to_fav": "Added to favorites",

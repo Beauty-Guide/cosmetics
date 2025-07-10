@@ -32,9 +32,9 @@ const ProductFilters = ({
   const { data: skinTypes, isLoading: isLoadingSkinTypes } = useGetAllSkinType()
   const { data: actions, isLoading: isLoadingActions } = useGetAllAction()
   const sortByOptions = [
-    { name: "По дате", id: "byDate" },
-    { name: "По популярности", id: "byPopularity" },
-    { name: "По избранному", id: "byFavourite" },
+    { name: t("fliter.sort_by_date"), id: "byDate" },
+    { name: t("filter.sort_by_popularity"), id: "byPopularity" },
+    { name: t("filter.sort_by_favorites"), id: "byFavourite" },
   ]
 
   if (isLoadingBrands || isLoadingSkinTypes || isLoadingActions) {
@@ -73,7 +73,7 @@ const ProductFilters = ({
           className="max-md:max-w-[150px]"
         />
         <FilterCombobox
-          label="Топ 10"
+          label={t("filter.sort_by")}
           options={sortByOptions}
           values={selectedSortBy}
           onChange={setSelectedSortBy}
