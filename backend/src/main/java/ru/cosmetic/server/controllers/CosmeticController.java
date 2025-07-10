@@ -14,6 +14,7 @@ import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.requestDto.CosmeticUpdateCatalogRequest;
 import ru.cosmetic.server.service.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class CosmeticController {
             cosmetic.setApplicationMethod(request.getApplicationMethod());
             cosmetic.setApplicationMethodEN(request.getApplicationMethodEN());
             cosmetic.setApplicationMethodKR(request.getApplicationMethodKR());
-            cosmetic.setCreatedDate(new Date());
+            cosmetic.setCreatedDate(LocalDateTime.now());
             cosmetic.setRating(request.getRating());
 
             // Установка связей по ID

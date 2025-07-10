@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class Cosmetic {
     private String applicationMethodKR;
 
     @Column(name = "created_date")
-    private Date createdDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "rating")
     private Integer rating;
