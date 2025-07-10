@@ -29,6 +29,7 @@ public class UserController {
     private final CatalogService catalogService;
     private final MinioService minioService;
     private final UserService userService;
+    private final UserSearchHistoryService userSearchHistoryService;
 
     @PostMapping("/getCosmeticsByFilters")
     @Operation(summary = "Получение косметики по фильтрам")
@@ -58,7 +59,21 @@ public class UserController {
         } else {
             String username = principal.getName();
             User user = userService.findByUsername(username).orElse(null);
-            return ResponseEntity.ok(UserResponse.builder().name(user.getUsername()).role(user.getRoles().stream().collect(Collectors.toList()).get(0).getName()).build());
+            return ResponseEntity.ok(UserResponse.builder()
+                    .name(user.getUsername())
+                    .role(user.getRoles().stream().collect(Collectors.toList()).get(0).getName())
+                    .history(userSearchHistoryService.findHistoryByUserId(user.getId()))
+                    .build());
+        }
+    }
+
+    @GetMapping("/deleteHistory/{id}")
+    @Operation(summary = "Удаление истории поиска по id")
+    public ResponseEntity<?> deleteHistory(@PathVariable Long id) {
+        if (userSearchHistoryService.remove(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return new ResponseEntity<>("Ошибка удаления истории", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -107,7 +122,7 @@ public class UserController {
     @Operation(summary = "Получение изображения")
     public ResponseEntity<ByteArrayResource> getFile(@RequestParam("cosmeticId") Long cosmeticId, @RequestParam("fileName") String fileName) throws Exception {
         String format = "%s/%s";
-        byte[] fileData = minioService.getFile(String.format(format, cosmeticId ,fileName));
+        byte[] fileData = minioService.getFile(String.format(format, cosmeticId, fileName));
         String contentType = minioService.getContentType(fileName);
 
         return ResponseEntity.ok()

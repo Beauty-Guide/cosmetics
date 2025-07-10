@@ -164,7 +164,7 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
         applicationMethod,
         applicationMethodEN,
         applicationMethodKR,
-        rating,
+        rating: Array.isArray(rating) ? rating[0] : rating,
         actionIds,
         skinTypeIds,
         keyIngredientIds,

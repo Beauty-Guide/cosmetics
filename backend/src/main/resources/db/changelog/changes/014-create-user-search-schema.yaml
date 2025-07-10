@@ -1,0 +1,67 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-user-search-history-table
+      author: yourname
+
+      changes:
+        # --- Таблица истории поисковых запросов ---
+        - createTable:
+            tableName: user_search_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: search_query
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: searched_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              # --- Признак удаления ---
+              - column:
+                  name: deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+        # --- Внешний ключ: ссылка на пользователя ---
+        - addForeignKeyConstraint:
+            baseTableName: user_search_history
+            baseColumnNames: user_id
+            constraintName: fk_user_search_history_user
+            referencedTableName: users
+            referencedColumnNames: id
+
+        # --- Уникальный индекс: один пользователь не может дважды искать одну и ту же строку (если не удалена) ---
+        - createIndex:
+            tableName: user_search_history
+            indexName: uq_user_search_query_active
+            unique: true
+            whereClause: NOT deleted
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: search_query
+
+        # --- Индекс по времени поиска ---
+        - createIndex:
+            tableName: user_search_history
+            indexName: idx_user_search_time
+            columns:
+              - column:
+                  name: searched_at

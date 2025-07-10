@@ -7,6 +7,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.cosmetic.server.models.Cosmetic;
+import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.models.UserSearchHistory;
 import ru.cosmetic.server.repo.CosmeticImageRepo;
 import ru.cosmetic.server.repo.CosmeticRepo;
 import ru.cosmetic.server.repo.FavoriteCosmeticRepo;
@@ -23,6 +25,8 @@ public class CosmeticService {
     private final CosmeticRepo cosmeticRepo;
     private final CosmeticImageRepo cosmeticImageRepo;
     private final FavoriteCosmeticRepo favoriteCosmeticRepo;
+    private final UserSearchHistoryService userSearchHistoryService;
+    private final UserService userService;
     private final CatalogService catalogService;
     private final JdbcTemplate jdbcTemplate;
     private final String IMAGE_URL = "/api/getFile?cosmeticId=%s&fileName=%s";
@@ -272,6 +276,14 @@ public class CosmeticService {
         if (filter.getName() != null && !filter.getName().trim().isEmpty()) {
             whereSql.append(" AND c.name ILIKE ?");
             params.add("%" + filter.getName().trim() + "%"); // Поиск по части имени, без учета регистра
+            if (filter.getUserId() != null) {
+                User user = userService.findById(filter.getUserId());
+                UserSearchHistory userSearchHistory = new UserSearchHistory();
+                userSearchHistory.setSearchQuery(filter.getName());
+                userSearchHistory.setUser(user);
+                userSearchHistory.setDeleted(false);
+                userSearchHistoryService.save(userSearchHistory);
+            }
         }
 
         return whereSql.toString();

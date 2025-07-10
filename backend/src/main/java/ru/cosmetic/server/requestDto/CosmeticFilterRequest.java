@@ -8,6 +8,7 @@ import java.util.List;
 public class CosmeticFilterRequest {
     // Фильтры
     private Long catalogId;
+    private Long userId;
     private List<Long> actionIds;
     private List<Long> skinTypeIds;
     private List<Long> brandIds;

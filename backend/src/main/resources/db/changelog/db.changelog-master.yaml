@@ -26,6 +26,8 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/013-create-favorite-schema.yaml
   - include:
+      file: db/changelog/changes/014-create-user-search-schema.yaml
+  - include:
       file: db/changelog/changesTestData/test-data-brands.yaml
   - include:
       file: db/changelog/changesTestData/test-data-ingredients.yaml
