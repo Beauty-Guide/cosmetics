@@ -46,7 +46,6 @@ public class TestDataController {
                 Cosmetic cosmetic = new Cosmetic();
 
                 cosmetic.setName("Косметика #" + (i + 1));
-                cosmetic.setDescription("Описание косметики #" + (i + 1));
                 cosmetic.setCompatibility("Подходит для всех типов кожи");
                 cosmetic.setUsageRecommendations("Используйте утром и вечером");
                 cosmetic.setApplicationMethod("Нанесите на чистую кожу");

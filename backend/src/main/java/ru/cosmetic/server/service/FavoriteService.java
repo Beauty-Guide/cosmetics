@@ -59,7 +59,6 @@ public class FavoriteService {
         return CosmeticResponse.builder()
                 .id(cosmetic.getId())
                 .name(cosmetic.getName())
-                .description(cosmetic.getDescription())
                 .compatibility(cosmetic.getCompatibility())
                 .usageRecommendations(cosmetic.getUsageRecommendations())
                 .applicationMethod(cosmetic.getApplicationMethod())

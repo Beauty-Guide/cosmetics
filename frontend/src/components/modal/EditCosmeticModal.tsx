@@ -16,6 +16,7 @@ import { getAllSkinType } from "@/services/adminSkinTypeApi.ts"
 import { getAllIngredients } from "@/services/adminIngredientApi.ts"
 import { updateCosmetic } from "@/services/adminCosmeticApi"
 import { uploadCosmeticImages } from "@/services/fileApi.ts"
+import {Slider} from "@/components/ui/slider.tsx";
 
 interface EditCosmeticModalProps {
   isOpen: boolean
@@ -24,12 +25,17 @@ interface EditCosmeticModalProps {
   initialData: {
     id: number
     name: string
-    description: string
     brandId: number | null
     catalogId: number | null
     compatibility: string
+    compatibilityEN: string
+    compatibilityKR: string
     usageRecommendations: string
+    usageRecommendationsEN: string
+    usageRecommendationsKR: string
     applicationMethod: string
+    applicationMethodEN: string
+    applicationMethodKR: string
     actions: CosmeticActionView[]
     skinTypes: SkinTypeView[]
     ingredients: IngredientView[]
@@ -59,7 +65,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
 
   // Локальные данные формы
   const [name, setName] = useState(initialData?.name || "")
-  const [description, setDescription] = useState(initialData?.description || "")
   const [brandId, setBrandId] = useState<number | null>(
     initialData?.brandId || null
   )
@@ -69,11 +74,29 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
   const [compatibility, setCompatibility] = useState(
     initialData?.compatibility || ""
   )
+  const [compatibilityEN, setCompatibilityEN] = useState(
+      initialData?.compatibilityEN || ""
+  )
+  const [compatibilityKR, setCompatibilityKR] = useState(
+      initialData?.compatibilityKR || ""
+  )
   const [usageRecommendations, setUsageRecommendations] = useState(
     initialData?.usageRecommendations || ""
   )
+  const [usageRecommendationsEN, setUsageRecommendationsEN] = useState(
+      initialData?.usageRecommendationsEN || ""
+  )
+  const [usageRecommendationsKR, setUsageRecommendationsKR] = useState(
+      initialData?.usageRecommendationsKR || ""
+  )
   const [applicationMethod, setApplicationMethod] = useState(
     initialData?.applicationMethod || ""
+  )
+  const [applicationMethodEN, setApplicationMethodEN] = useState(
+    initialData?.applicationMethodEN || ""
+  )
+  const [applicationMethodKR, setApplicationMethodKR] = useState(
+    initialData?.applicationMethodKR || ""
   )
   const [actionIds, setActionIds] = useState<number[]>(
     initialData?.actions.map((a) => a.id) || []
@@ -84,7 +107,9 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
   const [ingredientIds, setIngredientIds] = useState<number[]>(
     initialData?.ingredients.map((i) => i.id) || []
   )
-
+  const [rating, setRating] = useState(
+      initialData?.rating || 50
+  )
   // Изображения
   const [mainImageFile, setMainImageFile] = useState<File | null>(null)
   const [imageFiles, setImageFiles] = useState<File[]>([])
@@ -137,12 +162,17 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
       setError(null)
       setImagesMarkedForDeletion([])
       setName(initialData.name)
-      setDescription(initialData.description)
       setBrandId(initialData.brandId)
       setCatalogId(initialData.catalogId)
       setCompatibility(initialData.compatibility)
+      setCompatibilityEN(initialData.compatibilityEN)
+      setCompatibilityKR(initialData.compatibilityKR)
       setUsageRecommendations(initialData.usageRecommendations)
+      setUsageRecommendationsEN(initialData.usageRecommendationsEN)
+      setUsageRecommendationsKR(initialData.usageRecommendationsKR)
       setApplicationMethod(initialData.applicationMethod)
+      setApplicationMethodEN(initialData.applicationMethodEN)
+      setApplicationMethodKR(initialData.applicationMethodKR)
       setActionIds(initialData.actions.map((a) => a.id))
       setSkinTypeIdList(initialData.skinTypes.map((s) => s.id))
       setIngredientIds(initialData.ingredients.map((i) => i.id))
@@ -175,12 +205,18 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
       const updatedCosmetic = {
         id: initialData.id,
         name,
-        description,
         brandId: brandId || undefined,
         catalogId: catalogId || undefined,
         compatibility,
+        compatibilityEN,
+        compatibilityKR,
         usageRecommendations,
+        usageRecommendationsEN,
+        usageRecommendationsKR,
         applicationMethod,
+        applicationMethodEN,
+        applicationMethodKR,
+        rating: Array.isArray(rating) ? rating[0] : rating,
         actionIds,
         skinTypeIds: skinTypeIdList,
         keyIngredientIds: ingredientIds,
@@ -341,51 +377,123 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
               />
             </div>
             {/* Совместимость, рекомендации, способ применения */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <label
-                  htmlFor="editCompatibility"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Совместимость
+                <label htmlFor="editCompatibility" className="block text-sm font-medium text-gray-700 mb-1">
+                  Совместимость (RU)
                 </label>
                 <Textarea
-                  id="editCompatibility"
-                  rows={3}
-                  value={compatibility}
-                  onChange={(e) => setCompatibility(e.target.value)}
+                    id="editCompatibility"
+                    rows={3}
+                    value={compatibility}
+                    onChange={(e) => setCompatibility(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="editCompatibilityEN" className="block text-sm font-medium text-gray-700 mb-1">
+                  Совместимость (EN)
+                </label>
+                <Textarea
+                    id="editCompatibilityEN"
+                    rows={3}
+                    value={compatibilityEN}
+                    onChange={(e) => setCompatibilityEN(e.target.value)}
                 />
               </div>
               <div>
-                <label
-                  htmlFor="editUsage"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Рекомендации по применению
+                <label htmlFor="editCompatibilityKR" className="block text-sm font-medium text-gray-700 mb-1">
+                  Совместимость (KR)
                 </label>
                 <Textarea
-                  id="editUsage"
-                  rows={3}
-                  value={usageRecommendations}
-                  onChange={(e) => setUsageRecommendations(e.target.value)}
+                    id="editCompatibilityKR"
+                    rows={3}
+                    value={compatibilityKR}
+                    onChange={(e) => setCompatibilityKR(e.target.value)}
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <label
-                  htmlFor="editApplication"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Способ применения
+                <label htmlFor="editUsage" className="block text-sm font-medium text-gray-700 mb-1">
+                  Рекомендации по применению (RU)
                 </label>
                 <Textarea
-                  id="editApplication"
-                  rows={3}
-                  value={applicationMethod}
-                  onChange={(e) => setApplicationMethod(e.target.value)}
+                    id="editUsage"
+                    rows={3}
+                    value={usageRecommendations}
+                    onChange={(e) => setUsageRecommendations(e.target.value)}
                 />
               </div>
+              <div>
+                <label htmlFor="editUsageEN" className="block text-sm font-medium text-gray-700 mb-1">
+                  Рекомендации по применению (EN)
+                </label>
+                <Textarea
+                    id="editUsageEN"
+                    rows={3}
+                    value={usageRecommendationsEN}
+                    onChange={(e) => setUsageRecommendationsEN(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="editUsageKR" className="block text-sm font-medium text-gray-700 mb-1">
+                  Рекомендации по применению (EN)
+                </label>
+                <Textarea
+                    id="editUsageKR"
+                    rows={3}
+                    value={usageRecommendationsKR}
+                    onChange={(e) => setUsageRecommendationsKR(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <label htmlFor="editApplication" className="block text-sm font-medium text-gray-700 mb-1">
+                  Способ применения (RU)
+                </label>
+                <Textarea
+                    id="editApplication"
+                    rows={3}
+                    value={applicationMethod}
+                    onChange={(e) => setApplicationMethod(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="editApplicationEN" className="block text-sm font-medium text-gray-700 mb-1">
+                  Способ применения (EN)
+                </label>
+                <Textarea
+                    id="editApplicationEN"
+                    rows={3}
+                    value={applicationMethodEN}
+                    onChange={(e) => setApplicationMethodEN(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="editApplicationKR" className="block text-sm font-medium text-gray-700 mb-1">
+                  Способ применения (KR)
+                </label>
+                <Textarea
+                    id="editApplicationKR"
+                    rows={3}
+                    value={applicationMethodKR}
+                    onChange={(e) => setApplicationMethodKR(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <Slider
+                  label="Райтинг"
+                  min={0}
+                  max={100}
+                  value={rating}
+                  onValueChange={setRating}
+              />
             </div>
             {/* Файлы для загрузки */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

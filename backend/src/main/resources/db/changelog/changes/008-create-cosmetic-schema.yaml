@@ -31,12 +31,38 @@ databaseChangeLog:
                   name: compatibility
                   type: TEXT
               - column:
+                  name: compatibility_en
+                  type: TEXT
+              - column:
+                  name: compatibility_kr
+                  type: TEXT
+              - column:
                   name: usage_recommendations
+                  type: TEXT
+              - column:
+                  name: usage_recommendations_en
+                  type: TEXT
+              - column:
+                  name: usage_recommendations_kr
                   type: TEXT
               - column:
                   name: application_method
                   type: TEXT
-
+              - column:
+                  name: application_method_en
+                  type: TEXT
+              - column:
+                  name: application_method_kr
+                  type: TEXT
+              - column:
+                  name: rating
+                  type: NUMBER
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
         # --- Связь косметики и действий ---
         - createTable:
             tableName: cosmetic_cosmetic_action
