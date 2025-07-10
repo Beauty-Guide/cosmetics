@@ -74,14 +74,21 @@ export type CosmeticResponse = {
     name: string;
     description: string;
     compatibility: string;
+    compatibilityEN: string;
+    compatibilityKR: string;
     usageRecommendations: string;
+    usageRecommendationsEN: string;
+    usageRecommendationsKR: string;
     applicationMethod: string;
+    applicationMethodEN: string;
+    applicationMethodKR: string;
     catalog: Catalog1;
     brand: BrandView;
     actions: CosmeticActionView[];
     skinTypes: SkinTypeView[];
     ingredients: IngredientView[];
     images: ImageResponse[];
+    rating: number;
 };
 
 export type CosmeticsResponse = {

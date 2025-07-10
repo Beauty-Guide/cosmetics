@@ -14,6 +14,7 @@ import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.requestDto.CosmeticUpdateCatalogRequest;
 import ru.cosmetic.server.service.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,10 +41,17 @@ public class CosmeticController {
         try {
             Cosmetic cosmetic = new Cosmetic();
             cosmetic.setName(request.getName());
-            cosmetic.setDescription(request.getDescription());
             cosmetic.setCompatibility(request.getCompatibility());
+            cosmetic.setCompatibilityEN(request.getCompatibilityEN());
+            cosmetic.setCompatibilityKR(request.getCompatibilityKR());
             cosmetic.setUsageRecommendations(request.getUsageRecommendations());
+            cosmetic.setUsageRecommendationsEN(request.getUsageRecommendationsEN());
+            cosmetic.setUsageRecommendationsKR(request.getUsageRecommendationsKR());
             cosmetic.setApplicationMethod(request.getApplicationMethod());
+            cosmetic.setApplicationMethodEN(request.getApplicationMethodEN());
+            cosmetic.setApplicationMethodKR(request.getApplicationMethodKR());
+            cosmetic.setCreatedDate(new Date());
+            cosmetic.setRating(request.getRating());
 
             // Установка связей по ID
             cosmetic.setBrand(brandService.findById(request.getBrandId()));
@@ -89,9 +97,16 @@ public class CosmeticController {
         try {
             Cosmetic findCosmetic = cosmeticService.findById(id);
             findCosmetic.setName(request.getName());
-            findCosmetic.setApplicationMethod(request.getApplicationMethod());
             findCosmetic.setCompatibility(request.getCompatibility());
+            findCosmetic.setCompatibilityEN(request.getCompatibilityEN());
+            findCosmetic.setCompatibilityKR(request.getCompatibilityKR());
             findCosmetic.setUsageRecommendations(request.getUsageRecommendations());
+            findCosmetic.setUsageRecommendationsEN(request.getUsageRecommendationsEN());
+            findCosmetic.setUsageRecommendationsKR(request.getUsageRecommendationsKR());
+            findCosmetic.setApplicationMethod(request.getApplicationMethod());
+            findCosmetic.setApplicationMethodEN(request.getApplicationMethodEN());
+            findCosmetic.setApplicationMethodKR(request.getApplicationMethodKR());
+            findCosmetic.setRating(request.getRating());
             findCosmetic.setBrand(brandService.findById(request.getBrandId()));
             findCosmetic.setIngredients(ingredientService.findById(request.getKeyIngredientIds()));
             findCosmetic.setCatalog(catalogService.findById(request.getCatalogId()));

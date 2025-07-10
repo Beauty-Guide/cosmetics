@@ -16,8 +16,14 @@ public class CosmeticResponse {
     private String name;
     private String description;
     private String compatibility;
+    private String compatibilityEN;
+    private String compatibilityKR;
     private String usageRecommendations;
+    private String usageRecommendationsEN;
+    private String usageRecommendationsKR;
     private String applicationMethod;
+    private String applicationMethodEN;
+    private String applicationMethodKR;
     private BrandResponse brand;
     private CatalogResponse catalog;
     private List<ActionResponse> actions;
@@ -25,4 +31,5 @@ public class CosmeticResponse {
     private List<IngredientResponse> ingredients;
     private List<ImageResponse> images;
     private Boolean has_children;
+    private Long rating;
 }

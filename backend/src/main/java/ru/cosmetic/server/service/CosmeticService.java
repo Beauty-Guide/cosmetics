@@ -52,10 +52,16 @@ public class CosmeticService {
         SELECT
             c.id AS cosmetic_id,
             c.name AS cosmetic_name,
-            c.description AS cosmetic_description,
             c.compatibility,
+            c.compatibility_en,
+            c.compatibility_kr,
             c.usage_recommendations,
+            c.usage_recommendations_en,
+            c.usage_recommendations_kr,
             c.application_method,
+            c.application_method_en,
+            c.application_method_kr,
+            c.rating,
             b.id AS brand_id,
             b.name AS brand_name,
             cat.id AS catalog_id,
@@ -98,46 +104,64 @@ public class CosmeticService {
 
     public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang) {
         List<Object> params = new ArrayList<>();
+        boolean isFavoriteJoinNeeded = filter.isByFavourite();
         StringBuilder sql = new StringBuilder("""
-            SELECT
-                        c.id AS cosmetic_id,
-                        c.name AS cosmetic_name,
-                        c.description AS cosmetic_description,
-                        c.compatibility,
-                        c.usage_recommendations,
-                        c.application_method,
-                        b.id AS brand_id,
-                        b.name AS brand_name,
-                        cat.id AS catalog_id,
-                        cat.name AS catalog_name,
-                        cat.name_EN AS catalog_name_en,
-                        cat.name_KR AS catalog_name_ko,
-                        (SELECT EXISTS (
-                            SELECT 1 FROM catalog sub_cat WHERE sub_cat.parent_id = cat.id
-                        )) AS has_children,
-                        ARRAY_AGG(DISTINCT a.id) AS action_ids,
-                        ARRAY_AGG(DISTINCT a.name) AS action_names,
-                        ARRAY_AGG(DISTINCT a.name_EN) AS action_names_en,
-                        ARRAY_AGG(DISTINCT a.name_KR) AS action_names_ko,
-                        ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
-                        ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
-                        ARRAY_AGG(DISTINCT st.name_EN) AS skin_type_names_en,
-                        ARRAY_AGG(DISTINCT st.name_KR) AS skin_type_names_ko,
-                        ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
-                        ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
-                        (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
-                        (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
-                        (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
-                    FROM cosmetic c
-                    JOIN brand b ON c.brand_id = b.id
-                    JOIN catalog cat ON c.catalog_id = cat.id
-                    LEFT JOIN cosmetic_cosmetic_action cca ON c.id = cca.cosmetic_id
-                    LEFT JOIN cosmetic_action a ON cca.action_id = a.id
-                    LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
-                    LEFT JOIN skin_type st ON cst.skin_type_id = st.id
-                    LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
-                    LEFT JOIN ingredient i ON ci.ingredient_id = i.id
-        """);
+        SELECT
+            c.id AS cosmetic_id,
+            c.name AS cosmetic_name,
+            c.compatibility,
+            c.compatibility_en,
+            c.compatibility_kr,
+            c.usage_recommendations,
+            c.usage_recommendations_en,
+            c.usage_recommendations_kr,
+            c.application_method,
+            c.application_method_en,
+            c.application_method_kr,
+            c.rating,
+            b.id AS brand_id,
+            b.name AS brand_name,
+            cat.id AS catalog_id,
+            cat.name AS catalog_name,
+            cat.name_EN AS catalog_name_en,
+            cat.name_KR AS catalog_name_ko,
+            (SELECT EXISTS (
+                SELECT 1 FROM catalog sub_cat WHERE sub_cat.parent_id = cat.id
+            )) AS has_children,
+            ARRAY_AGG(DISTINCT a.id) AS action_ids,
+            ARRAY_AGG(DISTINCT a.name) AS action_names,
+            ARRAY_AGG(DISTINCT a.name_EN) AS action_names_en,
+            ARRAY_AGG(DISTINCT a.name_KR) AS action_names_ko,
+            ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
+            ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
+            ARRAY_AGG(DISTINCT st.name_EN) AS skin_type_names_en,
+            ARRAY_AGG(DISTINCT st.name_KR) AS skin_type_names_ko,
+            ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
+            ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
+            (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
+            (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
+            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
+    """);
+
+        if (isFavoriteJoinNeeded) {
+            sql.append(", COUNT(fc.id) AS favorite_count");
+        }
+
+        sql.append("""
+        FROM cosmetic c
+        JOIN brand b ON c.brand_id = b.id
+        JOIN catalog cat ON c.catalog_id = cat.id
+        LEFT JOIN cosmetic_cosmetic_action cca ON c.id = cca.cosmetic_id
+        LEFT JOIN cosmetic_action a ON cca.action_id = a.id
+        LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
+        LEFT JOIN skin_type st ON cst.skin_type_id = st.id
+        LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
+        LEFT JOIN ingredient i ON ci.ingredient_id = i.id
+    """);
+
+        if (isFavoriteJoinNeeded) {
+            sql.append(" LEFT JOIN favorite_cosmetics fc ON c.id = fc.cosmetic_id");
+        }
 
         // Добавляем WHERE часть
         sql.append(buildWhereClause(filter, params));
@@ -146,12 +170,24 @@ public class CosmeticService {
         sql.append(" GROUP BY c.id, b.id, cat.id");
 
         // Сортировка
-        if ("name".equalsIgnoreCase(filter.getSortBy())) {
-            sql.append(" ORDER BY c.name ").append(filter.getSortDirection().toUpperCase());
+        sql.append(" ORDER BY ");
+        if (filter.isByPopularity()) {
+            sql.append("c.rating ");
+        } else if (filter.isByDate()) {
+            sql.append("c.created_date ");
+        } else if (filter.isByFavourite()) {
+            sql.append("favorite_count ");
+        } else if ("name".equalsIgnoreCase(filter.getSortBy())) {
+            sql.append("c.name ");
         } else {
-            sql.append(" ORDER BY c.id ").append(filter.getSortDirection().toUpperCase());
+            sql.append("c.id ");
         }
 
+        String direction = "ASC";
+        if ("desc".equalsIgnoreCase(filter.getSortDirection())) {
+            direction = "DESC";
+        }
+        sql.append(direction);
         // Пагинация
         sql.append(" LIMIT ? OFFSET ?");
         params.add(filter.getSize());
@@ -254,10 +290,32 @@ public class CosmeticService {
         CosmeticResponse response = new CosmeticResponse();
         response.setId(safeGetLong(row, "cosmetic_id"));
         response.setName(safeGetString(row, "cosmetic_name"));
-        response.setDescription(safeGetString(row, "cosmetic_description"));
-        response.setCompatibility(safeGetString(row, "compatibility"));
-        response.setUsageRecommendations(safeGetString(row, "usage_recommendations"));
-        response.setApplicationMethod(safeGetString(row, "application_method"));
+        response.setRating(safeGetLong(row, "rating"));
+        if ("en".equals(lang)) {
+            response.setCompatibilityEN(safeGetString(row, "compatibility_en"));
+            response.setUsageRecommendationsEN(safeGetString(row, "usage_recommendations_en"));
+            response.setApplicationMethodEN(safeGetString(row, "application_method_en"));
+        } else if ("ko".equals(lang)) {
+            response.setCompatibilityKR(safeGetString(row, "compatibility_kr"));
+            response.setUsageRecommendationsKR(safeGetString(row, "usage_recommendations_kr"));
+            response.setApplicationMethodKR(safeGetString(row, "application_method_kr"));
+        } else if ("ru".equals(lang)) {
+            response.setCompatibility(safeGetString(row, "compatibility"));
+            response.setUsageRecommendations(safeGetString(row, "usage_recommendations"));
+            response.setApplicationMethod(safeGetString(row, "application_method"));
+        } else {
+            response.setCompatibility(safeGetString(row, "compatibility"));
+            response.setCompatibilityEN(safeGetString(row, "compatibility_en"));
+            response.setCompatibilityKR(safeGetString(row, "compatibility_kr"));
+
+            response.setUsageRecommendations(safeGetString(row, "usage_recommendations"));
+            response.setUsageRecommendationsEN(safeGetString(row, "usage_recommendations_en"));
+            response.setUsageRecommendationsKR(safeGetString(row, "usage_recommendations_kr"));
+
+            response.setApplicationMethod(safeGetString(row, "application_method"));
+            response.setApplicationMethodEN(safeGetString(row, "application_method_en"));
+            response.setApplicationMethodKR(safeGetString(row, "application_method_kr"));
+        }
 
         // Brand
         BrandResponse brand = new BrandResponse();

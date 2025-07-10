@@ -18,6 +18,7 @@ import { getAllIngredients } from "@/services/adminIngredientApi.ts"
 import { useSearchParams } from "react-router"
 import { addCosmetic } from "@/services/adminCosmeticApi.ts"
 import { uploadCosmeticImages } from "@/services/fileApi.ts"
+import {Slider} from "@/components/ui/slider.tsx";
 
 interface AddCosmeticModalProps {
   onAddSuccess: () => void
@@ -44,8 +45,15 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
   const [brandIds, setBrandIds] = useState<number[]>([])
   const [catalogIds, setCatalogIds] = useState<number[]>([])
   const [compatibility, setCompatibility] = useState("")
+  const [compatibilityEN, setCompatibilityEN] = useState("")
+  const [compatibilityKR, setCompatibilityKR] = useState("")
   const [usageRecommendations, setUsageRecommendations] = useState("")
+  const [usageRecommendationsEN, setUsageRecommendationsEN] = useState("")
+  const [usageRecommendationsKR, setUsageRecommendationsKR] = useState("")
   const [applicationMethod, setApplicationMethod] = useState("")
+  const [applicationMethodEN, setApplicationMethodEN] = useState("")
+  const [applicationMethodKR, setApplicationMethodKR] = useState("")
+  const [rating, setRating] = useState<number>(50)
   const [actionIds, setActionIds] = useState<number[]>([])
   const [skinTypeIds, setSkinTypeIds] = useState<number[]>([])
   const [keyIngredientIds, setKeyIngredientIds] = useState<number[]>([])
@@ -110,8 +118,15 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
     setBrandIds([])
     setCatalogIds([])
     setCompatibility("")
+    setCompatibilityEN("")
+    setCompatibilityKR("")
     setUsageRecommendations("")
+    setUsageRecommendationsEN("")
+    setUsageRecommendationsKR("")
     setApplicationMethod("")
+    setApplicationMethodEN("")
+    setApplicationMethodKR("")
+    setRating(50)
     setActionIds([])
     setSkinTypeIds([])
     setKeyIngredientIds([])
@@ -141,8 +156,15 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
         brandId: Number(selectedBrands[0]),
         catalogId: Number(selectedCatalogs[0]),
         compatibility,
+        compatibilityEN,
+        compatibilityKR,
         usageRecommendations,
+        usageRecommendationsEN,
+        usageRecommendationsKR,
         applicationMethod,
+        applicationMethodEN,
+        applicationMethodKR,
+        rating,
         actionIds,
         skinTypeIds,
         keyIngredientIds,
@@ -210,30 +232,67 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
       setError("Выберите каталог")
       return false
     }
-    if (selectedSkinTypes.length === 0) {
-      setError("Выберите тип кожи")
-      return false
-    }
-    if (selectedActions.length === 0) {
-      setError("Выберите действие")
-      return false
-    }
-    if (selectedIngredients.length === 0) {
-      setError("Выберите ингредиенты")
-      return false
-    }
-    if (!compatibility.trim()) {
-      setError("Поле 'Совместимость' не должно быть пустым")
-      return false
-    }
-    if (!usageRecommendations.trim()) {
-      setError("Поле 'Рекомендации по применению' не должно быть пустым")
-      return false
-    }
-    if (!applicationMethod.trim()) {
-      setError("Поле 'Способ применения' не должно быть пустым")
-      return false
-    }
+      // ВАЛИДАЦИЯ ДЛЯ compatibility + многоязычности
+      const isCompatibilityFilled =
+          compatibility.trim() !== '' ||
+          compatibilityEN.trim() !== '' ||
+          compatibilityKR.trim() !== ''
+
+      if (isCompatibilityFilled) {
+          if (compatibility.trim() === '') {
+              setError("Поле 'Совместимость (RU)' не должно быть пустым")
+              return false
+          }
+          if (compatibilityEN.trim() === '') {
+              setError("Поле 'Совместимость (ENG)' не должно быть пустым")
+              return false
+          }
+          if (compatibilityKR.trim() === '') {
+              setError("Поле 'Совместимость (KOR)' не должно быть пустым")
+              return false
+          }
+      }
+      // ВАЛИДАЦИЯ ДЛЯ usageRecommendations + многоязычности
+      const isUsageRecommendationsFilled =
+          usageRecommendations.trim() !== '' ||
+          usageRecommendationsEN.trim() !== '' ||
+          usageRecommendationsKR.trim() !== ''
+
+      if (isUsageRecommendationsFilled) {
+          if (usageRecommendations.trim() === '') {
+              setError("Поле 'Рекомендации по применению (RU)' не должно быть пустым")
+              return false
+          }
+          if (usageRecommendationsEN.trim() === '') {
+              setError("Поле 'Рекомендации по применению (ENG)' не должно быть пустым")
+              return false
+          }
+          if (usageRecommendationsKR.trim() === '') {
+              setError("Поле 'Рекомендации по применению (KOR)' не должно быть пустым")
+              return false
+          }
+      }
+
+      // ВАЛИДАЦИЯ ДЛЯ applicationMethod + многоязычности
+      const isApplicationMethodFilled =
+          applicationMethod.trim() !== '' ||
+          applicationMethodEN.trim() !== '' ||
+          applicationMethodKR.trim() !== ''
+
+      if (isApplicationMethodFilled) {
+          if (applicationMethod.trim() === '') {
+              setError("Поле 'Способ применения (RU)' не должно быть пустым")
+              return false
+          }
+          if (applicationMethodEN.trim() === '') {
+              setError("Поле 'Способ применения (ENG)' не должно быть пустым")
+              return false
+          }
+          if (applicationMethodKR.trim() === '') {
+              setError("Поле 'Способ применения (KOR)' не должно быть пустым")
+              return false
+          }
+      }
 
     // Все проверки пройдены
     return true
@@ -327,58 +386,123 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
                     onChange={setSelectedIngredients}
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="formCompatibility"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Совместимость
-                    </label>
-                    <Textarea
-                      id="formCompatibility"
-                      rows={3}
-                      placeholder="Пример: Подходит для всех типов кожи"
-                      value={compatibility}
-                      onChange={(e) => setCompatibility(e.target.value)}
-                      className=""
+                  {/* Поля на разных языках */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Совместимость (RU)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={compatibility}
+                              onChange={(e) => setCompatibility(e.target.value)}
+                          />
+                      </div>
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Совместимость (EN)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={compatibilityEN}
+                              onChange={(e) => setCompatibilityEN(e.target.value)}
+                          />
+                      </div>
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Совместимость (KR)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={compatibilityKR}
+                              onChange={(e) => setCompatibilityKR(e.target.value)}
+                          />
+                      </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Рекомендации по применению (RU)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={usageRecommendations}
+                              onChange={(e) => setUsageRecommendations(e.target.value)}
+                          />
+                      </div>
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Рекомендации по применению (EN)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={usageRecommendationsEN}
+                              onChange={(e) =>
+                                  setUsageRecommendationsEN(e.target.value)
+                              }
+                          />
+                      </div>
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Рекомендации по применению (KR)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={usageRecommendationsKR}
+                              onChange={(e) =>
+                                  setUsageRecommendationsKR(e.target.value)
+                              }
+                          />
+                      </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Способ применения (RU)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={applicationMethod}
+                              onChange={(e) => setApplicationMethod(e.target.value)}
+                          />
+                      </div>
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Способ применения (EN)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={applicationMethodEN}
+                              onChange={(e) =>
+                                  setApplicationMethodEN(e.target.value)
+                              }
+                          />
+                      </div>
+                      <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Способ применения (KR)
+                          </label>
+                          <Textarea
+                              rows={3}
+                              value={applicationMethodKR}
+                              onChange={(e) =>
+                                  setApplicationMethodKR(e.target.value)
+                              }
+                          />
+                      </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <Slider
+                        label="Райтинг"
+                        min={0}
+                        max={100}
+                        value={rating}
+                        onValueChange={setRating}
                     />
                   </div>
-                  <div>
-                    <label
-                      htmlFor="formUsage"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Рекомендации по применению
-                    </label>
-                    <Textarea
-                      id="formUsage"
-                      rows={3}
-                      placeholder="Как использовать средство"
-                      value={usageRecommendations}
-                      onChange={(e) => setUsageRecommendations(e.target.value)}
-                      className=""
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="formApplication"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Способ применения
-                    </label>
-                    <Textarea
-                      id="formApplication"
-                      rows={3}
-                      placeholder="Пример: Нанести утром и вечером"
-                      value={applicationMethod}
-                      onChange={(e) => setApplicationMethod(e.target.value)}
-                      className=""
-                    />
-                  </div>
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label

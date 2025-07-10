@@ -202,6 +202,7 @@ const CosmeticForm: React.FC = () => {
                                 <th className="border border-gray-300 px-4 py-2 text-left">Рекомендации</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left">Способ применения</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left">Тип кожи</th>
+                                <th className="border border-gray-300 px-4 py-2 text-left">Рейтинг</th>
                                 <th className="border border-gray-300 px-4 py-2 text-right">Действия</th>
                             </tr>
                             </thead>
@@ -217,6 +218,8 @@ const CosmeticForm: React.FC = () => {
                                     <td className="border border-gray-300 px-4 py-2">
                                         {cosmetic.skinTypes.map(s => s.name).join(', ') || '—'}
                                     </td>
+                                    <td className="border border-gray-300 px-4 py-2">{cosmetic.rating || '—'}</td>
+
                                     <td className="border border-gray-300 px-4 py-2 text-right">
                                         <div className="flex justify-end gap-2">
                                             <button
@@ -325,16 +328,22 @@ const CosmeticForm: React.FC = () => {
                     initialData={{
                         id: editingCosmetic.id,
                         name: editingCosmetic.name,
-                        description: editingCosmetic.description || "",
                         brandId: editingCosmetic.brand?.id || -1,
                         catalogId: editingCosmetic.catalog?.id || -1,
                         compatibility: editingCosmetic.compatibility || "",
+                        compatibilityEN: editingCosmetic.compatibilityEN || "",
+                        compatibilityKR: editingCosmetic.compatibilityKR || "",
                         usageRecommendations: editingCosmetic.usageRecommendations || "",
+                        usageRecommendationsEN: editingCosmetic.usageRecommendationsEN || "",
+                        usageRecommendationsKR: editingCosmetic.usageRecommendationsKR || "",
                         applicationMethod: editingCosmetic.applicationMethod || "",
+                        applicationMethodEN: editingCosmetic.applicationMethodEN || "",
+                        applicationMethodKR: editingCosmetic.applicationMethodKR || "",
                         actions: editingCosmetic.actions,
                         skinTypes: editingCosmetic.skinTypes,
                         ingredients: editingCosmetic.ingredients,
                         images: editingCosmetic.images,
+                        rating: editingCosmetic.rating,
                     }}
                 />
             )}

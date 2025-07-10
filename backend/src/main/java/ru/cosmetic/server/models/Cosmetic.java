@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,20 +20,35 @@ public class Cosmetic {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
-    private String description;
-
     // Совместимость
     @Column(name = "compatibility")
     private String compatibility;
+    @Column(name = "compatibility_en")
+    private String compatibilityEN;
+    @Column(name = "compatibility_kr")
+    private String compatibilityKR;
 
     // Рекомендации по применению
     @Column(name = "usage_recommendations")
     private String usageRecommendations;
+    @Column(name = "usage_recommendations_en")
+    private String usageRecommendationsEN;
+    @Column(name = "usage_recommendations_kr")
+    private String usageRecommendationsKR;
 
     // Способ применения
     @Column(name = "application_method")
     private String applicationMethod;
+    @Column(name = "application_method_en")
+    private String applicationMethodEN;
+    @Column(name = "application_method_kr")
+    private String applicationMethodKR;
+
+    @Column(name = "created_date")
+    private Date createdDate;
+
+    @Column(name = "rating")
+    private Integer rating;
 
     @ManyToOne
     @JoinColumn(name = "catalog_id")

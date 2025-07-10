@@ -20,4 +20,7 @@ public class CosmeticFilterRequest {
     // Сортировка
     private String sortBy;
     private String sortDirection;
+    private boolean byPopularity;
+    private boolean byDate;
+    private boolean byFavourite;
 }
