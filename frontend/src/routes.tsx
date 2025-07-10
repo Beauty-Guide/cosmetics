@@ -15,13 +15,14 @@ import Sandbox from "./pages/Sandbox"
 import ProductPage from "./pages/ProductPage"
 import Layout from "./components/Layout"
 import Favorites from "./pages/Favorites"
+import LoginSuccess from "@/pages/LoginSuccess.tsx";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/app" element={<Sandbox />} />
       <Route path="/login" element={<LoginForm />} />
-
+      <Route path="/login-success" element={<LoginSuccess />} />
       <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
 

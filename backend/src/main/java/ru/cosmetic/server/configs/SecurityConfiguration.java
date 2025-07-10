@@ -1,6 +1,7 @@
 package ru.cosmetic.server.configs;
 
 import ru.cosmetic.server.auth.CustomOAuth2UserService;
+import ru.cosmetic.server.auth.OAuth2AuthenticationSuccessHandler;
 import ru.cosmetic.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +33,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserService userService;
 
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,10 +57,6 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2SuccessHandler)
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .authorizationEndpoint(endpoint -> endpoint
-                                .baseUri("/oauth2/authorization") // ✅ Работает в Spring 6.x
-                        )
                 );
 
         return http.build();

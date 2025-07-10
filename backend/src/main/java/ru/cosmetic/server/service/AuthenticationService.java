@@ -1,20 +1,19 @@
 package ru.cosmetic.server.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.cosmetic.server.dtos.JwtRequest;
-import ru.cosmetic.server.dtos.JwtResponse;
-import ru.cosmetic.server.exceptions.AppError;
-import ru.cosmetic.server.models.User;
-import ru.cosmetic.server.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import ru.cosmetic.server.dtos.JwtRequest;
+import ru.cosmetic.server.dtos.JwtResponse;
+import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.utils.JwtTokenUtils;
 
 import java.util.Map;
 
@@ -39,7 +38,7 @@ public class AuthenticationService {
             return new ResponseEntity<>("Неправильный логин или пароль", HttpStatus.UNAUTHORIZED);
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
-        String token = jwtTokenUtils.generateToken(userDetails);
+        String token = jwtTokenUtils.generateToken(userDetails.getUsername());
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
