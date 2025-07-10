@@ -4,21 +4,20 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import ru.cosmetic.server.models.Role;
+import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.repo.UserRepository;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenUtils {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
@@ -26,26 +25,30 @@ public class JwtTokenUtils {
     @Value("${token.lifetime}")
     private Duration jwtLifetime;
 
-    /**
-     * Генерация токена
-     *
-     * @param userDetails данные пользователя
-     * @return токен
-     */
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        List<String> rolesList = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        claims.put("roles", rolesList);
+    private final UserRepository userRepository;
 
-        Date issuedDate = new Date();
-        Date expiredDate = new Date(issuedDate.getTime() + jwtLifetime.toMillis());
+    public String generateToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        Optional<User> userOpt = userRepository.findByUsernameWithRoles(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            List<String> rolesList = new ArrayList<>();
+            if (user.getRoles() != null) {
+                for (Role role : user.getRoles()) {
+                    rolesList.add(role.getName());
+                }
+            }
+            claims.put("roles", rolesList);
+        } else {
+            claims.put("roles", Collections.emptyList());
+        }
+        Date issuedAt = new Date();
+        Date expiration = new Date(issuedAt.getTime() + jwtLifetime.toMillis());
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(issuedDate)
-                .setExpiration(expiredDate)
+                .setSubject(email)
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiration)
                 .signWith(getSigningKey())
                 .compact();
     }

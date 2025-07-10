@@ -45,7 +45,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         if (!userRepository.findByEmail(email).isPresent()) {
             User user = new User();
-            user.setUsername(email);
+            user.setUsername(name);
             user.setEmail(email);
             user.setPassword(null);
             user.setProvider(registrationId);

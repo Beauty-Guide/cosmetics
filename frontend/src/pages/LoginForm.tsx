@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import type { JwtRequest, JwtResponse } from "../types/auth";
-import { Input } from "@/components/ui/input";
 
-const LoginForm: React.FC = () => {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [isLogin, setIsLogin] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+const LoginForm = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 🔥 Вход через Google
   const handleGoogleLogin = () => {
     window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
@@ -20,119 +20,76 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
     setError("");
 
-    const request = {
-      username,
-      password,
-    };
+    if (!isLogin && password !== confirmPassword) {
+      setError("Пароли не совпадают");
+      return;
+    }
+
+    const request = isLogin
+        ? { username, password }
+        : { username, email, password };
+
+    const endpoint = isLogin ? "http://localhost:8080/auth" : "http://localhost:8080/register";
 
     try {
-      const endpoint = isLogin
-          ? "http://localhost:8080/auth"
-          : "http://localhost:8080/register";
-
-      const response = await fetch(endpoint, {
+      const res = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(request),
       });
 
-      if (response.status === 409) {
-        const data = await response.json();
-        throw new Error(data.error); // "Username is already taken"
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err || "Ошибка авторизации");
       }
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-            errorText || (isLogin ? "Ошибка авторизации" : "Ошибка регистрации")
-        );
-      }
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
 
-      const data: JwtResponse = await response.json();
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
+      window.location.reload();
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        const from = location.state?.from?.pathname || "/";
-        navigate(from, { replace: true });
-        window.location.reload();
-      }
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Произошла ошибка");
     }
   };
 
   return (
-      <div
-          className="min-h-screen flex items-center justify-center bg-gray-100"
-          style={{
-            backgroundImage:
-                "url('../../../frontend/public/images/D0YXNI1YaT.png')",
-          }}
-      >
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold text-center mb-6">
-            {isLogin ? "Войти" : "Зарегистрироваться"}
-          </h2>
+          <h2 className="text-2xl font-semibold text-center mb-6">{isLogin ? "Войти" : "Зарегистрироваться"}</h2>
 
-          {/* Сообщение об ошибке */}
-          {error && (
-              <p className="text-red-500 text-sm text-center mb-4">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
-          {/* Кнопка Google OAuth2 */}
-          <div className="mb-6">
-            <button
-                type="button"
-                onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md transition duration-200"
-            >
-              <img
-                  src="https://www.google.com/favicon.ico "
-                  alt="Google Logo"
-                  width={20}
-                  height={20}
-              />
-              Войти через Google
-            </button>
-          </div>
+          <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md transition duration-200"
+          >
+            <img src="https://www.google.com/favicon.ico " alt="Google Logo" width={20} height={20} />
+            Войти через Google
+          </button>
 
-          {/* Переключатель между формами */}
-          <div className="flex justify-center space-x-4 mb-6">
+          <div className="flex justify-center space-x-4 my-6">
             <button
                 onClick={() => setIsLogin(true)}
-                className={`px-4 py-2 font-medium ${
-                    isLogin
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-500 hover:text-blue-600"
-                }`}
+                className={`px-4 py-2 font-medium ${isLogin ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-blue-600"}`}
             >
               Вход
             </button>
             <button
                 onClick={() => setIsLogin(false)}
-                className={`px-4 py-2 font-medium ${
-                    !isLogin
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-500 hover:text-blue-600"
-                }`}
+                className={`px-4 py-2 font-medium ${!isLogin ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-blue-600"}`}
             >
               Регистрация
             </button>
           </div>
 
-          {/* Форма логина/регистрации */}
           <form onSubmit={handleAuth} className="space-y-4">
-            {/* Логин */}
             <div>
-              <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Имя пользователя
-              </label>
-              <Input
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Имя пользователя</label>
+              <input
                   id="username"
                   type="text"
                   value={username}
@@ -143,15 +100,24 @@ const LoginForm: React.FC = () => {
               />
             </div>
 
-            {/* Пароль */}
+            {!isLogin && (
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Введите email"
+                  />
+                </div>
+            )}
+
             <div>
-              <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Пароль
-              </label>
-              <Input
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+              <input
                   id="password"
                   type="password"
                   value={password}
@@ -162,7 +128,21 @@ const LoginForm: React.FC = () => {
               />
             </div>
 
-            {/* Кнопка отправки формы */}
+            {!isLogin && (
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">Подтвердите пароль</label>
+                  <input
+                      id="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Подтвердите пароль"
+                  />
+                </div>
+            )}
+
             <button
                 type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200"

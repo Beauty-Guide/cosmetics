@@ -7,7 +7,11 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.responseDto.UserResponse;
@@ -55,16 +59,38 @@ public class UserController {
     @Operation(summary = "Получение косметики по id")
     public ResponseEntity<?> getCosmeticsById(Principal principal) {
         if (principal == null) {
-            return ResponseEntity.ok(UserResponse.builder().name("guest").role("guest").build());
-        } else {
-            String username = principal.getName();
-            User user = userService.findByUsername(username).orElse(null);
             return ResponseEntity.ok(UserResponse.builder()
-                    .name(user.getUsername())
-                    .role(user.getRoles().stream().collect(Collectors.toList()).get(0).getName())
-                    .history(userSearchHistoryService.findHistoryByUserId(user.getId()))
+                    .name("guest")
+                    .role("guest")
                     .build());
         }
+
+        String username;
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
+            OAuth2User user = oauthToken.getPrincipal();
+            username = user.getAttribute("email"); // например, email как username
+        } else if (principal instanceof UsernamePasswordAuthenticationToken token) {
+            username = token.getName();
+        }  else {
+            return ResponseEntity.ok(UserResponse.builder()
+                    .name("guest")
+                    .role("guest")
+                    .build());
+        }
+
+        User user = userService.findByUsername(username).orElse(null);
+        if (user == null) {
+            return ResponseEntity.ok(UserResponse.builder()
+                    .name("guest")
+                    .role("guest")
+                    .build());
+        }
+
+        return ResponseEntity.ok(UserResponse.builder()
+                .name(user. getUsername())
+                .role(user.getRoles().stream().findFirst().map(Role::getName).orElse("user"))
+                .history(userSearchHistoryService.findHistoryByUserId(user.getId()))
+                .build());
     }
 
     @GetMapping("/deleteHistory/{id}")
