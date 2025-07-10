@@ -78,7 +78,7 @@ public class UserController {
                     .build());
         }
 
-        User user = userService.findByUsername(username).orElse(null);
+        User user = userService.findByEmail(username);
         if (user == null) {
             return ResponseEntity.ok(UserResponse.builder()
                     .name("guest")
