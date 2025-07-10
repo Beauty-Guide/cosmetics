@@ -10,6 +10,8 @@ import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTranslation } from "react-i18next"
+import { Button } from "@/components/ui/button"
+import { List } from "lucide-react"
 
 const HomePage = () => {
   const { pathname } = useLocation()
@@ -29,6 +31,7 @@ const HomePage = () => {
   const [searchValue, setSearchValue] = useState<string | null>(
     searchParams.get("search")
   )
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
 
   const { data: products, isLoading: isLoadingItems } = useGetAllItems({
     page: page - 1,
@@ -107,11 +110,26 @@ const HomePage = () => {
     }
   }
 
+  const handleOpenDrawer = () => {
+    setIsDrawerOpen(true)
+  }
+
   return (
     <main className="w-full flex max-md:flex-col items-start justify-center p-4 mt-2 max-md:pt-0 px-sides">
-      <SideBar categoryTree={categoryTree} />
+      <SideBar
+        categoryTree={categoryTree}
+        isOpen={isDrawerOpen}
+        setIsOpen={setIsDrawerOpen}
+      />
       <div className="flex flex-col items-center justify-center w-full mt-1">
-        {
+        <div className="flex items-center justify-between w-full gap-3">
+          <Button
+            variant="outline"
+            className="my-2 hidden max-md:block"
+            onClick={handleOpenDrawer}
+          >
+            <List />
+          </Button>
           <h2 className="flex gap-2 text-md font-semibold mr-auto">
             {isLoadingItems ? (
               <Skeleton className="w-[100px] h-[24px]" />
@@ -119,7 +137,8 @@ const HomePage = () => {
               `${t("product.found")}: ${products?.total || 0}`
             )}
           </h2>
-        }
+        </div>
+
         <ProductFilters
           selectedBrands={selectedBrands}
           selectedSkinTypes={selectedSkinTypes}

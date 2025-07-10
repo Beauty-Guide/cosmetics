@@ -7,17 +7,17 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Button } from "../ui/button"
 import { useTranslation } from "react-i18next"
-import { List } from "lucide-react"
 
 type SideBarProps = {
   categoryTree: TCategory[]
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
 }
 
-const SideBar = ({ categoryTree }: SideBarProps) => {
+const SideBar = ({ categoryTree, isOpen, setIsOpen }: SideBarProps) => {
   const { t } = useTranslation()
   return (
     <>
@@ -30,12 +30,7 @@ const SideBar = ({ categoryTree }: SideBarProps) => {
         </div>
       </div>
       <div className="md:hidden">
-        <Drawer>
-          <DrawerTrigger asChild>
-            <Button variant="outline" className="my-2">
-              <List />
-            </Button>
-          </DrawerTrigger>
+        <Drawer open={isOpen} onOpenChange={setIsOpen}>
           <DrawerContent aria-describedby={undefined}>
             <div className="mx-auto w-full max-w-sm">
               <DrawerHeader>

@@ -23,7 +23,6 @@ import { Search, User2Icon } from "lucide-react"
 import { Input } from "./ui/input"
 import { memo, useEffect, useRef, useState } from "react"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
-import { Skeleton } from "./ui/skeleton"
 import { cn } from "@/lib/utils"
 
 const AppNavbar: React.FC = () => {
@@ -31,7 +30,7 @@ const AppNavbar: React.FC = () => {
   const { t, i18n } = useTranslation()
   const user = useAuth()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchValue = searchParams.get("search")
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
@@ -76,6 +75,7 @@ const AppNavbar: React.FC = () => {
       params.append("search", searchValue)
     } else if (!searchValue) {
       params.delete("search")
+      setSearchParams(params, { replace: false })
     }
 
     if (selectedBrands.length > 0) {
@@ -86,7 +86,10 @@ const AppNavbar: React.FC = () => {
       params.delete("brand")
     }
 
-    navigate(`/?${params.toString()}`)
+    if (searchValue && searchValue.length > 2) {
+      navigate(`/?${params.toString()}`)
+      if (searchInputRef.current) searchInputRef.current.value = ""
+    }
   }
 
   return (
@@ -199,27 +202,27 @@ const AppNavbar: React.FC = () => {
         onSubmit={handleSearch}
         className="flex w-full items-center justify-start mb-4"
       >
-        {!isLoadingBrands ? (
+        {
           <div className="max-w-[86px] rounded-r-none rounded-l-md border-1 border-r-0 overflow-hidden">
-            <FilterCombobox
-              label={t("filter.brand")}
-              options={brands}
-              values={selectedBrands}
-              onChange={setSelectedBrands}
-              labels={false}
-              badges={false}
-              showOnlyLabel={true}
-              variant="ghost"
-              className={cn(
-                "max-w-[86px]",
-                selectedBrands.length > 0 && "bg-blue-50",
-                showFilter && "hidden"
-              )}
-            />
+            {!isLoadingBrands && (
+              <FilterCombobox
+                label={t("filter.brand")}
+                options={brands}
+                values={selectedBrands}
+                onChange={setSelectedBrands}
+                labels={false}
+                badges={false}
+                showOnlyLabel={true}
+                variant="ghost"
+                className={cn(
+                  "max-w-[86px]",
+                  selectedBrands.length > 0 && "bg-blue-50",
+                  showFilter && "hidden"
+                )}
+              />
+            )}
           </div>
-        ) : (
-          <Skeleton className="h-[35px] w-[45px] rounded-md" />
-        )}
+        }
         <Input
           type="search"
           placeholder={t("search")}
