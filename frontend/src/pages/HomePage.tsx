@@ -108,7 +108,7 @@ const HomePage = () => {
   }
 
   return (
-    <main className="min-h-screen w-full flex max-md:flex-col items-start justify-center p-4 mt-2 max-md:pt-0 px-sides">
+    <main className="w-full flex max-md:flex-col items-start justify-center p-4 mt-2 max-md:pt-0 px-sides">
       <SideBar categoryTree={categoryTree} />
       <div className="flex flex-col items-center justify-center w-full mt-1">
         {

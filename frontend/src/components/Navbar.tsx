@@ -58,6 +58,10 @@ const AppNavbar: React.FC = () => {
     window.location.reload()
   }
 
+  const handleLogin = () => {
+    navigate("/login")
+  }
+
   const handleNagivate = (path: string) => {
     navigate(path)
   }
@@ -184,8 +188,8 @@ const AppNavbar: React.FC = () => {
                 {t("logout")}
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem>
-                <Link to="/login">{t("login")}</Link>
+              <DropdownMenuItem onClick={handleLogin}>
+                {t("login")}
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

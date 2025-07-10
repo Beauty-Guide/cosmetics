@@ -1,9 +1,15 @@
+import FavoriteButton from "@/components/HomeComponents/FavoriteButton"
 import { ImageCarousel } from "@/components/ImageCarousel"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useAuth } from "@/config/auth-context"
+import { ROLES } from "@/config/consts"
 import { useItemById } from "@/hooks/getItemById"
+import { Share2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useParams } from "react-router"
+import { toast } from "sonner"
 
 const ProductPage = () => {
   const { t } = useTranslation()
@@ -11,6 +17,15 @@ const ProductPage = () => {
   const { data: product, isLoading: isLoadingProduct } = useItemById(
     productId || ""
   )
+  const user = useAuth()
+  const isAdmin = user?.role.includes(ROLES.ADMIN)
+  const isUser = user?.role.includes(ROLES.USER)
+  const isAuthenticated = isAdmin || isUser
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href)
+    toast.success(t("product.linkCopied"))
+  }
 
   if (isLoadingProduct) {
     return (
@@ -39,7 +54,7 @@ const ProductPage = () => {
         <p className="text-muted-foreground text-sm">{product.brand.name}</p>
       </span>
       <div className="flex gap-15 max-lg:flex-col max-md:gap-2">
-        <div>
+        <div className="relative">
           <ImageCarousel
             images={
               product.images.length === 0
@@ -47,6 +62,19 @@ const ProductPage = () => {
                 : product.images
             }
           />
+          {isAuthenticated && (
+            <span className="flex flex-col items-center justify-center absolute top-2 right-5 max-md:-top-1">
+              <FavoriteButton productId={String(product.id)} />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-accent"
+                onClick={handleShare}
+              >
+                <Share2Icon className="w-5 h-5" />
+              </Button>
+            </span>
+          )}
         </div>
         <div className="flex gap-6 max-md:gap-1">
           {product.actions.length && (
