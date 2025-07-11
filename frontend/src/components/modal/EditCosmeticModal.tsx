@@ -4,7 +4,7 @@ import type {
   BrandView,
   Catalog,
   CosmeticActionView,
-  IngredientView,
+  IngredientView, MarketplaceLink,
   SkinTypeView,
 } from "@/model/types"
 import { Textarea } from "@/components/ui/textarea"
@@ -17,6 +17,7 @@ import { getAllIngredients } from "@/services/adminIngredientApi.ts"
 import { updateCosmetic } from "@/services/adminCosmeticApi"
 import { uploadCosmeticImages } from "@/services/fileApi.ts"
 import {Slider} from "@/components/ui/slider.tsx";
+import MarketplaceLinksTable from "@/components/modal/MarketplaceLinksTable.tsx";
 
 interface EditCosmeticModalProps {
   isOpen: boolean
@@ -110,6 +111,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
   const [rating, setRating] = useState(
       initialData?.rating || 50
   )
+  const [marketplaceLinks, setMarketplaceLinks] = useState<MarketplaceLink[]>([]);
   // Изображения
   const [mainImageFile, setMainImageFile] = useState<File | null>(null)
   const [imageFiles, setImageFiles] = useState<File[]>([])
@@ -176,7 +178,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
       setActionIds(initialData.actions.map((a) => a.id))
       setSkinTypeIdList(initialData.skinTypes.map((s) => s.id))
       setIngredientIds(initialData.ingredients.map((i) => i.id))
-
+      setMarketplaceLinks(initialData.marketplaceLinks || []);
       // Извлекаем главное изображение
       const mainImage = initialData.images?.find((img) => img.isMain)
       if (mainImage) {
@@ -221,6 +223,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
         skinTypeIds: skinTypeIdList,
         keyIngredientIds: ingredientIds,
         imagesForDeletion: imagesMarkedForDeletion.map((img) => img.id),
+        marketplaceLinks
       }
       console.log("updatedCosmetic", updatedCosmetic)
 
@@ -495,6 +498,13 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                   onValueChange={setRating}
               />
             </div>
+
+            {/* Marketplace Links Table */}
+            <MarketplaceLinksTable
+                links={marketplaceLinks}
+                onChange={setMarketplaceLinks}
+            />
+
             {/* Файлы для загрузки */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>

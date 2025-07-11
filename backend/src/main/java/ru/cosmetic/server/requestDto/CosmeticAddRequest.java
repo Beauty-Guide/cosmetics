@@ -23,4 +23,5 @@ public class CosmeticAddRequest {
     private String applicationMethodKR;
     private List<String> imagesForDeletion;
     private Integer rating;
+    private List<MarketplaceLinkRequest> marketplaceLinks;
 }

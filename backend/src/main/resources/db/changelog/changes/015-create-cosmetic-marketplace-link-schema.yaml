@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-cosmetic-marketplace-link
+      author: yourname
+
+      changes:
+        # --- Таблица: cosmetic_marketplace_link ---
+        - createTable:
+            tableName: cosmetic_marketplace_link
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location
+                  type: VARCHAR(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: marketplace_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_link
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+
+        # --- Добавление внешнего ключа: cosmetic_id -> cosmetic.id ---
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_marketplace_link
+            baseColumnNames: cosmetic_id
+            constraintName: fk_cosmetic_marketplace_link_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id

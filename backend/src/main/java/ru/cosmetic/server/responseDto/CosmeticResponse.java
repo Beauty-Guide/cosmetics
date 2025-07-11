@@ -32,4 +32,5 @@ public class CosmeticResponse {
     private List<ImageResponse> images;
     private Boolean has_children;
     private Long rating;
+    private List<MarketplaceLinkResponse> marketplaceLinks;
 }

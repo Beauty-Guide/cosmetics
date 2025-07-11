@@ -344,6 +344,7 @@ const CosmeticForm: React.FC = () => {
                         ingredients: editingCosmetic.ingredients,
                         images: editingCosmetic.images,
                         rating: editingCosmetic.rating,
+                        marketplaceLinks: editingCosmetic.marketplaceLinks,
                     }}
                 />
             )}

@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.exceptions.AppError;
 import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.models.Cosmetic;
+import ru.cosmetic.server.models.CosmeticMarketplaceLink;
 import ru.cosmetic.server.requestDto.CosmeticAddRequest;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.requestDto.CosmeticUpdateCatalogRequest;
+import ru.cosmetic.server.requestDto.MarketplaceLinkRequest;
 import ru.cosmetic.server.service.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +37,7 @@ public class CosmeticController {
     private final SkinTypeService skinTypeService;
     private final CosmeticImageService cosmeticImageService;
     private final MinioService minioService;
+    private final CosmeticMarketplaceLinkService marketplaceLinkService;
 
     @PostMapping("/addCosmetic")
     @Operation(summary = "Добавление косметики без изображений")
@@ -65,6 +69,16 @@ public class CosmeticController {
             // Сохранение косметики (без изображений)
             Cosmetic savedCosmetic = cosmeticService.save(cosmetic);
 
+            List<MarketplaceLinkRequest> marketplaceLinks = request.getMarketplaceLinks();
+            for (MarketplaceLinkRequest marketplaceLink : marketplaceLinks) {
+                CosmeticMarketplaceLink cosmeticMarketplaceLink = CosmeticMarketplaceLink.builder()
+                        .marketplaceName(marketplaceLink.getName())
+                        .productLink(marketplaceLink.getUrl())
+                        .location(marketplaceLink.getLocale())
+                        .cosmetic(savedCosmetic)
+                        .build();
+                marketplaceLinkService.save(cosmeticMarketplaceLink);
+            }
             // Возвращаем ID новой косметики
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Косметика добавлена");
@@ -115,6 +129,18 @@ public class CosmeticController {
             for (String imageId : request.getImagesForDeletion()) {
                 cosmeticImageService.remove(UUID.fromString(imageId));
                 minioService.deleteFile(findCosmetic.getId() + "/" + findCosmetic.getId() + "_" + imageId);
+            }
+
+            marketplaceLinkService.deleteAllByCosmeticId(findCosmetic);
+            List<MarketplaceLinkRequest> marketplaceLinks = request.getMarketplaceLinks();
+            for (MarketplaceLinkRequest marketplaceLink : marketplaceLinks) {
+                CosmeticMarketplaceLink cosmeticMarketplaceLink = CosmeticMarketplaceLink.builder()
+                        .marketplaceName(marketplaceLink.getName())
+                        .productLink(marketplaceLink.getUrl())
+                        .location(marketplaceLink.getLocale())
+                        .cosmetic(findCosmetic)
+                        .build();
+                marketplaceLinkService.save(cosmeticMarketplaceLink);
             }
 
             cosmeticService.save(findCosmetic);

@@ -84,7 +84,11 @@ public class CosmeticService {
             ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
             (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
             (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
-            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
+            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main,
+            (SELECT ARRAY_AGG(cml.id) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_ids,
+            (SELECT ARRAY_AGG(cml.marketplace_name) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_names,
+            (SELECT ARRAY_AGG(cml.location) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_locations,
+            (SELECT ARRAY_AGG(cml.product_link) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_product_links
         FROM cosmetic c
         JOIN brand b ON c.brand_id = b.id
         JOIN catalog cat ON c.catalog_id = cat.id
@@ -144,7 +148,11 @@ public class CosmeticService {
             ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
             (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
             (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
-            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main
+            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main,
+            (SELECT ARRAY_AGG(cml.id) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_ids,
+            (SELECT ARRAY_AGG(cml.marketplace_name) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_names,
+            (SELECT ARRAY_AGG(cml.location) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_locations,
+            (SELECT ARRAY_AGG(cml.product_link) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_product_links
     """);
 
         if (isFavoriteJoinNeeded) {
@@ -418,6 +426,26 @@ public class CosmeticService {
             }
         }
         response.setImages(images);
+
+        List<Long> marketplaceIds = safeGetLongList(row, "marketplace_ids");
+        List<String> marketplaceNames = safeGetStringList(row, "marketplace_names");
+        List<String> marketplaceLocations = safeGetStringList(row, "marketplace_locations");
+        List<String> marketplaceProductUrls = safeGetStringList(row, "marketplace_product_links");
+        List<MarketplaceLinkResponse> marketplaces = new ArrayList<>();
+        for (int i = 0; i < Math.min(marketplaceIds.size(), marketplaceNames.size()); i++) {
+            if (marketplaceIds.get(i) != null && marketplaceNames.get(i) != null && marketplaceLocations.get(i) != null && marketplaceProductUrls.get(i) != null) {
+                marketplaces.add(MarketplaceLinkResponse.builder()
+                        .id(marketplaceIds.get(i))
+                        .name(marketplaceNames.get(i))
+                        .url(marketplaceLocations.get(i))
+                        .locale(marketplaceLocations.get(i))
+                        .build()
+
+                );
+            }
+        }
+
+        response.setMarketplaceLinks(marketplaces);
         return response;
     }
 

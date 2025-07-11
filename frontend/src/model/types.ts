@@ -67,6 +67,13 @@ export interface Cosmetic {
 
     imageUrls?: string[]; // URL-ы уже существующих изображений
     imageFiles?: File[];   // Новые изображения для загрузки
+    marketplaceLinks?: MarketplaceLink[]; // ← Новое поле
+}
+
+export interface MarketplaceLink {
+    name: string;
+    url: string;
+    locale: string; // например "RU", "EN", "KR"
 }
 
 export type CosmeticResponse = {
@@ -89,6 +96,7 @@ export type CosmeticResponse = {
     ingredients: IngredientView[];
     images: ImageResponse[];
     rating: number;
+    marketplaceLinks?: MarketplaceLink[];
 };
 
 export type CosmeticsResponse = {
