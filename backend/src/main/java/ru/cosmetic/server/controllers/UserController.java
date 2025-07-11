@@ -65,20 +65,20 @@ public class UserController {
                     .build());
         }
 
-        String username;
+        User user;
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
-            OAuth2User user = oauthToken.getPrincipal();
-            username = user.getAttribute("email"); // например, email как username
+            OAuth2User oAuth2User = oauthToken.getPrincipal();
+            String email = oAuth2User.getAttribute("email");
+            user = userService.findByEmail(email);// например, email как username
         } else if (principal instanceof UsernamePasswordAuthenticationToken token) {
-            username = token.getName();
+            String username = token.getName();
+            user = userService.findByUsername(username).orElse(null);
         }  else {
             return ResponseEntity.ok(UserResponse.builder()
                     .name("guest")
                     .role("guest")
                     .build());
         }
-
-        User user = userService.findByEmail(username);
         if (user == null) {
             return ResponseEntity.ok(UserResponse.builder()
                     .name("guest")
