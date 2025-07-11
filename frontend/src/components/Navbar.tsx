@@ -19,11 +19,12 @@ import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
-import { Search, User2Icon } from "lucide-react"
-import { Input } from "./ui/input"
+import { User2Icon } from "lucide-react"
 import { memo, useEffect, useRef, useState } from "react"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { cn } from "@/lib/utils"
+import SearchInput from "./SearhInput"
+import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
 
 const AppNavbar: React.FC = () => {
   const { pathname } = useLocation()
@@ -45,6 +46,7 @@ const AppNavbar: React.FC = () => {
     enabled: !!isAuthenticated,
   })
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
+  const { mutate: deleteSearchHistory } = useDeleteSearchHistory()
   const showFilter = pathname === "/" || pathname.startsWith("/category")
 
   useEffect(() => {
@@ -88,8 +90,19 @@ const AppNavbar: React.FC = () => {
 
     if (searchValue && searchValue.length > 2) {
       navigate(`/?${params.toString()}`)
-      if (searchInputRef.current) searchInputRef.current.value = ""
     }
+  }
+
+  const handleSelectOption = (option: string) => {
+    const params = new URLSearchParams()
+    params.append("search", option)
+    if (searchInputRef.current) searchInputRef.current.value = option
+    setSearchParams(params, { replace: false })
+  }
+
+  const handleDeleteHistoryOption = (id: number) => {
+    deleteSearchHistory(id.toString())
+    if (searchInputRef.current) searchInputRef.current.value = ""
   }
 
   return (
@@ -223,24 +236,18 @@ const AppNavbar: React.FC = () => {
             )}
           </div>
         }
-        <Input
-          type="search"
+        <SearchInput
           placeholder={t("search")}
           className={cn(
             "max-w-[550px] border-r-0 rounded-r-none focus-visible:ring-[0px]",
             !showFilter && "border-l-0 rounded-l-none"
           )}
-          defaultValue={searchValue || ""}
           ref={searchInputRef}
+          searchHistory={user?.history || []}
+          defaultValue={searchValue || ""}
+          handleSelectOption={handleSelectOption}
+          handleDeleteHistoryOption={handleDeleteHistoryOption}
         />
-        <Button
-          type="submit"
-          variant="outline"
-          size="icon"
-          className="rounded-l-none rounded-r-md border-l-0"
-        >
-          <Search />
-        </Button>
       </form>
     </nav>
   )
