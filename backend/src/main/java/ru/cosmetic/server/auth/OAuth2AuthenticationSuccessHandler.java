@@ -33,8 +33,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         if (userService.findByEmail(email) == null) {
             User user = new User();
-            user.setUsername(email);
-
+            user.setUsername(name);
+            user.setEmail(email);
             user.setRoles(Collections.singleton(roleService.getUserRole())); // или любая логика
             userRepository.save(user);
         }

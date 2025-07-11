@@ -28,8 +28,8 @@ const LoginForm = () => {
     }
 
     const request = isLogin
-      ? { username, password }
-      : { username, email, password }
+      ? { email, password }
+      : { username, email, password, confirmPassword }
 
     const endpoint = isLogin
       ? "http://localhost:8080/auth"
@@ -109,31 +109,12 @@ const LoginForm = () => {
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
             <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {t("login.username")}
-            </label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t("login.enter_username")}
-            />
-          </div>
-
-          {!isLogin && (
-            <div>
-              <label
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                {t("login.email")}
-              </label>
-              <input
+            >
+              {t("login.email")}
+            </label>
+            <input
                 id="email"
                 type="email"
                 value={email}
@@ -141,8 +122,27 @@ const LoginForm = () => {
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder={t("login.enter_email")}
-              />
-            </div>
+            />
+          </div>
+
+          {!isLogin && (
+              <div>
+                <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  {t("login.username")}
+                </label>
+                <input
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder={t("login.enter_username")}
+                />
+              </div>
           )}
 
           <div>

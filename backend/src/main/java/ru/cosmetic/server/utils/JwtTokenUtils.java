@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
-import ru.cosmetic.server.repo.UserRepository;
+import ru.cosmetic.server.service.UserService;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
@@ -25,13 +25,12 @@ public class JwtTokenUtils {
     @Value("${token.lifetime}")
     private Duration jwtLifetime;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
-        Optional<User> userOpt = userRepository.findByUsernameWithRoles(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
+        User user = userService.findByEmail(email);
+        if (user != null) {
             List<String> rolesList = new ArrayList<>();
             if (user.getRoles() != null) {
                 for (Role role : user.getRoles()) {

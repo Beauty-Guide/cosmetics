@@ -1,9 +1,9 @@
 package ru.cosmetic.server.service;
 
-import ru.cosmetic.server.models.Role;
-import ru.cosmetic.server.repo.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.cosmetic.server.models.Role;
+import ru.cosmetic.server.repo.RoleRepository;
 
 @Service
 @RequiredArgsConstructor

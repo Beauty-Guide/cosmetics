@@ -1,8 +1,5 @@
 package ru.cosmetic.server.configs;
 
-import ru.cosmetic.server.auth.CustomOAuth2UserService;
-import ru.cosmetic.server.auth.OAuth2AuthenticationSuccessHandler;
-import ru.cosmetic.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-
+import ru.cosmetic.server.auth.OAuth2AuthenticationSuccessHandler;
+import ru.cosmetic.server.service.UserService;
 
 import java.util.List;
 
@@ -49,6 +47,7 @@ public class SecurityConfiguration {
                 }))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/register/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()

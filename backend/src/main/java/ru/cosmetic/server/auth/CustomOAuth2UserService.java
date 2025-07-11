@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.repo.UserRepository;
 import ru.cosmetic.server.service.RoleService;
-import ru.cosmetic.server.service.UserService;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
