@@ -50,4 +50,10 @@ export type TRole = "ROLE_ADMIN" | "ROLE_USER" | "guest"
 export type TUser = {
   username: string
   role: TRole
+  history: TUserHistory[]
+}
+
+export type TUserHistory = {
+  id: number
+  searchQuery: string
 }

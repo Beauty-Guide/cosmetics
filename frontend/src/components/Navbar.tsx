@@ -19,11 +19,13 @@ import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
-import { Search, User2Icon } from "lucide-react"
-import { Input } from "./ui/input"
+import { User2Icon } from "lucide-react"
 import { memo, useEffect, useRef, useState } from "react"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { cn } from "@/lib/utils"
+import SearchInput from "./SearhInput"
+import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
+import type { TUserHistory } from "@/types"
 
 const AppNavbar: React.FC = () => {
   const { pathname } = useLocation()
@@ -36,6 +38,7 @@ const AppNavbar: React.FC = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.getAll("brand")
   )
+  const [searchHistory, setSearchHistory] = useState<TUserHistory[]>([])
 
   const isAdmin = user?.role.includes(ROLES.ADMIN)
   const isUser = user?.role.includes(ROLES.USER)
@@ -45,11 +48,18 @@ const AppNavbar: React.FC = () => {
     enabled: !!isAuthenticated,
   })
   const { data: brands, isLoading: isLoadingBrands } = useGetAllBrands()
+  const { mutate: deleteSearchHistory } = useDeleteSearchHistory()
   const showFilter = pathname === "/" || pathname.startsWith("/category")
 
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
   }, [pathname, searchParams])
+
+  useEffect(() => {
+    if (user?.history) {
+      setSearchHistory(user.history)
+    }
+  }, [user])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -73,6 +83,10 @@ const AppNavbar: React.FC = () => {
 
     if (searchValue && searchValue.length > 2) {
       params.append("search", searchValue)
+      setSearchHistory((prev) => [
+        ...prev,
+        { id: prev.length + 1, searchQuery: searchValue },
+      ])
     } else if (!searchValue) {
       params.delete("search")
       setSearchParams(params, { replace: false })
@@ -88,8 +102,19 @@ const AppNavbar: React.FC = () => {
 
     if (searchValue && searchValue.length > 2) {
       navigate(`/?${params.toString()}`)
-      if (searchInputRef.current) searchInputRef.current.value = ""
     }
+  }
+
+  const handleSelectOption = (option: string) => {
+    const params = new URLSearchParams()
+    params.append("search", option)
+    if (searchInputRef.current) searchInputRef.current.value = option
+    setSearchParams(params, { replace: false })
+  }
+
+  const handleDeleteHistoryOption = (id: number) => {
+    deleteSearchHistory(id.toString())
+    if (searchInputRef.current) searchInputRef.current.value = ""
   }
 
   return (
@@ -200,7 +225,7 @@ const AppNavbar: React.FC = () => {
       </div>
       <form
         onSubmit={handleSearch}
-        className="flex w-full items-center justify-start mb-4"
+        className="flex w-full items-center justify-start mb-4 z-40"
       >
         {
           <div className="max-w-[86px] rounded-r-none rounded-l-md border-1 border-r-0 overflow-hidden">
@@ -223,24 +248,18 @@ const AppNavbar: React.FC = () => {
             )}
           </div>
         }
-        <Input
-          type="search"
+        <SearchInput
           placeholder={t("search")}
           className={cn(
             "max-w-[550px] border-r-0 rounded-r-none focus-visible:ring-[0px]",
             !showFilter && "border-l-0 rounded-l-none"
           )}
-          defaultValue={searchValue || ""}
           ref={searchInputRef}
+          searchHistory={searchHistory}
+          defaultValue={searchValue || ""}
+          handleSelectOption={handleSelectOption}
+          handleDeleteHistoryOption={handleDeleteHistoryOption}
         />
-        <Button
-          type="submit"
-          variant="outline"
-          size="icon"
-          className="rounded-l-none rounded-r-md border-l-0"
-        >
-          <Search />
-        </Button>
       </form>
     </nav>
   )
