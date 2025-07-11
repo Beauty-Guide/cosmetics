@@ -136,7 +136,7 @@ const AppNavbar: React.FC = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="start">
             <DropdownMenuLabel className="font-bold select-none">
-              {t("my_account")} {isAdmin && "(ADMIN)"}
+              {t("my_account")} {`(${user?.name})`}
             </DropdownMenuLabel>
             {isAdmin && (
               <DropdownMenuSub>

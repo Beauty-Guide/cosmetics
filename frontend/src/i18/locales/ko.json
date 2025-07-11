@@ -46,13 +46,14 @@
   "filter.select": "선택",
   "filter.sort_by": "정렬",
   "filter.sort_by_popularity": "종풍수로 정렬",
-  "fliter.sort_by_date": "날짜로 정렬",
+  "fliter.sort_by_date": "종풍수로 정렬",
   "filter.sort_by_favorites": "즐겨찾기 수로 정렬",
 
   "product.add_to_fav": "즐겨찾기에 추가",
   "product.added_to_fav": "즐겨찾기에 추가됨",
   "product.removed_from_fav": "즐겨찾기에서 제거됨",
   "product.remove_from_fav": "즐겨찾기에서 제거",
+  "product.marketplaceLinks": "마케트플레이스 연결",
 
   "login.email": "이메일",
   "login.password": "비밀번호",

@@ -12,7 +12,7 @@ import { useParams } from "react-router"
 import { toast } from "sonner"
 
 const ProductPage = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { productId } = useParams()
   const { data: product, isLoading: isLoadingProduct } = useItemById(
     productId || ""
@@ -44,9 +44,10 @@ const ProductPage = () => {
       </div>
     )
   }
+  console.log(i18n.language)
 
   return (
-    <main className="flex flex-col w-full items-start justify-start gap-5 p-4 px-sides">
+    <main className="flex flex-col w-full justify-start gap-5 p-4 px-sides">
       <span className="flex flex-col items-start justify-center gap-2 my-2 max-md:my-0">
         <h1 className="text-3xl font-bold text-left max-md:text-xl">
           {product.name}
@@ -153,6 +154,32 @@ const ProductPage = () => {
               {product.applicationMethod}
             </p>
           </span>
+        ) : null}
+        {product.marketplaceLinks && product.marketplaceLinks?.length > 0 ? (
+          <div className="flex flex-col p-4 w-full gap-2 bg-white my-4 max-md:my-1 rounded-md">
+            <h2 className="mb-1 text-xl max-md:text-lg font-bold">
+              {t("product.marketplaceLinks")}
+            </h2>
+            <span className="flex gap-2 flex-wrap font-semibold max-md:text-sm">
+              {product.marketplaceLinks
+                .filter((l) => l.locale === i18n.language.toUpperCase())
+                .map((marketplaceLink) => (
+                  <a
+                    href={marketplaceLink.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Badge
+                      className="w-25 h-8 max-md:w-45 max-md:h-8"
+                      variant="outline"
+                      key={marketplaceLink.id}
+                    >
+                      {marketplaceLink.name}
+                    </Badge>
+                  </a>
+                ))}
+            </span>
+          </div>
         ) : null}
       </div>
     </main>

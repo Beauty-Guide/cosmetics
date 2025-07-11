@@ -46,13 +46,14 @@
   "filter.select": "Выбрать",
   "filter.sort_by": "Сортировка",
   "filter.sort_by_popularity": "По популярности",
-  "fliter.sort_by_date": "По дате",
+  "fliter.sort_by_date": "По новинкам",
   "filter.sort_by_favorites": "По избранному",
 
   "product.add_to_fav": "Добавить в избранное",
   "product.added_to_fav": "Добавлено в избранное",
   "product.removed_from_fav": "Удалено из избранного",
   "product.remove_from_fav": "Удалить из избранного",
+  "product.marketplaceLinks": "Ссылки на маркетплейсы",
 
   "login.email": "Email",
   "login.password": "Пароль",

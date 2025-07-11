@@ -11,6 +11,7 @@ export type TProduct = {
   skinTypes: TSkinType[]
   ingredients: TIngredient[]
   images: TImage[]
+  marketplaceLinks?: TMarkerLink[]
 }
 
 export type TCategory = {
@@ -48,7 +49,7 @@ type TIngredient = {
 export type TRole = "ROLE_ADMIN" | "ROLE_USER" | "guest"
 
 export type TUser = {
-  username: string
+  name: string
   role: TRole
   history: TUserHistory[]
 }
@@ -56,4 +57,11 @@ export type TUser = {
 export type TUserHistory = {
   id: number
   searchQuery: string
+}
+
+export type TMarkerLink = {
+  id: string
+  locale: string
+  name: string
+  url: string
 }
