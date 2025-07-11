@@ -25,6 +25,7 @@ import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { cn } from "@/lib/utils"
 import SearchInput from "./SearhInput"
 import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
+import type { TUserHistory } from "@/types"
 
 const AppNavbar: React.FC = () => {
   const { pathname } = useLocation()
@@ -37,6 +38,7 @@ const AppNavbar: React.FC = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.getAll("brand")
   )
+  const [searchHistory, setSearchHistory] = useState<TUserHistory[]>([])
 
   const isAdmin = user?.role.includes(ROLES.ADMIN)
   const isUser = user?.role.includes(ROLES.USER)
@@ -52,6 +54,12 @@ const AppNavbar: React.FC = () => {
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
   }, [pathname, searchParams])
+
+  useEffect(() => {
+    if (user?.history) {
+      setSearchHistory(user.history)
+    }
+  }, [user])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -75,6 +83,10 @@ const AppNavbar: React.FC = () => {
 
     if (searchValue && searchValue.length > 2) {
       params.append("search", searchValue)
+      setSearchHistory((prev) => [
+        ...prev,
+        { id: prev.length + 1, searchQuery: searchValue },
+      ])
     } else if (!searchValue) {
       params.delete("search")
       setSearchParams(params, { replace: false })
@@ -243,7 +255,7 @@ const AppNavbar: React.FC = () => {
             !showFilter && "border-l-0 rounded-l-none"
           )}
           ref={searchInputRef}
-          searchHistory={user?.history || []}
+          searchHistory={searchHistory}
           defaultValue={searchValue || ""}
           handleSelectOption={handleSelectOption}
           handleDeleteHistoryOption={handleDeleteHistoryOption}
