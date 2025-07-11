@@ -1,7 +1,18 @@
 // src/components/admin/MarketplaceLinksTable.tsx
 import React, { useState, useEffect } from "react";
-import {Input} from "@/components/ui/input.tsx";
-import FilterCombobox from "@/components/HomeComponents/FilterCombobox.tsx";
+import {
+    Input,
+} from "@/components/ui/input";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button"
+import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
 
 interface MarketplaceLink {
     id: number;
@@ -24,12 +35,14 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
         url: "",
         locale: "RU",
     });
+
     const locales = [
         { id: "RU", name: "RU" },
         { id: "EN", name: "EN" },
         { id: "KR", name: "KR" },
-    ]
-    const [selectedLocale, setSelectedLocale] = useState<string[]>(["RU"])
+    ];
+
+    const [selectedLocale, setSelectedLocale] = useState<string[]>([newLink.locale]);
     const [marketplaceLinks, setMarketplaceLinks] = useState<MarketplaceLink[]>([]);
 
     // При изменении внешнего props.links обновляем локальное состояние
@@ -69,6 +82,7 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
         setMarketplaceLinks(updatedLinks);
         onChange(updatedLinks);
         setNewLink({ name: "", url: "", locale: "RU" });
+        setSelectedLocale(["RU"]);
     };
 
     const handleDelete = (id: number) => {
@@ -90,7 +104,6 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
                         onChange={(e) =>
                             setNewLink({ ...newLink, name: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Введите название: Ozon"
                     />
                 </div>
@@ -101,23 +114,10 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
                         onChange={(e) =>
                             setNewLink({ ...newLink, url: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="URL: https://example.com "
                     />
                 </div>
                 <div>
-                    {/*<select*/}
-                    {/*    value={newLink.locale}*/}
-                    {/*    onChange={(e) =>*/}
-                    {/*        setNewLink({ ...newLink, locale: e.target.value })*/}
-                    {/*    }*/}
-                    {/*    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"*/}
-                    {/*>*/}
-                    {/*    <option value="RU">RU</option>*/}
-                    {/*    <option value="EN">EN</option>*/}
-                    {/*    <option value="KR">KR</option>*/}
-                    {/*</select>*/}
-
                     <FilterCombobox
                         label=""
                         options={locales}
@@ -133,55 +133,48 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
                     />
                 </div>
                 <div>
-                    <button
-                        type="button"
-                        onClick={handleAdd}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                    >
-                        Добавить
-                    </button>
+                    <Button type="button" onClick={handleAdd}>Добавить</Button>
                 </div>
             </div>
 
             {/* Таблица ссылок */}
             {marketplaceLinks.length > 0 && (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full table-auto border-collapse">
-                        <thead>
-                        <tr className="bg-gray-100">
-                            <th className="px-4 py-2 text-left">Название</th>
-                            <th className="px-4 py-2 text-left">Ссылка</th>
-                            <th className="px-4 py-2 text-left">Локализация</th>
-                            <th className="px-4 py-2 text-center">Действия</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {marketplaceLinks.map((link) => (
-                            <tr key={link.id} className="border-t hover:bg-gray-50">
-                                <td className="px-4 py-2">{link.name}</td>
-                                <td className="px-4 py-2">
-                                    <a
-                                        href={link.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 underline"
-                                    >
-                                        {link.url}
-                                    </a>
-                                </td>
-                                <td className="px-4 py-2">{link.locale}</td>
-                                <td className="px-4 py-2 text-center">
-                                    <button
-                                        onClick={() => handleDelete(link.id)}
-                                        className="text-red-600 hover:text-red-800 font-medium"
-                                    >
-                                        Удалить
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                <div className="rounded-md border">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Название</TableHead>
+                                <TableHead>Ссылка</TableHead>
+                                <TableHead>Локализация</TableHead>
+                                <TableHead className="text-right">Действия</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {marketplaceLinks.map((link) => (
+                                <TableRow key={link.id}>
+                                    <TableCell className="font-medium">{link.name}</TableCell>
+                                    <TableCell>
+                                        <a
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 underline hover:text-blue-800"
+                                        >
+                                            {link.url}
+                                        </a>
+                                    </TableCell>
+                                    <TableCell>{link.locale}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Button
+                                            onClick={() => handleDelete(link.id)}
+                                            className="text-red-600 hover:text-red-800 font-medium">
+                                            Удалить
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </div>
             )}
         </div>

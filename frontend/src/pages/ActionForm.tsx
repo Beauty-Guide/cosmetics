@@ -6,23 +6,33 @@ import {
   getAllCosmeticActions,
   updateCosmeticAction,
 } from "../services/adminCosmeticActionApi"
+// Типы
+import type { CosmeticActionView } from "@/model/types"
 // Компоненты
 import ConfirmDeleteModal from "../components/admin/ConfirmDeleteModal"
 import FeedbackModal from "../components/admin/FeedbackModal"
-import type { CosmeticActionView } from "@/model/types"
+// UI shadcn
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {PencilIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
 
 const ActionForm: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-
   // Состояния формы
   const [name, setName] = useState<string>("")
   const [nameEN, setNameEN] = useState<string>("")
   const [nameKR, setNameKR] = useState<string>("")
-
   const [actions, setActions] = useState<CosmeticActionView[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-
   // Редактирование
   const [showEditModal, setShowEditModal] = useState<boolean>(false)
   const [editingAction, setEditingAction] = useState<CosmeticActionView | null>(
@@ -31,7 +41,6 @@ const ActionForm: React.FC = () => {
   const [editName, setEditName] = useState<string>("")
   const [editNameEN, setEditNameEN] = useState<string>("")
   const [editNameKR, setEditNameKR] = useState<string>("")
-
   // Удаление
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] =
       useState<boolean>(false)
@@ -39,7 +48,6 @@ const ActionForm: React.FC = () => {
   const [actionToDeleteName, setActionToDeleteName] = useState<string | null>(
       null
   )
-
   // Поиск и пагинация
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -111,7 +119,8 @@ const ActionForm: React.FC = () => {
   }
 
   const handleSaveEdit = async () => {
-    if (!editingAction || !editName.trim() || !editNameEN.trim() || !editNameKR.trim()) return
+    if (!editingAction || !editName.trim() || !editNameEN.trim() || !editNameKR.trim())
+      return
     try {
       await updateCosmeticAction(editingAction.id, {
         name: editName,
@@ -140,12 +149,13 @@ const ActionForm: React.FC = () => {
   }
 
   return (
-      <div className="p-4 max-w-5xl mx-auto">
+      <div className="p-4 max-w-7xl mx-auto">
         {/* Карточка формы */}
         <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
           <h4 className="text-xl font-semibold text-center mb-4">
             Управление действиями косметики
           </h4>
+
           {/* Форма добавления */}
           <form
               onSubmit={handleAddAction}
@@ -158,14 +168,12 @@ const ActionForm: React.FC = () => {
               >
                 Действие (RU)
               </label>
-              <input
+              <Input
                   id="formActionName"
-                  type="text"
                   placeholder="Введите название действия"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="md:col-span-3">
@@ -175,14 +183,12 @@ const ActionForm: React.FC = () => {
               >
                 Действие (EN)
               </label>
-              <input
+              <Input
                   id="formActionNameEN"
-                  type="text"
                   placeholder="Введите название действия"
                   value={nameEN}
                   onChange={(e) => setNameEN(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="md:col-span-3">
@@ -192,47 +198,43 @@ const ActionForm: React.FC = () => {
               >
                 Действие (KR)
               </label>
-              <input
+              <Input
                   id="formActionNameKR"
-                  type="text"
                   placeholder="Введите название действия"
                   value={nameKR}
                   onChange={(e) => setNameKR(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="md:col-span-2">
-              <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-              >
+              <Button type="submit" className="w-full">
                 Добавить действие
-              </button>
+              </Button>
             </div>
           </form>
+
           {/* Сообщения */}
           <FeedbackModal
               message={message}
               error={error}
               onClose={handleCloseModal}
           />
+
           {/* Поиск и заголовок на одной строке */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
             <h5 className="font-medium text-lg">Список действий</h5>
             <div className="w-full md:w-64">
-              <input
-                  type="text"
+              <Input
                   placeholder="Поиск по действиям..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
-                    setCurrentPage(1) // Сброс на первую страницу при новом поиске
+                    setCurrentPage(1)
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
+
           {/* Таблица действий */}
           {loading ? (
               <p>Загрузка данных...</p>
@@ -242,110 +244,76 @@ const ActionForm: React.FC = () => {
               </div>
           ) : (
               <>
-                <div className="overflow-x-auto mb-4">
-                  <table className="min-w-full table-auto border-collapse border border-gray-300">
-                    <thead className="bg-gray-100">
-                    <tr>
-                      <th className="border border-gray-300 px-4 py-2 text-left">
-                        Действие (RU)
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">
-                        Действие (EN)
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">
-                        Действие (KR)
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-right">
-                        Действия
-                      </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {currentItems.map((action) => (
-                        <tr key={action.id}>
-                          <td className="border border-gray-300 px-4 py-2">
-                            {action.name}
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2">
-                            {action.nameEN}
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2">
-                            {action.nameKR}
-                          </td>
-
-                          <td className="border border-gray-300 px-4 py-2 text-right">
-                            <div className="flex justify-end gap-2">
-                              <button
+                <div className="rounded-md border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Действие (RU)</TableHead>
+                        <TableHead>Действие (EN)</TableHead>
+                        <TableHead>Действие (KR)</TableHead>
+                        <TableHead className="text-right">Действия</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {currentItems.map((action) => (
+                          <TableRow key={action.id}>
+                            <TableCell>{action.name}</TableCell>
+                            <TableCell>{action.nameEN}</TableCell>
+                            <TableCell>{action.nameKR}</TableCell>
+                            <TableCell className="text-right space-x-2">
+                              <Button
+                                  variant="ghost"
+                                  size="icon"
                                   onClick={() => handleEditClick(action)}
-                                  title="Редактировать"
-                                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                              >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-4 w-4"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                  <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                                  />
-                                </svg>
-                              </button>
-                              <button
+                                  title="Редактировать"><PencilIcon />
+                              </Button>
+                              <Button
+                                  variant="ghost"
+                                  size="icon"
                                   onClick={() => handleDelete(action.id, action.name)}
-                                  title="Удалить"
-                                  className="text-red-600 hover:text-red-800 flex items-center gap-1"
-                              >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-4 w-4"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                  <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                  </table>
+                                  title="Удалить"><TrashIcon />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
+
                 {/* Пагинация */}
-                <div className="flex justify-between items-center mt-4">
-              <span className="text-sm text-gray-500">
-                Показано {indexOfFirstItem + 1}-
-                {Math.min(indexOfLastItem, filteredActions.length)} из{" "}
-                {filteredActions.length}
-              </span>
-                  <nav className="flex space-x-2">
-                    <button
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
-                    >
-                      Предыдущая
-                    </button>
-                    <button
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        disabled={indexOfLastItem >= filteredActions.length}
-                        className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
-                    >
-                      Следующая
-                    </button>
-                  </nav>
-                </div>
+                {filteredActions.length > itemsPerPage && (
+                    <div className="flex justify-between items-center mt-4">
+                <span className="text-sm text-gray-500">
+                  Показано {indexOfFirstItem + 1}-{" "}
+                  {Math.min(indexOfLastItem, filteredActions.length)} из{" "}
+                  {filteredActions.length}
+                </span>
+                      <nav className="flex space-x-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                setCurrentPage((prev) => Math.max(prev - 1, 1))
+                            }
+                            disabled={currentPage === 1}
+                        >
+                          Предыдущая
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                setCurrentPage((prev) =>
+                                    Math.min(prev + 1, Math.ceil(filteredActions.length / itemsPerPage))
+                                )
+                            }
+                            disabled={indexOfLastItem >= filteredActions.length}
+                        >
+                          Следующая
+                        </Button>
+                      </nav>
+                    </div>
+                )}
               </>
           )}
         </div>
@@ -367,48 +335,40 @@ const ActionForm: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Действие (RU)
                   </label>
-                  <input
+                  <Input
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Действие (EN)
                   </label>
-                  <input
+                  <Input
                       type="text"
                       value={editNameEN}
                       onChange={(e) => setEditNameEN(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Действие (KR)
                   </label>
-                  <input
+                  <Input
                       type="text"
                       value={editNameKR}
                       onChange={(e) => setEditNameKR(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="flex justify-end gap-3">
-                  <button
+                  <Button
+                      variant="outline"
                       onClick={() => setShowEditModal(false)}
-                      className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
                   >
                     Отмена
-                  </button>
-                  <button
-                      onClick={handleSaveEdit}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Сохранить
-                  </button>
+                  </Button>
+                  <Button onClick={handleSaveEdit}>Сохранить</Button>
                 </div>
               </div>
             </div>

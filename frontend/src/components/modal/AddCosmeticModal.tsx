@@ -20,6 +20,7 @@ import { addCosmetic } from "@/services/adminCosmeticApi.ts"
 import { uploadCosmeticImages } from "@/services/fileApi.ts"
 import {Slider} from "@/components/ui/slider.tsx";
 import MarketplaceLinksTable from "@/components/modal/MarketplaceLinksTable.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 interface AddCosmeticModalProps {
   onAddSuccess: () => void
@@ -309,12 +310,12 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
   return (
     <>
       {/* Кнопка для открытия модального окна */}
-      <button
+      <Button
         onClick={() => setIsOpen(true)}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        className="w-full px-4 py-2 text-white rounded-md"
       >
         Добавить косметику
-      </button>
+      </Button>
       {/* Модальное окно */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -577,19 +578,8 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
                   </div>
                 </div>
                 <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsOpen(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition"
-                  >
-                    Отмена
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                  >
-                    Добавить косметику
-                  </button>
+                  <Button type="button" onClick={() => setIsOpen(false)}>Отмена</Button>
+                  <Button type="submit">Добавить косметику</Button>
                 </div>
               </form>
             </div>

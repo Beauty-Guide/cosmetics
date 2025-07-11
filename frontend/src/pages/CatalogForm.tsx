@@ -13,41 +13,20 @@ import type { Catalog, Catalog1 } from "../model/types"
 // UI
 import ConfirmDeleteModal from "../components/admin/ConfirmDeleteModal"
 import FeedbackModal from "../components/admin/FeedbackModal"
-import FilterCombobox from "@/components/HomeComponents/FilterCombobox.tsx";
+import FilterCombobox from "@/components/HomeComponents/FilterCombobox.tsx"
+// shadcn
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {PencilIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
 
-const PencilIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-4 w-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-    >
-      <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-      />
-    </svg>
-)
-
-const TrashIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-4 w-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-    >
-      <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-      />
-    </svg>
-)
 
 const CatalogForm: React.FC = () => {
   const [name, setName] = useState<string>("")
@@ -76,12 +55,14 @@ const CatalogForm: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [currentPage, setCurrentPage] = useState<number>(1)
   const itemsPerPage = 10
+
   // Фильтрация данных
   const filteredCatalogs = catalogs.filter((c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.nameEN?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.nameKR?.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
   // Пагинация
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
@@ -102,27 +83,6 @@ const CatalogForm: React.FC = () => {
     loadCatalogs()
   }, [])
 
-  // Рекурсивное построение дерева
-  const buildCatalogTree = (catalogs: Catalog[]): Catalog[] => {
-    const map = new Map<number, Catalog>()
-    const roots: Catalog[] = []
-    catalogs.forEach((catalog) => {
-      map.set(catalog.id!, { ...catalog, children: [] })
-    })
-    catalogs.forEach((catalog) => {
-      const current = map.get(catalog.id!)
-      if (!current) return
-      if (catalog.parentId && map.has(catalog.parentId)) {
-        const parent = map.get(catalog.parentId)!
-        parent.children!.push(current)
-      } else if (!catalog.parentId) {
-        roots.push(current)
-      }
-    })
-    return roots
-  }
-
-  // Обработчики событий
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!name.trim()) {
@@ -192,158 +152,90 @@ const CatalogForm: React.FC = () => {
     setError(null)
   }
 
-  const renderCatalogOptions = (
-      catalogs: Catalog[],
-      level = 0
-  ): JSX.Element[] => {
-    const prefix = "— ".repeat(level)
-    return catalogs.reduce<JSX.Element[]>((acc, catalog) => {
-      acc.push(
-          <option key={catalog.id} value={catalog.id}>
-            {prefix + catalog.name}
-          </option>
-      )
-      if (catalog.children?.length) {
-        acc.push(...renderCatalogOptions(catalog.children, level + 1))
-      }
-      return acc
-    }, [])
-  }
-
-  const renderCatalogTableRows = (catalogs: Catalog1[]): JSX.Element[] => {
-    return catalogs.map((catalog) => (
-        <tr key={catalog.id}>
-          <td className="border border-gray-300 px-4 py-2">{catalog.name}</td>
-          <td className="border border-gray-300 px-4 py-2">
-            {catalog.parent?.name || "—"}
-          </td>
-          <td className="border border-gray-300 px-4 py-2 text-right">
-            <div className="flex justify-end gap-2">
-              <button
-                  onClick={() => handleEditClick(catalog)}
-                  title="Редактировать"
-                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-              >
-                <PencilIcon />
-              </button>
-              <button
-                  onClick={() => handleDelete(catalog.id, catalog.name)}
-                  title="Удалить"
-                  className="text-red-600 hover:text-red-800 flex items-center gap-1"
-              >
-                <TrashIcon />
-              </button>
-            </div>
-          </td>
-        </tr>
-    ))
-  }
-
-
   return (
-      <div className="p-4 max-w-5xl mx-auto">
+      <div className="p-4 max-w-7xl mx-auto">
         {/* Card */}
         <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6">
           <h4 className="text-xl font-semibold text-center mb-4">
             Управление каталогами
           </h4>
+
           {/* Форма добавления */}
-          <form
-              onSubmit={handleSubmit}
-              className="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
-          >
-            <div className="md:col-span-3">
+          <form onSubmit={handleSubmit} className="mb-6 grid gap-4">
+            <div>
               <label
                   htmlFor="formCatalogName"
                   className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Каталог (RU)
               </label>
-              <input
+              <Input
                   id="formCatalogName"
-                  type="text"
                   placeholder="Введите название каталога"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="md:col-span-3">
+            <div>
               <label
                   htmlFor="formCatalogNameEN"
                   className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Каталог (EN)
               </label>
-              <input
+              <Input
                   id="formCatalogNameEN"
-                  type="text"
                   placeholder="Введите название каталога"
                   value={nameEN}
                   onChange={(e) => setNameEN(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="md:col-span-3">
+            <div>
               <label
                   htmlFor="formCatalogNameKR"
                   className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Каталог (KR)
               </label>
-              <input
+              <Input
                   id="formCatalogNameKR"
-                  type="text"
                   placeholder="Введите название каталога"
                   value={nameKR}
                   onChange={(e) => setNameKR(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
-            <div className="md:col-span-2">
-
+            <div>
               <FilterCombobox
                   label="Родительский каталог"
                   options={[
                     { id: "", name: "— Без родителя —" },
-                    ...catalogs.map(cat => ({
+                    ...catalogs.map((cat) => ({
                       id: String(cat.id),
                       name: cat.name,
                     })),
                   ]}
-                  values={parentId ? [String(parentId)] : [""]} // <-- [""] гарантирует выбор "Без родителя"
+                  values={parentId ? [String(parentId)] : [""]}
                   onChange={(selectedIds) => {
-                    const selectedId = selectedIds[0] || null;
-                    setParentId(selectedId ? Number(selectedId) : null);
+                    const selectedId = selectedIds[0] || null
+                    setParentId(selectedId ? Number(selectedId) : null)
                   }}
                   singleSelect
               />
             </div>
-
-            <div className="md:col-span-5">
-              <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-              >
-                Добавить каталог
-              </button>
-            </div>
+            <Button type="submit">Добавить каталог</Button>
           </form>
 
           {/* Поиск и заголовок на одной строке */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
             <h5 className="font-medium text-lg">Текущая структура каталогов</h5>
             <div className="w-full md:w-64">
-              <input
-                  type="text"
+              <Input
                   placeholder="Поиск по каталогам..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -360,66 +252,45 @@ const CatalogForm: React.FC = () => {
               </div>
           ) : (
               <>
-                {/* Таблица */}
-                <div className="overflow-x-auto mb-4">
-                  <table className="min-w-full table-auto border-collapse border border-gray-300">
-                    <thead className="bg-gray-100">
-                    <tr>
-                      <th className="border border-gray-300 px-4 py-2 text-left">
-                        Каталог (RU)
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">
-                        Каталог (EN)
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">
-                        Каталог (KR)
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">
-                        Родитель
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-right">
-                        Действия
-                      </th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                {/* Таблица с shadcn/ui */}
+                <Table className="mb-4">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Каталог (RU)</TableHead>
+                      <TableHead>Каталог (EN)</TableHead>
+                      <TableHead>Каталог (KR)</TableHead>
+                      <TableHead>Родитель</TableHead>
+                      <TableHead className="text-right">Действия</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {currentItems.map((catalog) => (
-                        <tr key={catalog.id}>
-                          <td className="border border-gray-300 px-4 py-2">
-                            {catalog.name}
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2">
-                            {catalog.nameEN}
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2">
-                            {catalog.nameKR}
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2">
-                            {catalog.parent?.name || "—"}
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-right">
+                        <TableRow key={catalog.id}>
+                          <TableCell>{catalog.name}</TableCell>
+                          <TableCell>{catalog.nameEN}</TableCell>
+                          <TableCell>{catalog.nameKR}</TableCell>
+                          <TableCell>{catalog.parent?.name || "—"}</TableCell>
+                          <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
-                              <button
+                              <Button
+                                  variant="outline"
+                                  size="sm"
                                   onClick={() => handleEditClick(catalog)}
-                                  title="Редактировать"
-                                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
                               >
                                 <PencilIcon />
-                              </button>
-                              <button
-                                  onClick={() => handleDelete(catalog.id, catalog.name)}
-                                  title="Удалить"
-                                  className="text-red-600 hover:text-red-800 flex items-center gap-1"
-                              >
+                              </Button>
+                              <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDelete(catalog.id, catalog.name)}>
                                 <TrashIcon />
-                              </button>
+                              </Button>
                             </div>
-                          </td>
-                        </tr>
+                          </TableCell>
+                        </TableRow>
                     ))}
-                    </tbody>
-                  </table>
-                </div>
+                  </TableBody>
+                </Table>
 
                 {/* Пагинация */}
                 <div className="flex justify-between items-center mt-4">
@@ -428,22 +299,24 @@ const CatalogForm: React.FC = () => {
                 {Math.min(indexOfLastItem, filteredCatalogs.length)} из{" "}
                 {filteredCatalogs.length}
               </span>
-                  <nav className="flex space-x-2">
-                    <button
+                  <div className="flex space-x-2">
+                    <Button
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-3 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
+                        variant="outline"
+                        size="sm"
                     >
                       Предыдущая
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={indexOfLastItem >= filteredCatalogs.length}
-                        className="px-3 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
+                        variant="outline"
+                        size="sm"
                     >
                       Следующая
-                    </button>
-                  </nav>
+                    </Button>
+                  </div>
                 </div>
               </>
           )}
@@ -466,33 +339,30 @@ const CatalogForm: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Каталог (RU)
                   </label>
-                  <input
+                  <Input
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Каталог (EN)
                   </label>
-                  <input
+                  <Input
                       type="text"
                       value={editNameEN}
                       onChange={(e) => setEditNameEN(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Каталог (KR)
                   </label>
-                  <input
+                  <Input
                       type="text"
                       value={editNameKR}
                       onChange={(e) => setEditNameKR(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="mb-4">
@@ -500,29 +370,24 @@ const CatalogForm: React.FC = () => {
                       label="Родительский каталог"
                       options={[
                         { id: "", name: "— Без родителя —" },
-                        ...catalogs.map(cat => ({ id: String(cat.id), name: cat.name }))
+                        ...catalogs.map((cat) => ({ id: String(cat.id), name: cat.name })),
                       ]}
                       values={editParentId !== null ? [String(editParentId)] : [""]}
                       onChange={(selectedIds) => {
-                        const selectedId = selectedIds[0] || null;
-                        setEditParentId(selectedId ? Number(selectedId) : null);
+                        const selectedId = selectedIds[0] || null
+                        setEditParentId(selectedId ? Number(selectedId) : null)
                       }}
                       singleSelect
                   />
                 </div>
                 <div className="flex justify-end gap-3">
-                  <button
+                  <Button
                       onClick={() => setShowEditModal(false)}
-                      className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+                      variant="outline"
                   >
                     Отмена
-                  </button>
-                  <button
-                      onClick={handleSaveEdit}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Сохранить
-                  </button>
+                  </Button>
+                  <Button onClick={handleSaveEdit}>Сохранить</Button>
                 </div>
               </div>
             </div>

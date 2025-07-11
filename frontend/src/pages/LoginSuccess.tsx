@@ -16,7 +16,7 @@ const LoginSuccess = () => {
     }
   }, [navigate])
 
-  return <div>Вход через Google...</div>
+  // return <div></div>
 }
 
 export default LoginSuccess
