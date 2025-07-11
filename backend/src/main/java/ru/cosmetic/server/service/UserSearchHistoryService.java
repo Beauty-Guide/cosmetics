@@ -61,4 +61,8 @@ public class UserSearchHistoryService {
         dto.setSearchQuery((String) row.get("search_query"));
         return dto;
     }
+
+    public boolean existsByUserAndSearchQuery(User user, String searchQuery) {
+        return userSearchHistoryRepo.existsByUserAndSearchQuery(user, searchQuery);
+    }
 }

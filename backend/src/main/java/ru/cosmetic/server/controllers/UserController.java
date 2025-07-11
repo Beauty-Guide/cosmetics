@@ -37,9 +37,10 @@ public class UserController {
 
     @PostMapping("/getCosmeticsByFilters")
     @Operation(summary = "Получение косметики по фильтрам")
-    public ResponseEntity<?> getCosmeticsByFilters(@RequestBody CosmeticFilterRequest request, @RequestParam(required = false) String lang) {
+    public ResponseEntity<?> getCosmeticsByFilters(@RequestBody CosmeticFilterRequest request, @RequestParam(required = false) String lang, Principal principal) {
         try {
-            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request, lang));
+            User user = getUser(principal);
+            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request, lang, user));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики", HttpStatus.BAD_REQUEST);
         }
@@ -64,8 +65,22 @@ public class UserController {
                     .role("guest")
                     .build());
         }
+        User user = getUser(principal);
+        if (user == null) {
+            return ResponseEntity.ok(UserResponse.builder()
+                    .name("guest")
+                    .role("guest")
+                    .build());
+        }
+        return ResponseEntity.ok(UserResponse.builder()
+                .name(user. getUsername())
+                .role(user.getRoles().stream().findFirst().map(Role::getName).orElse("user"))
+                .history(userSearchHistoryService.findHistoryByUserId(user.getId()))
+                .build());
+    }
 
-        User user;
+    private User getUser(Principal principal) {
+        User user = null;
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oAuth2User = oauthToken.getPrincipal();
             String email = oAuth2User.getAttribute("email");
@@ -73,24 +88,8 @@ public class UserController {
         } else if (principal instanceof UsernamePasswordAuthenticationToken token) {
             String username = token.getName();
             user = userService.findByUsername(username).orElse(null);
-        }  else {
-            return ResponseEntity.ok(UserResponse.builder()
-                    .name("guest")
-                    .role("guest")
-                    .build());
         }
-        if (user == null) {
-            return ResponseEntity.ok(UserResponse.builder()
-                    .name("guest")
-                    .role("guest")
-                    .build());
-        }
-
-        return ResponseEntity.ok(UserResponse.builder()
-                .name(user. getUsername())
-                .role(user.getRoles().stream().findFirst().map(Role::getName).orElse("user"))
-                .history(userSearchHistoryService.findHistoryByUserId(user.getId()))
-                .build());
+        return user;
     }
 
     @GetMapping("/deleteHistory/{id}")

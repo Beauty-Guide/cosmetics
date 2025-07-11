@@ -106,7 +106,7 @@ public class CosmeticService {
         }
     }
 
-    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang) {
+    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang, User user) {
         List<Object> params = new ArrayList<>();
         boolean isFavoriteJoinNeeded = filter.isByFavourite();
         StringBuilder sql = new StringBuilder("""
@@ -174,7 +174,7 @@ public class CosmeticService {
         }
 
         // Добавляем WHERE часть
-        sql.append(buildWhereClause(filter, params));
+        sql.append(buildWhereClause(filter, params, user));
 
         // GROUP BY
         sql.append(" GROUP BY c.id, b.id, cat.id");
@@ -217,7 +217,7 @@ public class CosmeticService {
 
     private int getCountOfCosmetics(CosmeticFilterRequest filter) {
         List<Object> countParams = new ArrayList<>();
-        String whereClause = buildWhereClause(filter, countParams);
+        String whereClause = buildWhereClause(filter, countParams, null);
 
         String countSql = "SELECT COUNT(DISTINCT c.id) FROM cosmetic c " +
                 "JOIN brand b ON c.brand_id = b.id " +
@@ -247,7 +247,7 @@ public class CosmeticService {
         return jdbcTemplate.queryForList(sql, Long.class, parentId);
     }
 
-    private String buildWhereClause(CosmeticFilterRequest filter, List<Object> params) {
+    private String buildWhereClause(CosmeticFilterRequest filter, List<Object> params, User user) {
         StringBuilder whereSql = new StringBuilder(" WHERE 1=1 ");
 
         if (filter.getCatalogId() != null) {
@@ -283,13 +283,19 @@ public class CosmeticService {
         if (filter.getName() != null && !filter.getName().trim().isEmpty()) {
             whereSql.append(" AND c.name ILIKE ?");
             params.add("%" + filter.getName().trim() + "%"); // Поиск по части имени, без учета регистра
-            if (filter.getUserId() != null) {
-                User user = userService.findById(filter.getUserId());
-                UserSearchHistory userSearchHistory = new UserSearchHistory();
-                userSearchHistory.setSearchQuery(filter.getName());
-                userSearchHistory.setUser(user);
-                userSearchHistory.setDeleted(false);
-                userSearchHistoryService.save(userSearchHistory);
+            if (user != null) {
+                String searchQuery = filter.getName();
+
+                // Проверяем, есть ли уже такая запись у пользователя
+                boolean exists = userSearchHistoryService.existsByUserAndSearchQuery(user, searchQuery);
+
+                if (!exists) {
+                    UserSearchHistory userSearchHistory = new UserSearchHistory();
+                    userSearchHistory.setSearchQuery(filter.getName());
+                    userSearchHistory.setUser(user);
+                    userSearchHistory.setDeleted(false);
+                    userSearchHistoryService.save(userSearchHistory);
+                }
             }
         }
 

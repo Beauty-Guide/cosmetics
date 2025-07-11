@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface UserSearchHistoryRepo extends JpaRepository<UserSearchHistory, Long> {
     List<UserSearchHistory> findAllByUser(User user);
+
+    boolean existsByUserAndSearchQuery(User user, String searchQuery);
 }

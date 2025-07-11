@@ -85,7 +85,7 @@ public class CosmeticController {
             cosmeticFilterRequest.setSortDirection("ASC");
             Long countOfCosmetics = cosmeticService.getCountOfCosmetics();
             cosmeticFilterRequest.setSize(countOfCosmetics);
-            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(cosmeticFilterRequest, lang));
+            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(cosmeticFilterRequest, lang, null));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения брендов", HttpStatus.BAD_REQUEST);
         }
