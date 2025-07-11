@@ -49,29 +49,33 @@ const FavoriteItem = ({ product }: TFavoriteItemProps) => {
           <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
             {t("product.actions")}
           </h2>
-          {product.actions.map((action) => (
-            <Badge
-              key={action.id}
-              variant="outline"
-              className="flex items-center justify-start text-md max-md:text-sm font-bold w-60 h-12 max-md:w-45 max-md:h-10 rounded-2xl"
-            >
-              ✓ {action.name}
-            </Badge>
-          ))}
+          {product.actions
+            ? product.actions.map((action) => (
+                <Badge
+                  key={action.id}
+                  variant="outline"
+                  className="flex items-center justify-start text-md max-md:text-sm font-bold w-60 h-12 max-md:w-45 max-md:h-10 rounded-2xl"
+                >
+                  ✓ {action.name}
+                </Badge>
+              ))
+            : null}
         </span>
         <span className="flex flex-col gap-2 bg-white p-3 rounded-md h-min">
           <h2 className="mb-2 text-2xl max-md:text-xl font-bold">
             {t("product.skinTypes")}
           </h2>
-          {product.skinTypes.map((skinType) => (
-            <Badge
-              key={skinType.id}
-              variant="outline"
-              className="flex items-center justify-start text-md max-md:text-sm font-bold w-60 h-12 max-md:w-45 max-md:h-10 rounded-2xl"
-            >
-              ✓ {skinType.name}
-            </Badge>
-          ))}
+          {product.skinTypes
+            ? product.skinTypes.map((skinType) => (
+                <Badge
+                  key={skinType.id}
+                  variant="outline"
+                  className="flex items-center justify-start text-md max-md:text-sm font-bold w-60 h-12 max-md:w-45 max-md:h-10 rounded-2xl"
+                >
+                  ✓ {skinType.name}
+                </Badge>
+              ))
+            : null}
         </span>
       </div>
     </div>

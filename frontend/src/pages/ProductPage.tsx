@@ -63,7 +63,7 @@ const ProductPage = () => {
             }
           />
           {isAuthenticated && (
-            <span className="flex flex-col items-center justify-center absolute top-2 right-5 max-md:-top-1">
+            <span className="flex flex-col items-center justify-center absolute top-2 right-1">
               <FavoriteButton productId={String(product.id)} />
               <Button
                 variant="ghost"
@@ -77,7 +77,7 @@ const ProductPage = () => {
           )}
         </div>
         <div className="flex gap-6 max-md:gap-1">
-          {product.actions.length && (
+          {product.actions.length ? (
             <span className="flex flex-col items-start gap-2 bg-white p-3 rounded h-min">
               <h2 className="mb-2 text-2xl max-md:text-lg font-bold">
                 {t("product.actions")}
@@ -92,8 +92,8 @@ const ProductPage = () => {
                 </Badge>
               ))}
             </span>
-          )}
-          {product.skinTypes.length && (
+          ) : null}
+          {product.skinTypes.length ? (
             <span className="flex flex-col gap-2 bg-white p-3 rounded-md h-min">
               <h2 className="mb-2 text-2xl max-md:text-lg font-bold">
                 {t("product.skinTypes")}
@@ -108,11 +108,11 @@ const ProductPage = () => {
                 </Badge>
               ))}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
       <div className="flex gap-4 flex-wrap max-md:gap-1">
-        {product.ingredients.length && (
+        {product.ingredients.length ? (
           <span className="flex flex-col bg-white p-4 max-md:py-2 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               {t("product.ingredients")}
@@ -123,8 +123,8 @@ const ProductPage = () => {
               ))}
             </ul>
           </span>
-        )}
-        {product.compatibility && (
+        ) : null}
+        {product.compatibility ? (
           <span className="flex flex-col bg-white p-4 max-md:py-2 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               {t("product.compatibility")}
@@ -133,8 +133,8 @@ const ProductPage = () => {
               {product.compatibility}
             </p>
           </span>
-        )}
-        {product.usageRecommendations && (
+        ) : null}
+        {product.usageRecommendations ? (
           <span className="flex flex-col bg-white p-4 max-md:py-2 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               {t("product.usageRecommendations")}
@@ -143,8 +143,8 @@ const ProductPage = () => {
               {product.usageRecommendations}
             </p>
           </span>
-        )}
-        {product.applicationMethod && (
+        ) : null}
+        {product.applicationMethod ? (
           <span className="flex flex-col bg-white p-4 max-md:py-2 rounded-md">
             <h2 className="mb-1 text-xl max-md:text-lg font-bold">
               {t("product.applicationMethod")}
@@ -153,7 +153,7 @@ const ProductPage = () => {
               {product.applicationMethod}
             </p>
           </span>
-        )}
+        ) : null}
       </div>
     </main>
   )

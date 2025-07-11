@@ -36,7 +36,7 @@ export function ImageCarousel({ images }: TImageCarouselProps) {
               <img
                 src={getImgUrl(img.url)}
                 alt={`Image ${index + 1}`}
-                className="w-full h-auto object-cover rounded-md max-md:h-[300px]"
+                className="w-full h-auto object-cover rounded-md"
               />
             </div>
           ))}
