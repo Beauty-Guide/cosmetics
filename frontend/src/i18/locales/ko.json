@@ -29,6 +29,8 @@
   "nav.actions": "동작",
   "nav.ingredients": "성분",
   "nav.search_history": "검색 기록",
+  "nav.no_search_history": "검색 기록이 없습니다",
+  "nav.search_history_deleted": "검색 기록을 삭제 하었습니다",
 
   "breadcrumb.product": "상품",
   "breadcrumb.favorites": "즐겨찾기",

@@ -213,7 +213,7 @@ const AppNavbar: React.FC = () => {
       </div>
       <form
         onSubmit={handleSearch}
-        className="flex w-full items-center justify-start mb-4"
+        className="flex w-full items-center justify-start mb-4 z-40"
       >
         {
           <div className="max-w-[86px] rounded-r-none rounded-l-md border-1 border-r-0 overflow-hidden">

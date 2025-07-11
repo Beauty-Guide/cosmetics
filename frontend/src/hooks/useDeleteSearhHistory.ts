@@ -22,7 +22,7 @@ export const useDeleteSearchHistory = () => {
     mutationFn: (id: string) => deleteSearchHistory(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] })
-      toast.success(t("search_history.deleted"))
+      toast.success(t("nav.search_history_deleted"))
     },
     onError: (error: AxiosError) => {
       toast.error(error.message)
