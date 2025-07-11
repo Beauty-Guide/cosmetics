@@ -115,8 +115,8 @@ public class FavoriteController {
         }
 
         try {
-            String username = principal.getName();
-            var favorites = favoriteService.getFavoritesByUser(username, lang);
+            String email = principal.getName();
+            var favorites = favoriteService.getFavoritesByUser(email, lang);
             return ResponseEntity.ok(favorites);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

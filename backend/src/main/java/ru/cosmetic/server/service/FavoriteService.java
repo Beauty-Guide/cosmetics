@@ -44,12 +44,10 @@ public class FavoriteService {
         }
     }
 
-    public List<CosmeticResponse> getFavoritesByUser(String username, String lang) {
-        User user = userRepo.findByUsername(username)
+    public List<CosmeticResponse> getFavoritesByUser(String email, String lang) {
+        User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
-
         List<FavoriteCosmetic> favorites = favoriteRepo.findByUser(user);
-
         return favorites.stream()
                 .map(fav -> mapToCosmeticResponse(fav.getCosmetic(), lang))
                 .toList();
