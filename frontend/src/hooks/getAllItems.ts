@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "@/config/consts"
+import apiClient from "@/services/adminApi"
 import type { TProduct } from "@/types"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
 import { useTranslation } from "react-i18next"
 
 type TGetAllItemsResponse = {
@@ -40,7 +40,7 @@ const fetchAllItems = async (
   filters: TProductFilters,
   lang: string
 ): Promise<TGetAllItemsResponse> => {
-  const response = await axios.post(
+  const response = await apiClient.post(
     `${API_BASE_URL}/api/getCosmeticsByFilters`,
     filters,
     {
