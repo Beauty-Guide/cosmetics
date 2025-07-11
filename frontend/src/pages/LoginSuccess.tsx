@@ -1,22 +1,22 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react"
+import { useNavigate } from "react-router"
 
 const LoginSuccess = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate()
 
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get("token");
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get("token")
 
-        if (token) {
-            localStorage.setItem("token", token);
-            window.location.href = "/";
-        } else {
-            navigate("/login");
-        }
-    }, [navigate]);
+    if (token) {
+      localStorage.setItem("token", token)
+      window.location.href = "/"
+    } else {
+      navigate("/login")
+    }
+  }, [navigate])
 
-    return <div>Вход через Google...</div>;
-};
+  return <div>Вход через Google...</div>
+}
 
-export default LoginSuccess;
+export default LoginSuccess

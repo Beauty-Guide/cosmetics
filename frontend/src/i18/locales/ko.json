@@ -49,5 +49,27 @@
   "product.add_to_fav": "즐겨찾기에 추가",
   "product.added_to_fav": "즐겨찾기에 추가됨",
   "product.removed_from_fav": "즐겨찾기에서 제거됨",
-  "product.remove_from_fav": "즐겨찾기에서 제거"
+  "product.remove_from_fav": "즐겨찾기에서 제거",
+
+  "login.email": "이메일",
+  "login.password": "비밀번호",
+  "login.sign_in": "로그인",
+  "login.sign_up": "회원가입",
+  "login.signing": "로그인 중",
+  "login.registration": "회원 등록",
+  "login.forgot_password": "비밀번호를 잊으셨나요?",
+  "login.reset_password": "비밀번호 재설정",
+  "login.google": "Google로 로그인",
+  "login.enter_email": "이메일을 입력하세요",
+  "login.enter_password": "비밀번호를 입력하세요",
+  "login.enter_username": "사용자 이름을 입력하세요",
+  "login.enter_password_confirmation": "비밀번호 확인을 입력하세요",
+  "login.passwords_dont_match": "비밀번호가 일치하지 않습니다",
+  "login.username": "사용자 이름",
+
+  "register.email": "이메일",
+  "register.password": "비밀번호",
+  "register.password_confirmation": "비밀번호 확인",
+  "register.sign_up": "회원가입",
+  "register.sign_in_with_google": "Google로 로그인"
 }
