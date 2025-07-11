@@ -47,8 +47,8 @@ public class FavoriteController {
         }
 
         try {
-            String username = principal.getName();
-            favoriteService.addToFavorites(username, cosmeticId);
+            String email = principal.getName();
+            favoriteService.addToFavorites(email, cosmeticId);
             return ResponseEntity.ok("Косметика успешно добавлена в избранное");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -83,8 +83,8 @@ public class FavoriteController {
         }
 
         try {
-            String username = principal.getName();
-            favoriteService.removeFromFavorites(username, cosmeticId);
+            String email = principal.getName();
+            favoriteService.removeFromFavorites(email, cosmeticId);
             return ResponseEntity.ok("Косметика успешно удалена из избранного");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

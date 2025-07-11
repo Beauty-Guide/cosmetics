@@ -21,8 +21,8 @@ public class FavoriteService {
     private final CosmeticImageService cosmeticImageService;
     private final String IMAGE_URL = "/api/getFile?cosmeticId=%s&fileName=%s";
 
-    public void addToFavorites(String username, Long cosmeticId) {
-        User user = userRepo.findByUsername(username).orElseThrow();
+    public void addToFavorites(String email, Long cosmeticId) {
+        User user = userRepo.findByEmail(email).orElseThrow();
         Cosmetic cosmetic = cosmeticService.findById(cosmeticId);
 
         if (favoriteRepo.findByUserAndCosmetic(user, cosmetic) != null) {
@@ -35,8 +35,8 @@ public class FavoriteService {
         favoriteRepo.save(favorite);
     }
 
-    public void removeFromFavorites(String username, Long cosmeticId) {
-        User user = userRepo.findByUsername(username).orElseThrow();
+    public void removeFromFavorites(String email, Long cosmeticId) {
+        User user = userRepo.findByEmail(email).orElseThrow();
         Cosmetic cosmetic = cosmeticService.findById(cosmeticId);
         FavoriteCosmetic favorite = favoriteRepo.findByUserAndCosmetic(user, cosmetic);
         if (favorite != null) {
