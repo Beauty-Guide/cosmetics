@@ -21,7 +21,7 @@ import {
 import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
 import {getAllCatalogsForAddCosmetic} from "@/services/adminCatalogApi.ts"
-import {PencilIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
+import {PencilIcon, TransferIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
 
 const CosmeticForm: React.FC = () => {
     const [message, setMessage] = useState<string | null>(null)
@@ -244,7 +244,7 @@ const CosmeticForm: React.FC = () => {
                                                         onClick={() => handleMove(cosmetic.id, cosmetic.name)}
                                                         title="Перенести"
                                                     >
-                                                        <PencilIcon />
+                                                        <TransferIcon />
                                                     </Button>
                                                 )}
                                             </TableCell>

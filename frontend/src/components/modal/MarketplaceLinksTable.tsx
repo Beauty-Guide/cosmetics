@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button"
 import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
+import {TrashIcon} from "@/components/modal/ActionIcons.tsx";
 
 interface MarketplaceLink {
     id: number;
@@ -165,10 +166,8 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
                                     </TableCell>
                                     <TableCell>{link.locale}</TableCell>
                                     <TableCell className="text-right">
-                                        <Button
-                                            onClick={() => handleDelete(link.id)}
-                                            className="text-red-600 hover:text-red-800 font-medium">
-                                            Удалить
+                                        <Button onClick={() => handleDelete(link.id)}>
+                                            <TrashIcon />
                                         </Button>
                                     </TableCell>
                                 </TableRow>

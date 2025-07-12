@@ -18,6 +18,7 @@ import { updateCosmetic } from "@/services/adminCosmeticApi"
 import { uploadCosmeticImages } from "@/services/fileApi.ts"
 import {Slider} from "@/components/ui/slider.tsx";
 import MarketplaceLinksTable from "@/components/modal/MarketplaceLinksTable.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 interface EditCosmeticModalProps {
   isOpen: boolean
@@ -380,115 +381,100 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
               />
             </div>
             {/* Совместимость, рекомендации, способ применения */}
+            <div className="my-6 h-px bg-gray-300 w-full"></div>
+            <h5 className="text-lg font-semibold">Совместимость</h5>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <label htmlFor="editCompatibility" className="block text-sm font-medium text-gray-700 mb-1">
-                  Совместимость (RU)
-                </label>
                 <Textarea
                     id="editCompatibility"
                     rows={3}
                     value={compatibility}
+                    placeholder="Совместимость (RU)"
                     onChange={(e) => setCompatibility(e.target.value)}
                 />
               </div>
-
               <div>
-                <label htmlFor="editCompatibilityEN" className="block text-sm font-medium text-gray-700 mb-1">
-                  Совместимость (EN)
-                </label>
                 <Textarea
                     id="editCompatibilityEN"
                     rows={3}
                     value={compatibilityEN}
+                    placeholder="Совместимость (EN)"
                     onChange={(e) => setCompatibilityEN(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="editCompatibilityKR" className="block text-sm font-medium text-gray-700 mb-1">
-                  Совместимость (KR)
-                </label>
                 <Textarea
                     id="editCompatibilityKR"
                     rows={3}
                     value={compatibilityKR}
+                    placeholder="Совместимость (KR)"
                     onChange={(e) => setCompatibilityKR(e.target.value)}
                 />
               </div>
             </div>
-
+            <div className="my-6 h-px bg-gray-300 w-full"></div>
+            <h5 className="text-lg font-semibold">Рекомендации по применению</h5>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <label htmlFor="editUsage" className="block text-sm font-medium text-gray-700 mb-1">
-                  Рекомендации по применению (RU)
-                </label>
                 <Textarea
                     id="editUsage"
                     rows={3}
                     value={usageRecommendations}
+                    placeholder="Рекомендации по применению (RU)"
                     onChange={(e) => setUsageRecommendations(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="editUsageEN" className="block text-sm font-medium text-gray-700 mb-1">
-                  Рекомендации по применению (EN)
-                </label>
                 <Textarea
                     id="editUsageEN"
                     rows={3}
                     value={usageRecommendationsEN}
+                    placeholder="Рекомендации по применению (EN)"
                     onChange={(e) => setUsageRecommendationsEN(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="editUsageKR" className="block text-sm font-medium text-gray-700 mb-1">
-                  Рекомендации по применению (EN)
-                </label>
                 <Textarea
                     id="editUsageKR"
                     rows={3}
                     value={usageRecommendationsKR}
+                    placeholder="Рекомендации по применению (KR)"
                     onChange={(e) => setUsageRecommendationsKR(e.target.value)}
                 />
               </div>
             </div>
-
+            <div className="my-6 h-px bg-gray-300 w-full"></div>
+            <h5 className="text-lg font-semibold">Способ применения </h5>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <label htmlFor="editApplication" className="block text-sm font-medium text-gray-700 mb-1">
-                  Способ применения (RU)
-                </label>
                 <Textarea
                     id="editApplication"
                     rows={3}
                     value={applicationMethod}
+                    placeholder="Способ применения (RU)"
                     onChange={(e) => setApplicationMethod(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="editApplicationEN" className="block text-sm font-medium text-gray-700 mb-1">
-                  Способ применения (EN)
-                </label>
                 <Textarea
                     id="editApplicationEN"
                     rows={3}
                     value={applicationMethodEN}
+                    placeholder="Способ применения (EN)"
                     onChange={(e) => setApplicationMethodEN(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="editApplicationKR" className="block text-sm font-medium text-gray-700 mb-1">
-                  Способ применения (KR)
-                </label>
                 <Textarea
                     id="editApplicationKR"
                     rows={3}
                     value={applicationMethodKR}
+                    placeholder="Способ применения (KR)"
                     onChange={(e) => setApplicationMethodKR(e.target.value)}
                 />
               </div>
             </div>
-
+            <div className="my-6 h-px bg-gray-300 w-full"></div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <Slider
                   label="Райтинг"
@@ -498,12 +484,13 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                   onValueChange={setRating}
               />
             </div>
-
+            <div className="my-6 h-px bg-gray-300 w-full"></div>
             {/* Marketplace Links Table */}
             <MarketplaceLinksTable
                 links={marketplaceLinks}
                 onChange={setMarketplaceLinks}
             />
+            <div className="my-6 h-px bg-gray-300 w-full"></div>
 
             {/* Файлы для загрузки */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -538,28 +525,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                 >
                   Изображения
                 </label>
-                {/*<Input*/}
-                {/*    id="formImages"*/}
-                {/*    type="file"*/}
-                {/*    multiple*/}
-                {/*    accept="image/*"*/}
-                {/*    onChange={(e) => {*/}
-                {/*      if (e.target.files) {*/}
-                {/*        // Преобразуем файлы в массив*/}
-                {/*        const newFiles = Array.from(e.target.files);*/}
-
-                {/*        // Создаем новый массив для хранения объектов { id, url }*/}
-                {/*        const newImageUrls = newFiles.map((file) => ({*/}
-                {/*          id: "test", // Генерируем уникальный ID*/}
-                {/*          url: URL.createObjectURL(file), // Создаем временный URL для предварительного просмотра*/}
-                {/*        }));*/}
-
-                {/*        // Обновляем состояние imageFiles и imageUrls*/}
-                {/*        setImageFiles([...imageFiles, ...newFiles]);*/}
-                {/*        setImageUrls([...imageUrls, ...newImageUrls]);*/}
-                {/*      }*/}
-                {/*    }}*/}
-                {/*/>*/}
                 <Input
                   id="formImages"
                   type="file"
@@ -649,19 +614,8 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
               </div>
             </div>
             <div className="flex justify-end space-x-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition"
-              >
-                Отмена
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-              >
-                Сохранить изменения
-              </button>
+              <Button type="button" onClick={onClose}>Отмена</Button>
+              <Button type="submit">Сохранить изменения</Button>
             </div>
           </form>
         </div>

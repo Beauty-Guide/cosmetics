@@ -3,6 +3,7 @@
 import React, {useState} from 'react';
 import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
 import type { Catalog1 } from "@/model/types";
+import {Button} from "@/components/ui/button.tsx";
 
 interface MoveCosmeticModalProps {
     isOpen: boolean;
@@ -42,13 +43,8 @@ const MoveCosmeticModal: React.FC<MoveCosmeticModalProps> = ({
                 />
 
                 <div className="flex justify-end gap-2 mt-6">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                    >
-                        Отмена
-                    </button>
-                    <button
+                    <Button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Отмена</Button>
+                    <Button
                         onClick={() => {
                             if (selectedCatalog) {
                                 onConfirm(selectedCatalog.id, cosmeticId); // ← отправляем оба аргумента
@@ -57,10 +53,7 @@ const MoveCosmeticModal: React.FC<MoveCosmeticModalProps> = ({
                         disabled={!selectedCatalog}
                         className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
                             !selectedCatalog ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                    >
-                        Перенести
-                    </button>
+                        }`}>Перенести</Button>
                 </div>
             </div>
         </div>

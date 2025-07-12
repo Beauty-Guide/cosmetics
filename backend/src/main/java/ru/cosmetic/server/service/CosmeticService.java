@@ -437,7 +437,7 @@ public class CosmeticService {
                 marketplaces.add(MarketplaceLinkResponse.builder()
                         .id(marketplaceIds.get(i))
                         .name(marketplaceNames.get(i))
-                        .url(marketplaceLocations.get(i))
+                        .url(marketplaceProductUrls.get(i))
                         .locale(marketplaceLocations.get(i))
                         .build()
 
