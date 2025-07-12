@@ -19,6 +19,7 @@ import { uploadCosmeticImages } from "@/services/fileApi.ts"
 import {Slider} from "@/components/ui/slider.tsx";
 import MarketplaceLinksTable from "@/components/modal/MarketplaceLinksTable.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {API_BASE_URL} from "@/config/consts.ts";
 
 interface EditCosmeticModalProps {
   isOpen: boolean
@@ -183,7 +184,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
       // Извлекаем главное изображение
       const mainImage = initialData.images?.find((img) => img.isMain)
       if (mainImage) {
-        setMainImageUrl("http://localhost:8080" + mainImage.url)
+        setMainImageUrl(API_BASE_URL + mainImage.url)
         setMainImageId(mainImage.id)
       }
 
@@ -192,7 +193,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
         ?.filter((img) => !img.isMain)
         .map((img) => ({
           id: img.id,
-          url: "http://localhost:8080" + img.url,
+          url: API_BASE_URL + img.url,
         }))
       setImageUrls(additionalImages || [])
     }

@@ -6,8 +6,6 @@ import {
   getAllCatalogs,
   updateCatalog,
 } from "../services/adminCatalogApi"
-// Компоненты
-import CatalogTree from "../components/admin/CatalogTree"
 // Типы
 import type { Catalog, Catalog1 } from "../model/types"
 // UI

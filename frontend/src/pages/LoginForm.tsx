@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate, useLocation } from "react-router"
+import {API_BASE_URL} from "@/config/consts.ts";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("")
@@ -15,7 +16,7 @@ const LoginForm = () => {
   const location = useLocation()
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google"
+    window.location.href = API_BASE_URL + "/oauth2/authorization/google"
   }
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -32,8 +33,8 @@ const LoginForm = () => {
       : { username, email, password, confirmPassword }
 
     const endpoint = isLogin
-      ? "http://localhost:8080/auth"
-      : "http://localhost:8080/register"
+      ? API_BASE_URL + "/auth"
+      : API_BASE_URL + "/register"
 
     try {
       const res = await fetch(endpoint, {
