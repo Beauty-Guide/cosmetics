@@ -12,6 +12,7 @@ import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.repo.UserRepository;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,10 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public User getUser(Principal principal) {
+        return findByEmail(principal.getName());
     }
 
     public User findByEmail(String email) {

@@ -17,21 +17,22 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import static ru.cosmetic.server.utils.JwtTokenUtils.BEARER_PREFIX;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    public static final String BEARER_PREFIX = "Bearer ";
-    public static final String HEADER_NAME = "Authorization";
+
     private final JwtTokenUtils jwtTokenUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
-        var authHeader = request.getHeader(HEADER_NAME);
+        var authHeader = jwtTokenUtils.getHeader(request);
         String username = null;
         String jwt = null;
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
-            jwt = authHeader.substring(BEARER_PREFIX.length());
+            jwt = jwtTokenUtils.getJwt(authHeader);
             try {
                 username = jwtTokenUtils.extractUserName(jwt);
             } catch (ExpiredJwtException e) {

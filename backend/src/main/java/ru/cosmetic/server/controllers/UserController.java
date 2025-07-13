@@ -41,7 +41,7 @@ public class UserController {
         try {
             User user = null;
             if (principal != null) {
-                user  = getUser(principal);
+                user  = userService.getUser(principal);
             }
             return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request, lang, user));
         } catch (Exception e) {
@@ -68,7 +68,7 @@ public class UserController {
                     .role("guest")
                     .build());
         }
-        User user = getUser(principal);
+        User user = userService.getUser(principal);
         if (user == null) {
             return ResponseEntity.ok(UserResponse.builder()
                     .name("guest")
@@ -82,9 +82,6 @@ public class UserController {
                 .build());
     }
 
-    private User getUser(Principal principal) {
-       return userService.findByEmail(principal.getName());
-    }
 
     @GetMapping("/deleteHistory/{id}")
     @Operation(summary = "Удаление истории поиска по id")

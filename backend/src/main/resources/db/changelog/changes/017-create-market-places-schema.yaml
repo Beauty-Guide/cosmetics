@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 016-create-seller-credentials-table
+      author: yourname
+
+      changes:
+        # --- Таблица: учетные данные продавцов ---
+        - createTable:
+            tableName: market_places
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false

@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,10 @@ import java.util.function.Function;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtils {
+
+    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String HEADER_NAME = "Authorization";
+
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
@@ -110,4 +115,11 @@ public class JwtTokenUtils {
                 .getBody();
     }
 
+    public String getHeader(HttpServletRequest request) {
+        return request.getHeader(HEADER_NAME);
+    }
+
+    public String getJwt(String authHeader) {
+        return authHeader.substring(BEARER_PREFIX.length());
+    }
 }
