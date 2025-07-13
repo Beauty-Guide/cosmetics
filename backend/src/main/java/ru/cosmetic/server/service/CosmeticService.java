@@ -325,13 +325,13 @@ public class CosmeticService {
         response.setName(safeGetString(row, "cosmetic_name"));
         response.setRating(safeGetLong(row, "rating"));
         if ("en".equals(lang)) {
-            response.setCompatibilityEN(safeGetString(row, "compatibility_en"));
-            response.setUsageRecommendationsEN(safeGetString(row, "usage_recommendations_en"));
-            response.setApplicationMethodEN(safeGetString(row, "application_method_en"));
+            response.setCompatibility(safeGetString(row, "compatibility_en"));
+            response.setUsageRecommendations(safeGetString(row, "usage_recommendations_en"));
+            response.setApplicationMethod(safeGetString(row, "application_method_en"));
         } else if ("ko".equals(lang)) {
-            response.setCompatibilityKR(safeGetString(row, "compatibility_kr"));
-            response.setUsageRecommendationsKR(safeGetString(row, "usage_recommendations_kr"));
-            response.setApplicationMethodKR(safeGetString(row, "application_method_kr"));
+            response.setCompatibility(safeGetString(row, "compatibility_kr"));
+            response.setUsageRecommendations(safeGetString(row, "usage_recommendations_kr"));
+            response.setApplicationMethod(safeGetString(row, "application_method_kr"));
         } else if ("ru".equals(lang)) {
             response.setCompatibility(safeGetString(row, "compatibility"));
             response.setUsageRecommendations(safeGetString(row, "usage_recommendations"));

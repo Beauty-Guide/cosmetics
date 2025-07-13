@@ -196,10 +196,6 @@ const CosmeticForm: React.FC = () => {
                                         <TableHead>Название</TableHead>
                                         <TableHead>Бренд</TableHead>
                                         <TableHead>Каталог</TableHead>
-                                        <TableHead>Совместимость</TableHead>
-                                        <TableHead>Рекомендации</TableHead>
-                                        <TableHead>Способ применения</TableHead>
-                                        <TableHead>Тип кожи</TableHead>
                                         <TableHead>Рейтинг</TableHead>
                                         <TableHead className="text-right">Действия</TableHead>
                                     </TableRow>
@@ -210,10 +206,6 @@ const CosmeticForm: React.FC = () => {
                                             <TableCell>{cosmetic.name}</TableCell>
                                             <TableCell>{cosmetic.brand?.name || '—'}</TableCell>
                                             <TableCell>{cosmetic.catalog?.name || '—'}</TableCell>
-                                            <TableCell>{cosmetic.compatibility || '—'}</TableCell>
-                                            <TableCell>{cosmetic.usageRecommendations || '—'}</TableCell>
-                                            <TableCell>{cosmetic.applicationMethod || '—'}</TableCell>
-                                            <TableCell>{cosmetic.skinTypes.map(s => s.name).join(', ') || '—'}</TableCell>
                                             <TableCell>{cosmetic.rating || '—'}</TableCell>
                                             <TableCell className="text-right space-x-2">
                                                 <Button

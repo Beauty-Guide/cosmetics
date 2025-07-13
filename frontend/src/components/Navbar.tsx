@@ -145,37 +145,37 @@ const AppNavbar: React.FC = () => {
                   <DropdownMenuSubContent className="flex flex-col p-2 gap-2">
                     <Link
                       to="/admin"
-                      className="text-black hover:text-blue-900 transition-colors"
+                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 text-sm outline-hidden"
                     >
                       {t("nav.cosmetic")}
                     </Link>
                     <Link
                       to="/admin/catalog"
-                      className="text-black hover:text-blue-900 transition-colors"
+                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 text-sm outline-hidden"
                     >
                       {t("nav.catalogs")}
                     </Link>
                     <Link
                       to="/admin/brand"
-                      className="text-black hover:text-blue-900 transition-colors"
+                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 text-sm outline-hidden"
                     >
                       {t("nav.brands")}
                     </Link>
                     <Link
                       to="/admin/skinType"
-                      className="text-black hover:text-blue-900 transition-colors"
+                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 text-sm outline-hidden"
                     >
                       {t("nav.skinTypes")}
                     </Link>
                     <Link
                       to="/admin/action"
-                      className="text-black hover:text-blue-900 transition-colors"
+                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 text-sm outline-hidden"
                     >
                       {t("nav.actions")}
                     </Link>
                     <Link
                       to="/admin/ingredient"
-                      className="text-black hover:text-blue-900 transition-colors"
+                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 text-sm outline-hidden"
                     >
                       {t("nav.ingredients")}
                     </Link>
