@@ -142,17 +142,6 @@ const HomePage = () => {
             )}
           </h2>
         </div>
-
-        <ProductFilters
-          selectedBrands={selectedBrands}
-          selectedSkinTypes={selectedSkinTypes}
-          selectedAction={selectedAction}
-          selectedSortBy={sortBy}
-          setSelectedBrands={setSelectedBrands}
-          setSelectedSkinTypes={setSelectedSkinTypes}
-          setSelectedAction={setSelectedAction}
-          setSelectedSortBy={setSortBy}
-        />
         <Products
           products={products?.cosmetics || []}
           isLoading={isLoadingItems}

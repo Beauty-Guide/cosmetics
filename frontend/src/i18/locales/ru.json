@@ -48,6 +48,8 @@
   "filter.sort_by_popularity": "По популярности",
   "fliter.sort_by_date": "По новинкам",
   "filter.sort_by_favorites": "По избранному",
+  "filter.apply": "Применить",
+  "filter.reset": "Сбросить",
 
   "product.add_to_fav": "Добавить в избранное",
   "product.added_to_fav": "Добавлено в избранное",

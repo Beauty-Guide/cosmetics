@@ -3,20 +3,6 @@ databaseChangeLog:
       id: insert-test-catalogs
       author: yourname
       changes:
-        # --- Корневые категории ---
-        - insert:
-            tableName: catalog
-            columns:
-              - column:
-                  name: name
-                  value: "Косметика"
-              - column:
-                  name: name_en
-                  value: "Cosmetics"
-              - column:
-                  name: name_kr
-                  value: "화장품"
-
         # --- Дочерние категории ---
         # Уход за кожей
         - insert:
@@ -31,9 +17,6 @@ databaseChangeLog:
               - column:
                   name: name_kr
                   value: "스킨케어"
-              - column:
-                  name: parent_id
-                  valueNumeric: 1
         - insert:
             tableName: catalog
             columns:
@@ -108,9 +91,6 @@ databaseChangeLog:
               - column:
                   name: name_kr
                   value: "메이크업"
-              - column:
-                  name: parent_id
-                  valueNumeric: 1
         - insert:
             tableName: catalog
             columns:
@@ -260,9 +240,6 @@ databaseChangeLog:
               - column:
                   name: name_kr
                   value: "향수"
-              - column:
-                  name: parent_id
-                  valueNumeric: 1
         - insert:
             tableName: catalog
             columns:
@@ -322,9 +299,6 @@ databaseChangeLog:
               - column:
                   name: name_kr
                   value: "헤어케어"
-              - column:
-                  name: parent_id
-                  valueNumeric: 1
         - insert:
             tableName: catalog
             columns:

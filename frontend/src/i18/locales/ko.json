@@ -48,6 +48,8 @@
   "filter.sort_by_popularity": "종풍수로 정렬",
   "fliter.sort_by_date": "종풍수로 정렬",
   "filter.sort_by_favorites": "즐겨찾기 수로 정렬",
+  "filter.apply": "적용",
+  "filter.reset": "초기화",
 
   "product.add_to_fav": "즐겨찾기에 추가",
   "product.added_to_fav": "즐겨찾기에 추가됨",

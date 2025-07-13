@@ -19,13 +19,15 @@ import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
-import { User2Icon } from "lucide-react"
+import {SlidersIcon, User2Icon, XIcon} from "lucide-react"
 import { memo, useEffect, useRef, useState } from "react"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { cn } from "@/lib/utils"
 import SearchInput from "./SearhInput"
 import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
 import type { TUserHistory } from "@/types"
+import {SearchWithFilters} from "@/components/HomeComponents/SearchWithFilters.tsx";
+
 
 const AppNavbar: React.FC = () => {
   const { pathname } = useLocation()
@@ -35,9 +37,10 @@ const AppNavbar: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchValue = searchParams.get("search")
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(
-    searchParams.getAll("brand")
-  )
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(searchParams.getAll("brand"))
+  const [selectedSkinTypes, setSelectedSkinTypes] = useState<string[]>(searchParams.getAll("skinType"))
+  const [selectedAction, setSelectedAction] = useState<string[]>(searchParams.getAll("action"))
+  const [selectedSortBy, setSelectedSortBy] = useState<string[]>(searchParams.getAll("sortBy"))
   const [searchHistory, setSearchHistory] = useState<TUserHistory[]>([])
 
   const isAdmin = user?.role.includes(ROLES.ADMIN)
@@ -117,13 +120,31 @@ const AppNavbar: React.FC = () => {
     if (searchInputRef.current) searchInputRef.current.value = ""
   }
 
+  const handleSubmitFilters = () => {
+    const params = new URLSearchParams()
+    selectedBrands.forEach((b) => params.append("brand", b))
+    selectedSkinTypes.forEach((s) => params.append("skinType", s))
+    selectedAction.forEach((a) => params.append("cosmeticAction", a))
+    setSearchParams(params)
+  }
+
   return (
     <nav className="flex flex-col w-full shadow-md px-sides border-b-1">
-      <div className="flex items-center justify-between py-4 max-md:py-3 flex-wrap gap-2">
-        <Link to="/" className="text-xl font-bold tracking-tight text-blue-900">
+      <div className="flex items-center justify-between py-4 max-md:py-3 gap-2">
+        <Link to="/" className="text-xl font-bold tracking-tight text-blue-900" style={{width:"20%"}}>
           Beauty Guide
         </Link>
-
+        <SearchWithFilters
+            selectedBrands={selectedBrands}
+            selectedSkinTypes={selectedSkinTypes}
+            selectedAction={selectedAction}
+            selectedSortBy={selectedSortBy}
+            setSelectedBrands={setSelectedBrands}
+            setSelectedSkinTypes={setSelectedSkinTypes}
+            setSelectedAction={setSelectedAction}
+            setSelectedSortBy={setSelectedSortBy}
+            onSubmitFilters={handleSubmitFilters}
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -223,44 +244,6 @@ const AppNavbar: React.FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <form
-        onSubmit={handleSearch}
-        className="flex w-full items-center justify-start mb-4 z-40"
-      >
-        {
-          <div className="max-w-[86px] rounded-r-none rounded-l-md border-1 border-r-0 overflow-hidden">
-            {!isLoadingBrands && (
-              <FilterCombobox
-                label={t("filter.brand")}
-                options={brands}
-                values={selectedBrands}
-                onChange={setSelectedBrands}
-                labels={false}
-                badges={false}
-                showOnlyLabel={true}
-                variant="ghost"
-                className={cn(
-                  "max-w-[86px]",
-                  selectedBrands.length > 0 && "bg-blue-50",
-                  showFilter && "hidden"
-                )}
-              />
-            )}
-          </div>
-        }
-        <SearchInput
-          placeholder={t("search")}
-          className={cn(
-            "max-w-[550px] border-r-0 rounded-r-none focus-visible:ring-[0px]",
-            !showFilter && "border-l-0 rounded-l-none"
-          )}
-          ref={searchInputRef}
-          searchHistory={searchHistory}
-          defaultValue={searchValue || ""}
-          handleSelectOption={handleSelectOption}
-          handleDeleteHistoryOption={handleDeleteHistoryOption}
-        />
-      </form>
     </nav>
   )
 }
