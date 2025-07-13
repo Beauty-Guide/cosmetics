@@ -32,5 +32,4 @@ public class SellerCredential {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Getters and setters
 }
