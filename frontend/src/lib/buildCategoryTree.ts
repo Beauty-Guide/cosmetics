@@ -1,4 +1,5 @@
 export function buildCategoryTree(categories) {
+  if (!categories) return []
   const map = new Map()
   const roots = []
 

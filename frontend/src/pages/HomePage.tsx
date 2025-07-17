@@ -1,4 +1,3 @@
-import ProductFilters from "@/components/HomeComponents/ProductFilters"
 import Products from "@/components/HomeComponents/Products"
 import SideBar from "@/components/HomeComponents/SIdeBar"
 import Pagination from "@/components/Pagination"
@@ -17,7 +16,7 @@ const HomePage = () => {
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.getAll("brand")
   )
@@ -69,30 +68,11 @@ const HomePage = () => {
     setSelectedBrands(searchParams.getAll("brand"))
     setSelectedSkinTypes(searchParams.getAll("skinType"))
     setSelectedAction(searchParams.getAll("cosmeticAction"))
+    setSortBy(searchParams.getAll("sortBy"))
     setSearchValue(searchParams.get("search"))
 
     setPage(1)
   }, [pathname, searchParams])
-
-  useEffect(() => {
-    const params = new URLSearchParams()
-
-    selectedBrands.forEach((b) => params.append("brand", b))
-    selectedSkinTypes.forEach((s) => params.append("skinType", s))
-    selectedAction.forEach((a) => params.append("cosmeticAction", a))
-
-    if (searchValue) {
-      params.append("search", searchValue)
-    }
-
-    setSearchParams(params, { replace: false })
-  }, [
-    selectedBrands,
-    selectedSkinTypes,
-    selectedAction,
-    searchValue,
-    setSearchParams,
-  ])
 
   const categoryTree = useMemo(
     () => buildCategoryTree(isLoadingCategories ? [] : categories),
@@ -142,17 +122,6 @@ const HomePage = () => {
             )}
           </h2>
         </div>
-
-        <ProductFilters
-          selectedBrands={selectedBrands}
-          selectedSkinTypes={selectedSkinTypes}
-          selectedAction={selectedAction}
-          selectedSortBy={sortBy}
-          setSelectedBrands={setSelectedBrands}
-          setSelectedSkinTypes={setSelectedSkinTypes}
-          setSelectedAction={setSelectedAction}
-          setSelectedSortBy={setSortBy}
-        />
         <Products
           products={products?.cosmetics || []}
           isLoading={isLoadingItems}

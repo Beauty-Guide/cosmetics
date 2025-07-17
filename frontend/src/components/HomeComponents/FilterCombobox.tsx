@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Command,
@@ -68,9 +68,7 @@ export default function MultiSelectCombobox({
   }
 
   const selectedLabels = useMemo(() => {
-    return options
-      .filter((opt) => values.includes(String(opt.id)))
-      .map((opt) => opt.name)
+    return options.filter((opt) => values.includes(String(opt.id)))
   }, [options, values])
 
   return (
@@ -90,8 +88,8 @@ export default function MultiSelectCombobox({
           >
             {selectedLabels.length > 0 && !showOnlyLabel
               ? singleSelect
-                ? selectedLabels[0]
-                : selectedLabels.join(", ")
+                ? selectedLabels[0].name
+                : selectedLabels.map((opt) => opt.name).join(", ")
               : `${label}`}
             <ChevronsUpDown className="ml-2 max-md:ml-0 h-4 w-4 text-muted-foreground" />
           </Button>
@@ -124,10 +122,18 @@ export default function MultiSelectCombobox({
 
       {badges && !singleSelect && values.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2 max-h-[100px] max-md:max-h-[50px] overflow-y-auto">
-          {selectedLabels.map((label, index) => (
-            <Badge key={index} variant="secondary">
-              {label}
-            </Badge>
+          {selectedLabels.map((item, index) => (
+            <span key={index} className="flex items-center gap-1">
+              <Badge variant="secondary">{item.name}</Badge>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full w-6 h-6"
+                onClick={() => toggleValue(String(item.id))}
+              >
+                <X className="h-1 w-1" width={3} height={3} />
+              </Button>
+            </span>
           ))}
         </div>
       )}
