@@ -76,7 +76,7 @@ const ProductPage = () => {
             </span>
           )}
         </div>
-        <div className="flex gap-6 max-md:gap-0">
+        <div className="flex flex-wrap gap-6 max-md:gap-0">
           {product.actions.length ? (
             <span className="flex flex-col items-start gap-2 bg-white p-3 rounded h-min">
               <h2 className="mb-2 text-2xl max-md:text-lg font-bold">
