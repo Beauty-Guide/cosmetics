@@ -113,6 +113,13 @@ const SearchDialogModal = ({
     if (searchInputRef.current) searchInputRef.current.value = ""
   }
 
+  const handleClearFilters = () => {
+    setSelectedBrands([])
+    setSelectedSkinTypes([])
+    setSelectedAction([])
+    setSortBy([])
+  }
+
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
   }, [searchParams])
@@ -147,6 +154,9 @@ const SearchDialogModal = ({
             handleDeleteHistoryOption={handleDeleteHistoryOption}
           />
         </form>
+        <Button variant="outline" size="sm" onClick={handleClearFilters}>
+          Сбросить фильтры
+        </Button>
         <ProductFilters
           selectedBrands={selectedBrands}
           selectedSkinTypes={selectedSkinTypes}
