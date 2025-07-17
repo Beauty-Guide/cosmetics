@@ -155,7 +155,7 @@ const SearchDialogModal = ({
           />
         </form>
         <Button variant="outline" size="sm" onClick={handleClearFilters}>
-          Сбросить фильтры
+          {t("filter.clear_filters")}
         </Button>
         <ProductFilters
           selectedBrands={selectedBrands}

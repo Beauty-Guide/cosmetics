@@ -49,6 +49,7 @@
   "filter.sort_by_popularity": "Popularity",
   "fliter.sort_by_date": "By newest",
   "filter.sort_by_favorites": "Favorites",
+  "filter.clear_filters": "Clear filters",
 
   "product.add_to_fav": "Add to favorites",
   "product.added_to_fav": "Added to favorites",
