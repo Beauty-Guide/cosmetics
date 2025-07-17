@@ -22,6 +22,7 @@ import { User2Icon } from "lucide-react"
 import { memo, useState } from "react"
 import SearchDialogModal from "./SearchDialogModal"
 import { Input } from "./ui/input"
+import { cn } from "@/lib/utils"
 
 const AppNavbar: React.FC = () => {
   const { t, i18n } = useTranslation()
@@ -162,7 +163,7 @@ const AppNavbar: React.FC = () => {
         </DropdownMenu>
       </div>
       <div className="relative flex w-full items-center justify-start mb-4 z-40">
-        {searchParams.size && (
+        {searchParams.size > 0 && (
           <div className="absolute left-2 top-1/2 -translate-y-1/2 bg-blue-900 text-white text-xs px-2 py-0.5 rounded-full">
             {searchParams.size}
           </div>
@@ -170,7 +171,10 @@ const AppNavbar: React.FC = () => {
         <Input
           placeholder={t("search")}
           value={searchValue || ""}
-          className="max-w-[550px] border-r-0 pl-9"
+          className={cn(
+            "max-w-[550px] border-r-0",
+            searchParams.size > 0 && "pl-9"
+          )}
           onClick={handleOpenSearchModal}
         />
         <SearchDialogModal

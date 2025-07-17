@@ -132,7 +132,7 @@ const SearchDialogModal = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-2/3 max-md:w-full max-w-none sm:max-w-full flex flex-col justify-start items-start top-[5vh] translate-y-0 gap-1 rounded-none">
+      <DialogContent className="w-2/3 max-md:w-full max-w-none sm:max-w-full flex flex-col justify-start items-start top-[5vh] max-md:top-0 translate-y-0 gap-1 rounded-none">
         <DialogHeader>
           <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
@@ -169,9 +169,9 @@ const SearchDialogModal = ({
         />
         <DialogFooter className="w-full flex items-center">
           <DialogClose asChild>
-            <Button variant="outline">{t("close")}</Button>
+            <Button variant="ghost">{t("close")}</Button>
           </DialogClose>
-          <Button variant="outline" form="search-form">
+          <Button variant="default" form="search-form">
             {t("apply")}
           </Button>
         </DialogFooter>
