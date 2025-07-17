@@ -63,6 +63,7 @@ const ProductFilters = ({
           onChange={setSelectedSkinTypes}
           // labels={false}
           className="max-md:max-w-[250px]"
+          searchInput={false}
         />
         <FilterCombobox
           label={t("filter.select_action")}
@@ -71,6 +72,7 @@ const ProductFilters = ({
           onChange={setSelectedAction}
           // labels={false}
           className="max-md:max-w-[250px]"
+          searchInput={false}
         />
         <FilterCombobox
           label={t("filter.sort_by")}
@@ -80,6 +82,7 @@ const ProductFilters = ({
           // labels={false}
           className="max-md:max-w-[250px]"
           singleSelect={true}
+          searchInput={false}
         />
       </div>
     </div>

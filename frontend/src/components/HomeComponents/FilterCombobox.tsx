@@ -32,6 +32,7 @@ interface MultiSelectComboboxProps {
   badges?: boolean
   showOnlyLabel?: boolean
   variant?: "default" | "ghost" | "outline"
+  searchInput?: boolean
   className?: string
 }
 
@@ -45,6 +46,7 @@ export default function MultiSelectCombobox({
   badges = true,
   variant = "outline",
   showOnlyLabel = false,
+  searchInput = true,
   className,
 }: MultiSelectComboboxProps) {
   const { t } = useTranslation()
@@ -96,7 +98,9 @@ export default function MultiSelectCombobox({
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command>
-            <CommandInput placeholder={`${t("search")} ${label}...`} />
+            {searchInput && (
+              <CommandInput placeholder={`${t("search")} ${label}...`} />
+            )}
             <CommandEmpty>{t("filter.not_found")}</CommandEmpty>
             <CommandGroup className="max-h-60 overflow-y-auto">
               {options.map((opt) => (
