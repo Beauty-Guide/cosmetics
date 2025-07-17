@@ -1,6 +1,7 @@
 package ru.cosmetic.server.configs;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +13,18 @@ import java.util.ResourceBundle;
 @Configuration
 public class JdbcTemplateConfiguration {
 
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+
+    @Value("${spring.datasource.driver-class-name}")
+    private String driverClassName;
+
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
@@ -19,12 +32,11 @@ public class JdbcTemplateConfiguration {
 
     @Bean
     public DataSource dataSource() {
-        ResourceBundle rb = ResourceBundle.getBundle("application");
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(rb.getString("spring.datasource.driverClassName"));
-        dataSource.setUrl(rb.getString("spring.datasource.url"));
-        dataSource.setUsername(rb.getString("spring.datasource.username"));
-        dataSource.setPassword(rb.getString("spring.datasource.password"));
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(dbUrl);
+        dataSource.setUsername(dbUsername);
+        dataSource.setPassword(dbPassword);
         return dataSource;
     }
 

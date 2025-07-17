@@ -110,4 +110,11 @@ public class JwtTokenUtils {
                 .getBody();
     }
 
+    public boolean isTokenValid(String token, String username) {
+        return username.equals(extractUserName(token)) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractClaim(token, Claims::getExpiration).before(new Date());
+    }
 }

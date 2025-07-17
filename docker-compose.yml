@@ -10,7 +10,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://dbpostgresql:5432/cowboo
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cowboo
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     #      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
@@ -21,6 +21,7 @@ services:
       - my-network
     depends_on:
       - postgres
+      - vault
 
   postgres:
     image: postgres:17
@@ -56,6 +57,21 @@ services:
       - NODE_ENV=production
     networks:
       - my-network
+    depends_on:
+      - cosmetic-backend
+
+    # HashiCorp Vault
+  vault:
+    image: hashicorp/vault:latest
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV=true
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+    volumes:
+      - vault_data:/vault
+    command: ["server", "-dev", "-dev-listen-address=0.0.0.0:8200"]
 
   cosmetic-minio:
     image: minio/minio:latest
@@ -92,11 +108,12 @@ services:
       fi;
       "
 
-# Объявляем именованный том здесь ↓↓↓
 volumes:
   postgres_data:
   minio_data:
   node_modules:
+  vault_data:
 
 networks:
   my-network:
+    driver: bridge
