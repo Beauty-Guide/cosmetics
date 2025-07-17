@@ -47,38 +47,38 @@ const ProductFilters = ({
 
   return (
     <div className="flex py-5 w-full">
-      <div className="flex gap-5 overflow-x-auto p-3 shadow-md rounded-md">
+      <div className="flex gap-5 flex-wrap w-full p-4 shadow-md rounded-md">
         <FilterCombobox
           label={t("filter.select_brand")}
           options={brands}
           values={selectedBrands}
           onChange={setSelectedBrands}
-          labels={false}
-          className="max-md:max-w-[150px]"
+          // labels={false}
+          className="max-md:max-w-[250px]"
         />
         <FilterCombobox
           label={t("filter.select_skin_type")}
           options={skinTypes}
           values={selectedSkinTypes}
           onChange={setSelectedSkinTypes}
-          labels={false}
-          className="max-md:max-w-[150px]"
+          // labels={false}
+          className="max-md:max-w-[250px]"
         />
         <FilterCombobox
           label={t("filter.select_action")}
           options={actions}
           values={selectedAction}
           onChange={setSelectedAction}
-          labels={false}
-          className="max-md:max-w-[150px]"
+          // labels={false}
+          className="max-md:max-w-[250px]"
         />
         <FilterCombobox
           label={t("filter.sort_by")}
           options={sortByOptions}
           values={selectedSortBy}
           onChange={setSelectedSortBy}
-          labels={false}
-          className="max-md:max-w-[150px]"
+          // labels={false}
+          className="max-md:max-w-[250px]"
           singleSelect={true}
         />
       </div>
