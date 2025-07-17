@@ -21,6 +21,7 @@
   "login": "로그인",
   "logout": "로그아웃",
   "lang": "언어",
+  "apply": "확인",
 
   "nav.cosmetic": "화장품",
   "nav.catalogs": "카탈로그",
@@ -48,6 +49,7 @@
   "filter.sort_by_popularity": "종풍수로 정렬",
   "fliter.sort_by_date": "종풍수로 정렬",
   "filter.sort_by_favorites": "즐겨찾기 수로 정렬",
+  "filter.clear_filters": "필터 제거",
 
   "product.add_to_fav": "즐겨찾기에 추가",
   "product.added_to_fav": "즐겨찾기에 추가됨",
