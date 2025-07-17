@@ -34,7 +34,7 @@ const SearhInput = forwardRef<HTMLInputElement, TSearhInputProps>(
       <div className="flex w-full relative z-40">
         {open && (
           <div
-            className="fixed inset-0 bg-black/30 p-10 z-10"
+            className="fixed inset-0 bg-black/20 z-10"
             onClick={() => setOpen(false)}
           />
         )}

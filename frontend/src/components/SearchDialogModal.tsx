@@ -142,6 +142,7 @@ const SearchDialogModal = ({
           onSubmit={handleSearch}
           className="flex w-full items-center justify-start my-5 z-40"
         >
+          <input type="text" tabIndex={-1} className="sr-only" autoFocus />
           <SearchInput
             placeholder={t("search")}
             className={cn(
