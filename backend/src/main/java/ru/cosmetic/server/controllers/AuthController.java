@@ -1,18 +1,19 @@
 package ru.cosmetic.server.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.dtos.JwtRequest;
+import ru.cosmetic.server.dtos.JwtResponse;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.UserRequest;
 import ru.cosmetic.server.service.AuthenticationService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import ru.cosmetic.server.service.RoleService;
 import ru.cosmetic.server.service.UserService;
 import ru.cosmetic.server.utils.JwtTokenUtils;
@@ -36,13 +37,15 @@ public class AuthController {
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/auth")
-    public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest) {
-        return authService.createAuthToken(authRequest);
+    public ResponseEntity<JwtResponse> createAuthToken(@RequestBody JwtRequest authRequest, HttpServletResponse response) {
+        return authService.createAuthToken(authRequest, response);
     }
 
     @Operation(summary = "Регистрация нового пользователя")
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserRequest userRequest, @RequestParam(required = false) String lang) {
+    public ResponseEntity<?> register(@RequestBody UserRequest userRequest,
+                                      @RequestParam(required = false) String lang,
+                                      HttpServletResponse response) {
         Locale locale = parseLocale(lang);
         if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
             String error = messageSource.getMessage("password.not.match", null, locale);
@@ -64,10 +67,12 @@ public class AuthController {
             user.setProvider("local");
             user.setRoles(Collections.singleton(roleService.getUserRole()));
             if (userService.createUser(user)) {
-                String token = jwtTokenUtils.generateToken(user.getEmail());
+                String accessToken = jwtTokenUtils.generateAccessToken(user.getEmail());
+                String refreshToken = jwtTokenUtils.generateRefreshToken(user.getEmail());
+                jwtTokenUtils.sendRefreshToken(refreshToken, response);
                 String successMessage = messageSource.getMessage("register.success", null, locale);
                 return ResponseEntity.ok()
-                        .body(Map.of("token", token, "message", successMessage));
+                        .body(Map.of("token", accessToken, "message", successMessage));
             } else {
                 String errorMessage = messageSource.getMessage("register.failed", null, locale);
                 return ResponseEntity

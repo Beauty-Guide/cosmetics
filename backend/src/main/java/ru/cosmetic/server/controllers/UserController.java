@@ -60,20 +60,14 @@ public class UserController {
     }
 
     @GetMapping("/getUserInfo")
-    @Operation(summary = "Получение косметики по id")
-    public ResponseEntity<?> getCosmeticsById(Principal principal) {
+    @Operation(summary = "Получение информации о пользователе")
+    public ResponseEntity<?> getCosmeticsById(Principal principal, @RequestParam(required = false) String lang) {
         if (principal == null) {
-            return ResponseEntity.ok(UserResponse.builder()
-                    .name("guest")
-                    .role("guest")
-                    .build());
+            return ResponseEntity.ok(buildGuestResponse(lang));
         }
         User user = getUser(principal);
         if (user == null) {
-            return ResponseEntity.ok(UserResponse.builder()
-                    .name("guest")
-                    .role("guest")
-                    .build());
+            return ResponseEntity.ok(buildGuestResponse(lang));
         }
         return ResponseEntity.ok(UserResponse.builder()
                 .name(user. getUsername())
@@ -84,6 +78,23 @@ public class UserController {
 
     private User getUser(Principal principal) {
        return userService.findByEmail(principal.getName());
+    }
+
+    private UserResponse buildGuestResponse(String lang) {
+        return UserResponse.builder()
+                .name(getGuestName(lang))
+                .role("guest")
+                .build();
+    }
+
+    private String getGuestName(String lang) {
+        if ("en".equals(lang)) {
+            return "Guest";
+        } else if ("ko".equals(lang)) {
+            return "손님";
+        } else {
+            return "Гость";
+        }
     }
 
     @GetMapping("/deleteHistory/{id}")

@@ -1,9 +1,14 @@
 package ru.cosmetic.server.utils;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,6 +24,7 @@ import java.util.function.Function;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtils {
+
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
@@ -27,7 +33,26 @@ public class JwtTokenUtils {
 
     private final UserService userService;
 
-    public String generateToken(String email) {
+    public String generateAccessToken(String email) {
+        return buildToken(email);
+    }
+
+    public String generateRefreshToken(String email) {
+        return buildToken(email);
+    }
+
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            JWT.require(Algorithm.HMAC256("refreshSecretKey"))
+                    .build()
+                    .verify(refreshToken);
+            return true;
+        } catch (JWTVerificationException exception) {
+            return false;
+        }
+    }
+
+    private String buildToken(String email) {
         Map<String, Object> claims = new HashMap<>();
         User user = userService.findByEmail(email);
         if (user != null) {
@@ -50,6 +75,15 @@ public class JwtTokenUtils {
                 .setExpiration(expiration)
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    public void sendRefreshToken(String refreshToken, HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/api/refresh");
+        cookie.setMaxAge((int) Duration.ofDays(7).getSeconds());
+        response.addCookie(cookie);
     }
 
     /**
@@ -111,10 +145,14 @@ public class JwtTokenUtils {
     }
 
     public boolean isTokenValid(String token, String username) {
-        return username.equals(extractUserName(token)) && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractClaim(token, Claims::getExpiration).before(new Date());
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return extractUserName(token).equals(username);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
