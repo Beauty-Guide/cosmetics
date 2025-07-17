@@ -161,11 +161,16 @@ const AppNavbar: React.FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex w-full items-center justify-start mb-4 z-40">
+      <div className="relative flex w-full items-center justify-start mb-4 z-40">
+        {searchParams.size && (
+          <div className="absolute left-2 top-1/2 -translate-y-1/2 bg-blue-900 text-white text-xs px-2 py-0.5 rounded-full">
+            {searchParams.size}
+          </div>
+        )}
         <Input
           placeholder={t("search")}
           value={searchValue || ""}
-          className="max-w-[550px] border-r-0"
+          className="max-w-[550px] border-r-0 pl-9"
           onClick={handleOpenSearchModal}
         />
         <SearchDialogModal
