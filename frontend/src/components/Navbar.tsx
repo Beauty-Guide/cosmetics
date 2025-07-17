@@ -81,42 +81,42 @@ const AppNavbar: React.FC = () => {
                 <DropdownMenuSubTrigger>{t("ADMIN")}</DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent className="flex flex-col p-2 gap-2">
-                    <Link
-                      to="/admin"
+                    <DropdownMenuItem
                       className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+                      onClick={() => handleNagivate("/admin")}
                     >
                       {t("nav.cosmetic")}
-                    </Link>
-                    <Link
-                      to="/admin/catalog"
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+                      onClick={() => handleNagivate("/admin/catalog")}
                     >
                       {t("nav.catalogs")}
-                    </Link>
-                    <Link
-                      to="/admin/brand"
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+                      onClick={() => handleNagivate("/admin/brand")}
                     >
                       {t("nav.brands")}
-                    </Link>
-                    <Link
-                      to="/admin/skinType"
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+                      onClick={() => handleNagivate("/admin/skinType")}
                     >
                       {t("nav.skinTypes")}
-                    </Link>
-                    <Link
-                      to="/admin/action"
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+                      onClick={() => handleNagivate("/admin/action")}
                     >
                       {t("nav.actions")}
-                    </Link>
-                    <Link
-                      to="/admin/ingredient"
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+                      onClick={() => handleNagivate("/admin/ingredient")}
                     >
                       {t("nav.ingredients")}
-                    </Link>
+                    </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
