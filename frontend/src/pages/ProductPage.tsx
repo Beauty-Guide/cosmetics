@@ -44,7 +44,6 @@ const ProductPage = () => {
       </div>
     )
   }
-  console.log(i18n.language)
 
   return (
     <main className="flex flex-col w-full justify-start gap-5 p-4 px-sides">
@@ -77,7 +76,7 @@ const ProductPage = () => {
             </span>
           )}
         </div>
-        <div className="flex gap-6 max-md:gap-1">
+        <div className="flex gap-6 max-md:gap-0">
           {product.actions.length ? (
             <span className="flex flex-col items-start gap-2 bg-white p-3 rounded h-min">
               <h2 className="mb-2 text-2xl max-md:text-lg font-bold">
@@ -87,7 +86,7 @@ const ProductPage = () => {
                 <Badge
                   key={action.id}
                   variant="outline"
-                  className="flex items-center justify-start text-md max-md:text-sm font-bold w-60 h-12 max-md:w-45 max-md:h-8 rounded-2xl"
+                  className="flex items-center justify-start text-md max-md:text-sm font-bold w-fit h-full rounded-2xl py-1"
                 >
                   ✓ {action.name}
                 </Badge>
@@ -103,7 +102,7 @@ const ProductPage = () => {
                 <Badge
                   key={skinType.id}
                   variant="outline"
-                  className="flex items-center justify-start text-md max-md:text-sm font-bold w-60 h-12 max-md:w-45 max-md:h-8 rounded-2xl"
+                  className="flex items-center justify-start text-md max-md:text-sm font-bold w-fit h-full rounded-2xl py-1"
                 >
                   ✓ {skinType.name}
                 </Badge>

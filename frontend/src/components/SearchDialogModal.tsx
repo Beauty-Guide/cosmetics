@@ -96,9 +96,7 @@ const SearchDialogModal = ({
 
     setSearchParams(params, { replace: false })
 
-    if (searchValue && searchValue.length > 2) {
-      navigate(`/?${params.toString()}`)
-    }
+    navigate(`/?${params.toString()}`)
   }
 
   const handleSelectOption = (option: string) => {
@@ -110,6 +108,7 @@ const SearchDialogModal = ({
 
   const handleDeleteHistoryOption = (id: number) => {
     deleteSearchHistory(id.toString())
+    setSearchHistory((prev) => prev.filter((h) => h.id !== id))
     if (searchInputRef.current) searchInputRef.current.value = ""
   }
 
