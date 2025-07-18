@@ -3,6 +3,7 @@ package ru.cosmetic.server.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -25,6 +26,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtTokenUtils jwtTokenUtils;
     private final RoleService roleService;
 
+    @Value("${server.url}")
+    private String serverUrl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
@@ -44,6 +48,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String accessToken = jwtTokenUtils.generateAccessToken(email);
         String refreshToken = jwtTokenUtils.generateRefreshToken(email);
         jwtTokenUtils.sendRefreshToken(refreshToken, response);
-        response.sendRedirect("http://localhost:3000/login-success?token=" + accessToken);
+        response.sendRedirect(serverUrl + "/login-success?token=" + accessToken);
     }
 }

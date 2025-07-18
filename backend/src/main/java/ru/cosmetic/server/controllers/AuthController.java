@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,9 @@ public class AuthController {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtils jwtTokenUtils;
+
+    @Value("${server.url}")
+    private String serverUrl;
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/auth")
@@ -102,6 +106,6 @@ public class AuthController {
 
     @GetMapping("/auth-redirect")
     public void handleRedirect(@RequestParam String token, HttpServletResponse response) throws IOException {
-        response.sendRedirect("http://localhost:3000/login-success?token=" + token);
+        response.sendRedirect(serverUrl + "/login-success?token=" + token);
     }
 }
