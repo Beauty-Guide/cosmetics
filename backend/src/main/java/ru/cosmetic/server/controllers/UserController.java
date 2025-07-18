@@ -7,18 +7,16 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.responseDto.UserResponse;
 import ru.cosmetic.server.service.*;
+import ru.cosmetic.server.utils.JwtTokenUtils;
 
 import java.security.Principal;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +32,8 @@ public class UserController {
     private final MinioService minioService;
     private final UserService userService;
     private final UserSearchHistoryService userSearchHistoryService;
+    private final JwtTokenUtils jwtTokenUtils;
+
 
     @PostMapping("/getCosmeticsByFilters")
     @Operation(summary = "Получение косметики по фильтрам")
@@ -61,16 +61,31 @@ public class UserController {
 
     @GetMapping("/getUserInfo")
     @Operation(summary = "Получение информации о пользователе")
-    public ResponseEntity<?> getCosmeticsById(Principal principal, @RequestParam(required = false) String lang) {
-        if (principal == null) {
+    public ResponseEntity<?> getUserInfo(
+            @RequestHeader(name = "Authorization", required = false) String authHeader,
+            @RequestParam(required = false) String lang) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.ok(buildGuestResponse(lang));
         }
-        User user = getUser(principal);
+        String refreshToken = authHeader.substring(7);
+        if (!jwtTokenUtils.validateRefreshToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("error", "Refresh token is invalid or expired"));
+        }
+        String email;
+        try {
+            email = jwtTokenUtils.extractUserName(refreshToken);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("error", "Could not extract user from token"));
+        }
+        User user = userService.findByEmail(email);
         if (user == null) {
-            return ResponseEntity.ok(buildGuestResponse(lang));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("error", "User not found"));
         }
         return ResponseEntity.ok(UserResponse.builder()
-                .name(user. getUsername())
+                .name(user.getUsername())
                 .role(user.getRoles().stream().findFirst().map(Role::getName).orElse("user"))
                 .history(userSearchHistoryService.findHistoryByUserId(user.getId()))
                 .build());

@@ -1,4 +1,4 @@
-import apiClient from './adminApi'; //
+import apiClient from '@/hooks/apiClient';
 import type {CosmeticActionAdd, CosmeticActionView} from '../model/types';
 
 export const addCosmeticAction = async (action: CosmeticActionAdd): Promise<void> => {

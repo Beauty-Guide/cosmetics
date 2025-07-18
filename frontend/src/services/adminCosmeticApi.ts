@@ -1,4 +1,4 @@
-import apiClient from './adminApi';
+import apiClient from '@/hooks/apiClient';
 import type {Cosmetic, CosmeticResponse} from '../model/types'; // Предполагается, что типы вынесены в отдельный файл
 // Предполагается, что типы вынесены в отдельный файл
 

@@ -1,5 +1,5 @@
 import type {SkinType, SkinTypeView} from '../model/types';
-import apiClient from './adminApi'; //
+import apiClient from '@/hooks/apiClient';
 
 export const addSkinType = async (skinType: SkinType): Promise<void> => {
   try {

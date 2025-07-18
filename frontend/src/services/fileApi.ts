@@ -1,4 +1,4 @@
-import apiClient from './adminApi';
+import apiClient from '@/hooks/apiClient';
 
 export const uploadCosmeticImages = async (
     cosmeticId: number,

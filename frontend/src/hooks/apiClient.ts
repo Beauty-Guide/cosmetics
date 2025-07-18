@@ -72,8 +72,8 @@ apiClient.interceptors.response.use(
           }
         )
 
-        const newAccessToken = response.data.accessToken
-        localStorage.setItem("accessToken", newAccessToken)
+        const newAccessToken = response.data.token
+        localStorage.setItem("token", newAccessToken)
         processQueue(newAccessToken)
         isRefreshing = false
 

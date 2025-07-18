@@ -1,4 +1,4 @@
-import apiClient from './adminApi'; //
+import apiClient from '@/hooks/apiClient';
 import {type Catalog} from '../model/types';
 
 export const addCatalog = async (catalog: Catalog): Promise<void> => {

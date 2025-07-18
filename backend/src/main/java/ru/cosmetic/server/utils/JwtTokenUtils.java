@@ -1,9 +1,7 @@
 package ru.cosmetic.server.utils;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -30,29 +28,31 @@ public class JwtTokenUtils {
 
     @Value("${token.lifetime}")
     private Duration jwtLifetime;
+    private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7 дней
 
     private final UserService userService;
 
     public String generateAccessToken(String email) {
-        return buildToken(email);
+        return buildToken(email, true);
     }
 
     public String generateRefreshToken(String email) {
-        return buildToken(email);
+        return buildToken(email, false);
     }
 
     public boolean validateRefreshToken(String refreshToken) {
         try {
-            JWT.require(Algorithm.HMAC256("refreshSecretKey"))
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
                     .build()
-                    .verify(refreshToken);
+                    .parseClaimsJws(refreshToken);
             return true;
-        } catch (JWTVerificationException exception) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    private String buildToken(String email) {
+    private String buildToken(String email, boolean isAccessToken) {
         Map<String, Object> claims = new HashMap<>();
         User user = userService.findByEmail(email);
         if (user != null) {
@@ -67,7 +67,13 @@ public class JwtTokenUtils {
             claims.put("roles", Collections.emptyList());
         }
         Date issuedAt = new Date();
-        Date expiration = new Date(issuedAt.getTime() + jwtLifetime.toMillis());
+        Date expiration;
+        if (isAccessToken) {
+            expiration = new Date(issuedAt.getTime() + jwtLifetime.toMillis());
+        } else {
+            expiration = new Date(issuedAt.getTime() + REFRESH_TOKEN_EXPIRATION);
+        }
+        claims.put("tokenType", isAccessToken ? "access" : "refresh");
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
@@ -81,8 +87,8 @@ public class JwtTokenUtils {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
-        cookie.setPath("/api/refresh");
-        cookie.setMaxAge((int) Duration.ofDays(7).getSeconds());
+        cookie.setPath("/");
+        cookie.setMaxAge((int) (REFRESH_TOKEN_EXPIRATION / 1000));
         response.addCookie(cookie);
     }
 

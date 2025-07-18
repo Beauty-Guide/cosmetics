@@ -1,4 +1,4 @@
-import apiClient from './adminApi'; //
+import apiClient from '@/hooks/apiClient';
 import {type BrandView} from '../model/types';
 
 // === API методы ===

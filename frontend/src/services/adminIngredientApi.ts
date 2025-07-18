@@ -1,4 +1,4 @@
-import apiClient from './adminApi'; //
+import apiClient from '@/hooks/apiClient';
 import type {Ingredient, IngredientView} from '../model/types';
 
 export const addIngredient = async (ingredient: Ingredient): Promise<void> => {
