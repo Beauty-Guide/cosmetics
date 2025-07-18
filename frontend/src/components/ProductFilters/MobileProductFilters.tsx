@@ -56,15 +56,24 @@ const MobileProductFilterOption = ({
   return (
     <Dialog>
       <DialogTrigger>
-        <Badge className={cn("px-2 py-1", values.length > 0 && "bg-blue-900")}>
+        <Badge
+          className={cn(
+            "px-2 py-1 bg-white text-black border border-gray-300",
+            values.length > 0 && "bg-gray-100 border-gray-500"
+          )}
+        >
           {values.length > 0 && `${values.length} `}
           {name}
         </Badge>
       </DialogTrigger>
-      <DialogContent aria-describedby={undefined}>
+      <DialogContent
+        aria-describedby={undefined}
+        className="flex flex-col gap-12 max-w-none max-h-none h-full"
+      >
         <DialogHeader>
           <DialogTitle></DialogTitle>
         </DialogHeader>
+        <div tabIndex={0} className="sr-only" />
         {searchInput && (
           <Input
             placeholder={t("search")}
@@ -73,7 +82,7 @@ const MobileProductFilterOption = ({
             onChange={(e) => setSearchValue(e.target.value)}
           />
         )}
-        <div className="flex flex-wrap gap-2 max-h-[400px] overflow-y-auto">
+        <div className="flex items-center justify-start flex-wrap gap-2 max-h-[400px] overflow-y-auto">
           {options
             .filter((option) =>
               option.name
@@ -85,9 +94,9 @@ const MobileProductFilterOption = ({
                 onClick={() => toggleValue(String(option.id))}
                 key={option.id}
                 className={cn(
-                  "bg-primary text-primary-foreground",
+                  "h-8 px-2 py-1 bg-white text-black border border-gray-300",
                   values.some((v) => String(v) === String(option.id)) &&
-                    "bg-blue-900 text-primary-foreground"
+                    "bg-gray-100 border-gray-500"
                 )}
               >
                 {option.name}
@@ -95,7 +104,7 @@ const MobileProductFilterOption = ({
             ))}
         </div>
         <DialogClose asChild>
-          <Button variant="ghost">{t("close")}</Button>
+          <Button variant="outline">{t("close")}</Button>
         </DialogClose>
       </DialogContent>
     </Dialog>

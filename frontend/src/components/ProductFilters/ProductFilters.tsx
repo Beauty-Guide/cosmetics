@@ -47,7 +47,7 @@ const ProductFilters = ({
 
   return (
     <div className="flex py-5 w-full">
-      <div className="flex gap-5 flex-wrap w-full p-4 shadow-md rounded-md">
+      <div className="flex gap-5 flex-wrap w-full py-3">
         <FilterCombobox
           label={t("filter.select_brand")}
           options={brands}

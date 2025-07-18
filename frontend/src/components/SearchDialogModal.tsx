@@ -136,12 +136,12 @@ const SearchDialogModal = ({
           <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
+        <div tabIndex={0} className="sr-only" />
         <form
           id="search-form"
           onSubmit={handleSearch}
           className="flex w-full items-center justify-start my-5 z-40"
         >
-          <input type="text" tabIndex={-1} className="sr-only" autoFocus />
           <SearchInput
             placeholder={t("search")}
             className={cn(
@@ -152,6 +152,7 @@ const SearchDialogModal = ({
             defaultValue={searchValue || ""}
             handleSelectOption={handleSelectOption}
             handleDeleteHistoryOption={handleDeleteHistoryOption}
+            name="search"
           />
         </form>
         <Button variant="outline" size="sm" onClick={handleClearFilters}>
@@ -182,7 +183,7 @@ const SearchDialogModal = ({
           />
         </div>
         <DialogFooter className="w-full flex items-center">
-          <Button variant="ghost" form="search-form">
+          <Button variant="outline" form="search-form">
             {t("apply")}
           </Button>
         </DialogFooter>
