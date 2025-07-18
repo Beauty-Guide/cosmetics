@@ -10,6 +10,7 @@ import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.models.UserSearchHistory;
 import ru.cosmetic.server.repo.CosmeticImageRepo;
+import ru.cosmetic.server.repo.CosmeticMarketplaceLinkRepo;
 import ru.cosmetic.server.repo.CosmeticRepo;
 import ru.cosmetic.server.repo.FavoriteCosmeticRepo;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
@@ -27,7 +28,7 @@ public class CosmeticService {
     private final FavoriteCosmeticRepo favoriteCosmeticRepo;
     private final UserSearchHistoryService userSearchHistoryService;
     private final UserService userService;
-    private final CatalogService catalogService;
+    private final CosmeticMarketplaceLinkRepo cosmeticMarketplaceLinkRepo;
     private final JdbcTemplate jdbcTemplate;
     private final String IMAGE_URL = "/api/getFile?cosmeticId=%s&fileName=%s";
 
@@ -575,6 +576,7 @@ public class CosmeticService {
         }
         cosmeticImageRepo.deleteByCosmeticId(id);
         favoriteCosmeticRepo.deleteByCosmeticId(id);
+        cosmeticMarketplaceLinkRepo.deleteAllByCosmeticId(id);
         cosmeticRepo.deleteById(id);
 
         return true;
