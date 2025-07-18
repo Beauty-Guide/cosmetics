@@ -1,6 +1,5 @@
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -15,7 +14,8 @@ import type { TUserHistory } from "@/types"
 import { useNavigate, useSearchParams } from "react-router"
 import { Button } from "./ui/button"
 import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
-import ProductFilters from "./HomeComponents/ProductFilters"
+import ProductFilters from "./ProductFilters/ProductFilters"
+import MobileProductFilters from "./ProductFilters/MobileProductFilters"
 
 type TSearhInputProps = {
   open: boolean
@@ -131,17 +131,17 @@ const SearchDialogModal = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-2/3 max-md:w-full max-w-none sm:max-w-full flex flex-col justify-start items-start top-[5vh] max-md:top-0 translate-y-0 gap-1 rounded-none">
+      <DialogContent className="w-2/3 max-md:w-full max-w-none sm:max-w-full flex flex-col justify-start items-start top-[5vh] max-md:top-0 translate-y-0 gap-1 rounded-md">
         <DialogHeader>
           <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
+        <div tabIndex={0} className="sr-only" />
         <form
           id="search-form"
           onSubmit={handleSearch}
           className="flex w-full items-center justify-start my-5 z-40"
         >
-          <input type="text" tabIndex={-1} className="sr-only" autoFocus />
           <SearchInput
             placeholder={t("search")}
             className={cn(
@@ -152,26 +152,38 @@ const SearchDialogModal = ({
             defaultValue={searchValue || ""}
             handleSelectOption={handleSelectOption}
             handleDeleteHistoryOption={handleDeleteHistoryOption}
+            name="search"
           />
         </form>
         <Button variant="outline" size="sm" onClick={handleClearFilters}>
           {t("filter.clear_filters")}
         </Button>
-        <ProductFilters
-          selectedBrands={selectedBrands}
-          selectedSkinTypes={selectedSkinTypes}
-          selectedAction={selectedAction}
-          selectedSortBy={sortBy}
-          setSelectedBrands={setSelectedBrands}
-          setSelectedSkinTypes={setSelectedSkinTypes}
-          setSelectedAction={setSelectedAction}
-          setSelectedSortBy={setSortBy}
-        />
+        <div className="w-full max-md:hidden">
+          <ProductFilters
+            selectedBrands={selectedBrands}
+            selectedSkinTypes={selectedSkinTypes}
+            selectedAction={selectedAction}
+            selectedSortBy={sortBy}
+            setSelectedBrands={setSelectedBrands}
+            setSelectedSkinTypes={setSelectedSkinTypes}
+            setSelectedAction={setSelectedAction}
+            setSelectedSortBy={setSortBy}
+          />
+        </div>
+        <div className="hidden max-md:block">
+          <MobileProductFilters
+            selectedBrands={selectedBrands}
+            selectedSkinTypes={selectedSkinTypes}
+            selectedAction={selectedAction}
+            selectedSortBy={sortBy}
+            setSelectedBrands={setSelectedBrands}
+            setSelectedSkinTypes={setSelectedSkinTypes}
+            setSelectedAction={setSelectedAction}
+            setSelectedSortBy={setSortBy}
+          />
+        </div>
         <DialogFooter className="w-full flex items-center">
-          <DialogClose asChild>
-            <Button variant="ghost">{t("close")}</Button>
-          </DialogClose>
-          <Button variant="default" form="search-form">
+          <Button variant="outline" form="search-form">
             {t("apply")}
           </Button>
         </DialogFooter>

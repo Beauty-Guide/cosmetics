@@ -175,6 +175,7 @@ const AppNavbar: React.FC = () => {
             "max-w-[550px] border-r-0",
             searchParams.size > 0 && "pl-9"
           )}
+          readOnly
           onClick={handleOpenSearchModal}
         />
         <SearchDialogModal
