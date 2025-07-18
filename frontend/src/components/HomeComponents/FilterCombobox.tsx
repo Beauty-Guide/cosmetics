@@ -102,7 +102,10 @@ export default function MultiSelectCombobox({
               <CommandInput placeholder={`${t("search")} ${label}...`} />
             )}
             <CommandEmpty>{t("filter.not_found")}</CommandEmpty>
-            <CommandGroup className="max-h-60 overflow-y-auto">
+            <CommandGroup
+              onWheel={(e) => e.stopPropagation()}
+              className="max-h-60 overflow-y-auto"
+            >
               {options.map((opt) => (
                 <CommandItem
                   key={opt.id}
