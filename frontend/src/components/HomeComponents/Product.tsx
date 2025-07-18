@@ -23,12 +23,12 @@ const Product = ({ product }: ProductProps) => {
   return (
     <div
       key={product.id}
-      className="flex flex-col relative items-start justify-start mt-5 h-[420px] w-[460px] p-4 rounded-md shadow-md hover:shadow-xl"
+      className="flex flex-col relative items-start justify-start mt-5 h-[420px] w-[460px] p-4 rounded-md shadow-md hover:shadow-xl overflow-hidden"
     >
       <img
         src={getImgUrl(product.images.find((img) => img.isMain)?.url)}
         alt=""
-        className="h-[300px] w-[450px] rounded-md"
+        className="max-h-[300px] max-md:max-w-[350px] max-w-[420px] rounded-md mx-auto"
         onClick={navigateToItem}
       />
       <span className="flex flex-col items-start justify-center mt-2">
