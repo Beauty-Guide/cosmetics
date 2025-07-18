@@ -1,5 +1,5 @@
 import { useGetAllAction } from "@/hooks/getAllAction"
-import FilterCombobox from "./FilterCombobox"
+import FilterCombobox from "../HomeComponents/FilterCombobox"
 import { useGetAllBrands } from "@/hooks/getAllbrands"
 import { useGetAllSkinType } from "@/hooks/getAllSkinType"
 import { memo } from "react"

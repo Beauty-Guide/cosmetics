@@ -15,7 +15,8 @@ import type { TUserHistory } from "@/types"
 import { useNavigate, useSearchParams } from "react-router"
 import { Button } from "./ui/button"
 import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
-import ProductFilters from "./HomeComponents/ProductFilters"
+import ProductFilters from "./ProductFilters/ProductFilters"
+import MobileProductFilters from "./ProductFilters/MobileProductFilters"
 
 type TSearhInputProps = {
   open: boolean
@@ -157,16 +158,30 @@ const SearchDialogModal = ({
         <Button variant="outline" size="sm" onClick={handleClearFilters}>
           {t("filter.clear_filters")}
         </Button>
-        <ProductFilters
-          selectedBrands={selectedBrands}
-          selectedSkinTypes={selectedSkinTypes}
-          selectedAction={selectedAction}
-          selectedSortBy={sortBy}
-          setSelectedBrands={setSelectedBrands}
-          setSelectedSkinTypes={setSelectedSkinTypes}
-          setSelectedAction={setSelectedAction}
-          setSelectedSortBy={setSortBy}
-        />
+        <div className="w-full max-md:hidden">
+          <ProductFilters
+            selectedBrands={selectedBrands}
+            selectedSkinTypes={selectedSkinTypes}
+            selectedAction={selectedAction}
+            selectedSortBy={sortBy}
+            setSelectedBrands={setSelectedBrands}
+            setSelectedSkinTypes={setSelectedSkinTypes}
+            setSelectedAction={setSelectedAction}
+            setSelectedSortBy={setSortBy}
+          />
+        </div>
+        <div className="hidden max-md:block">
+          <MobileProductFilters
+            selectedBrands={selectedBrands}
+            selectedSkinTypes={selectedSkinTypes}
+            selectedAction={selectedAction}
+            selectedSortBy={sortBy}
+            setSelectedBrands={setSelectedBrands}
+            setSelectedSkinTypes={setSelectedSkinTypes}
+            setSelectedAction={setSelectedAction}
+            setSelectedSortBy={setSortBy}
+          />
+        </div>
         <DialogFooter className="w-full flex items-center">
           <DialogClose asChild>
             <Button variant="ghost">{t("close")}</Button>

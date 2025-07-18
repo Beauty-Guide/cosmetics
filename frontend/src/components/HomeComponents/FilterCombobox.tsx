@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useTranslation } from "react-i18next"
 
-type Option = {
+export type Option = {
   name: string
   id: string
 }
