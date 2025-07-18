@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { API_BASE_URL } from "@/config/consts"
 import { toast } from "sonner"
-import apiClient from "@/services/adminApi"
+import apiClient from "./apiClient"
 import type { AxiosError } from "axios"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
