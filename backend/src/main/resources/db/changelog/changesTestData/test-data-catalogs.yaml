@@ -1,0 +1,168 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-catalogs
+      author: yourname
+      changes:
+        # --- Главные каталоги ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Уход за кожей"
+              - column:
+                  name: name_en
+                  value: "Skincare"
+              - column:
+                  name: name_kr
+                  value: "스킨케어"
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Макияж"
+              - column:
+                  name: name_en
+                  value: "Makeup"
+              - column:
+                  name: name_kr
+                  value: "메이크업"
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Волосы"
+              - column:
+                  name: name_en
+                  value: "Hair"
+              - column:
+                  name: name_kr
+                  value: "헤어"
+
+        # --- Подкаталоги: Уход за кожей ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Очищение"
+              - column:
+                  name: name_en
+                  value: "Cleansing"
+              - column:
+                  name: name_kr
+                  value: "클렌징"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Увлажнение"
+              - column:
+                  name: name_en
+                  value: "Moisturizing"
+              - column:
+                  name: name_kr
+                  value: "보습"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Антивозрастной уход"
+              - column:
+                  name: name_en
+                  value: "Anti-Aging Care"
+              - column:
+                  name: name_kr
+                  value: "에이징 케어"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        # --- Подкаталоги: Макияж ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Лицо"
+              - column:
+                  name: name_en
+                  value: "Face"
+              - column:
+                  name: name_kr
+                  value: "페이스"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Глаза"
+              - column:
+                  name: name_en
+                  value: "Eyes"
+              - column:
+                  name: name_kr
+                  value: "아이즈"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Губы"
+              - column:
+                  name: name_en
+                  value: "Lips"
+              - column:
+                  name: name_kr
+                  value: "립스"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+
+        # --- Подкаталоги: Волосы ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Шампуни"
+              - column:
+                  name: name_en
+                  value: "Shampoos"
+              - column:
+                  name: name_kr
+                  value: "샴푸"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Кондиционеры"
+              - column:
+                  name: name_en
+                  value: "Conditioners"
+              - column:
+                  name: name_kr
+                  value: "컨디셔너"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3

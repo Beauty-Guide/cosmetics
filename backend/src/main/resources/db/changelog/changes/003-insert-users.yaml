@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-insert-users
+      author: yourname
+
+      changes:
+        # --- Пользователи ---
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: user
+              - column:
+                  name: password
+                  value: '$2a$10$CaGfkaeMUjmltsrqezrKd.cmryZLs2.db2CeVD66VLh.7J4Wdm5MG'
+              - column:
+                  name: email
+                  value: user@gmail.com
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: admin
+              - column:
+                  name: password
+                  value: '$2a$10$CaGfkaeMUjmltsrqezrKd.cmryZLs2.db2CeVD66VLh.7J4Wdm5MG'
+              - column:
+                  name: email
+                  value: admin@gmail.com
+
+        # --- Связь пользователей и ролей ---
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 2
+              - column:
+                  name: role_id
+                  valueNumeric: 2

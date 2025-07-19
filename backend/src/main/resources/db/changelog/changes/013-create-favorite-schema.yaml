@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-favorite-cosmetics-table
+      author: yourname
+
+      changes:
+        # --- Таблица избранных косметических средств ---
+        - createTable:
+            tableName: favorite_cosmetics
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: added_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        # --- Внешний ключ: ссылка на пользователя ---
+        - addForeignKeyConstraint:
+            baseTableName: favorite_cosmetics
+            baseColumnNames: user_id
+            constraintName: fk_favorite_cosmetics_user
+            referencedTableName: users
+            referencedColumnNames: id
+
+        # --- Внешний ключ: ссылка на косметическое средство ---
+        - addForeignKeyConstraint:
+            baseTableName: favorite_cosmetics
+            baseColumnNames: cosmetic_id
+            constraintName: fk_favorite_cosmetics_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id
+
+        # --- Уникальный индекс: пользователь + косметика (чтобы не было дублей) ---
+        - createIndex:
+            tableName: favorite_cosmetics
+            indexName: uq_user_cosmetic
+            unique: true
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: cosmetic_id

@@ -1,0 +1,128 @@
+version: "3.8"
+
+services:
+  cosmetic-backend:
+    container_name: cosmetic-backend
+    image: cosmetic-backend-image
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+      TOKEN_SIGNING_KEY: ${TOKEN_SIGNING_KEY}
+      TOKEN_LIFETIME: ${TOKEN_LIFETIME}
+    networks:
+      - my-network
+    depends_on:
+      - postgres
+      - vault
+
+  postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my-network
+
+  cosmetic-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${API_BASE_URL}
+    container_name: cosmetic-frontend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - node_modules:/app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=production
+    networks:
+      - my-network
+    depends_on:
+      - cosmetic-backend
+
+  vault:
+    image: hashicorp/vault:latest
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV=true
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_DEV_ROOT_TOKEN_ID}
+    volumes:
+      - vault_data:/vault
+    command: ["server", "-dev", "-dev-listen-address=0.0.0.0:8200"]
+
+  cosmetic-minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    volumes:
+      - minio_data:/data
+    command: ["server", "/data", "--console-address", ":9001"]
+    networks:
+      - my-network
+
+  create-bucket:
+    image: quay.io/minio/mc
+    container_name: create-bucket
+    depends_on:
+      - cosmetic-minio
+    networks:
+      - my-network
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5 &&
+      mc alias set minio http://cosmetic-minio:9000 $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY &&
+      if ! mc ls minio/cosmetics > /dev/null 2>&1; then
+        echo 'Бакет не найден. Создаю бакет \"cosmetics\"...' &&
+        mc mb minio/cosmetics &&
+        mc anonymous set public minio/cosmetics &&
+        echo 'Bucket \"cosmetics\" успешно создан и сделан публичным';
+      else
+        echo 'Bucket \"cosmetics\" уже существует';
+      fi;
+      "
+
+volumes:
+  postgres_data:
+  minio_data:
+  node_modules:
+  vault_data:
+
+networks:
+  my-network:
+    driver: bridge

@@ -1,0 +1,92 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users-roles-schema
+      author: yourname
+
+      changes:
+        # --- Таблица пользователей ---
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: true  # Может быть null для OAuth2-пользователей
+              - column:
+                  name: password
+                  type: VARCHAR(80)
+                  constraints:
+                    nullable: true  # Может быть null для OAuth2-пользователей
+              - column:
+                  name: email
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true    # Уникальность email
+              - column:
+                  name: oauth2_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true  # Только для OAuth2-пользователей
+              - column:
+                  name: provider
+                  type: VARCHAR(50)
+                  defaultValue: "local"
+                  constraints:
+                    nullable: false  # 'local', 'google', 'github' и т.д.
+
+        # --- Таблица ролей ---
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+        # --- Связь many-to-many: пользователь <-> роль ---
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: INT
+                  constraints:
+                    nullable: false
+            primaryKeys:
+              - constraintName: pk_users_roles
+                columnNames: "user_id,role_id"
+
+        - addForeignKeyConstraint:
+            baseTableName: users_roles
+            baseColumnNames: user_id
+            constraintName: fk_users_roles_user
+            referencedTableName: users
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: users_roles
+            baseColumnNames: role_id
+            constraintName: fk_users_roles_role
+            referencedTableName: roles
+            referencedColumnNames: id
