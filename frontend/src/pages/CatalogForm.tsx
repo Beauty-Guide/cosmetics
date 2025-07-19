@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {PencilIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 
 
 const CatalogForm: React.FC = () => {
@@ -53,6 +54,8 @@ const CatalogForm: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [currentPage, setCurrentPage] = useState<number>(1)
   const itemsPerPage = 10
+
+  const [open, setOpen] = useState(false);
 
   // Фильтрация данных
   const filteredCatalogs = catalogs.filter((c) =>
@@ -105,6 +108,7 @@ const CatalogForm: React.FC = () => {
       setParentId(null)
       const updatedCatalogs = await getAllCatalogs()
       setCatalogs(updatedCatalogs)
+      setOpen(false);
     } catch (err: any) {
       setError(err.message || "Произошла ошибка при добавлении")
       setMessage(null)
@@ -145,86 +149,86 @@ const CatalogForm: React.FC = () => {
     setShowEditModal(true)
   }
 
-  const handleCloseModal = () => {
-    setMessage(null)
-    setError(null)
-  }
-
   return (
       <div className="p-4 max-w-7xl mx-auto">
         {/* Card */}
         <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6">
-          <h4 className="text-xl font-semibold text-center mb-4">
-            Управление каталогами
-          </h4>
+          <h4 className="text-xl font-semibold text-center mb-4">Управление каталогами</h4>
+          <Button onClick={() => setOpen(true)} className="w-full">
+            Добавить каталог
+          </Button>
 
-          {/* Форма добавления */}
-          <form onSubmit={handleSubmit} className="mb-6 grid gap-4">
-            <div>
-              <label
-                  htmlFor="formCatalogName"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Каталог (RU)
-              </label>
-              <Input
-                  id="formCatalogName"
-                  placeholder="Введите название каталога"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-              />
-            </div>
-            <div>
-              <label
-                  htmlFor="formCatalogNameEN"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Каталог (EN)
-              </label>
-              <Input
-                  id="formCatalogNameEN"
-                  placeholder="Введите название каталога"
-                  value={nameEN}
-                  onChange={(e) => setNameEN(e.target.value)}
-                  required
-              />
-            </div>
-            <div>
-              <label
-                  htmlFor="formCatalogNameKR"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Каталог (KR)
-              </label>
-              <Input
-                  id="formCatalogNameKR"
-                  placeholder="Введите название каталога"
-                  value={nameKR}
-                  onChange={(e) => setNameKR(e.target.value)}
-                  required
-              />
-            </div>
-            <div>
-              <FilterCombobox
-                  label="Родительский каталог"
-                  options={[
-                    { id: "", name: "— Без родителя —" },
-                    ...catalogs.map((cat) => ({
-                      id: String(cat.id),
-                      name: cat.name,
-                    })),
-                  ]}
-                  values={parentId ? [String(parentId)] : [""]}
-                  onChange={(selectedIds) => {
-                    const selectedId = selectedIds[0] || null
-                    setParentId(selectedId ? Number(selectedId) : null)
-                  }}
-                  singleSelect
-              />
-            </div>
-            <Button type="submit">Добавить каталог</Button>
-          </form>
+          {/* Модальное окно */}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Добавить каталог</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4 py-4">
+                <div>
+                  <label htmlFor="formCatalogName" className="block text-sm font-medium text-gray-700 mb-1">Каталог
+                    (RU)</label>
+                  <Input id="formCatalogName" placeholder="Введите название каталога" value={name}
+                         onChange={(e) => setName(e.target.value)} required/>
+                </div>
+
+                <div>
+                  <label htmlFor="formCatalogNameEN" className="block text-sm font-medium text-gray-700 mb-1">Каталог
+                    (EN)</label>
+                  <Input
+                      id="formCatalogNameEN"
+                      placeholder="Введите название каталога"
+                      value={nameEN}
+                      onChange={(e) => setNameEN(e.target.value)}
+                      required
+                  />
+                </div>
+
+                <div>
+                  <label
+                      htmlFor="formCatalogNameKR"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Каталог (KR)
+                  </label>
+                  <Input
+                      id="formCatalogNameKR"
+                      placeholder="Введите название каталога"
+                      value={nameKR}
+                      onChange={(e) => setNameKR(e.target.value)}
+                      required
+                  />
+                </div>
+
+                <div>
+                  <FilterCombobox
+                      label="Родительский каталог"
+                      options={[
+                        {id: '', name: '— Без родителя —'},
+                        ...catalogs.map((cat) => ({
+                          id: String(cat.id),
+                          name: cat.name,
+                        })),
+                      ]}
+                      values={parentId ? [parentId] : ['']}
+                      onChange={(selectedIds) => {
+                        const selectedId = selectedIds[0] || null;
+                        setParentId(selectedId);
+                      }}
+                      singleSelect
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Отмена
+                  </Button>
+                  <Button type="submit">Добавить</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <div style={{paddingBottom: "10px"}}></div>
 
           {/* Поиск и заголовок на одной строке */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
@@ -239,7 +243,18 @@ const CatalogForm: React.FC = () => {
           </div>
 
           {/* Сообщения */}
-          <FeedbackModal message={message} error={error} onClose={handleCloseModal} />
+          <FeedbackModal
+              open={!!message || !!error}
+              onOpenChange={(open) => {
+                if (!open) {
+                  // можно сбросить сообщения
+                  setMessage(null);
+                  setError(null);
+                }
+              }}
+              message={message}
+              error={error}
+          />
 
           {/* Список каталогов */}
           {loading ? (
@@ -321,100 +336,110 @@ const CatalogForm: React.FC = () => {
         </div>
 
         {/* Модальное окно редактирования */}
-        {showEditModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-              <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h5 className="text-lg font-semibold">Редактировать каталог</h5>
-                  <button
-                      onClick={() => setShowEditModal(false)}
-                      className="text-gray-500 hover:text-gray-800 text-xl"
-                  >
-                    &times;
-                  </button>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Каталог (RU)
-                  </label>
-                  <Input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Каталог (EN)
-                  </label>
-                  <Input
-                      type="text"
-                      value={editNameEN}
-                      onChange={(e) => setEditNameEN(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Каталог (KR)
-                  </label>
-                  <Input
-                      type="text"
-                      value={editNameKR}
-                      onChange={(e) => setEditNameKR(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <FilterCombobox
-                      label="Родительский каталог"
-                      options={[
-                        { id: "", name: "— Без родителя —" },
-                        ...catalogs.map((cat) => ({ id: String(cat.id), name: cat.name })),
-                      ]}
-                      values={editParentId !== null ? [String(editParentId)] : [""]}
-                      onChange={(selectedIds) => {
-                        const selectedId = selectedIds[0] || null
-                        setEditParentId(selectedId ? Number(selectedId) : null)
-                      }}
-                      singleSelect
-                  />
-                </div>
-                <div className="flex justify-end gap-3">
-                  <Button
-                      onClick={() => setShowEditModal(false)}
-                      variant="outline"
-                  >
-                    Отмена
-                  </Button>
-                  <Button onClick={handleSaveEdit}>Сохранить</Button>
-                </div>
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Редактировать каталог</DialogTitle>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Каталог (RU)
+                </label>
+                <Input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Каталог (EN)
+                </label>
+                <Input
+                    type="text"
+                    value={editNameEN}
+                    onChange={(e) => setEditNameEN(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Каталог (KR)
+                </label>
+                <Input
+                    type="text"
+                    value={editNameKR}
+                    onChange={(e) => setEditNameKR(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <FilterCombobox
+                    label="Родительский каталог"
+                    options={[
+                      { id: "", name: "— Без родителя —" },
+                      ...catalogs.map((cat) => ({ id: String(cat.id), name: cat.name })),
+                    ]}
+                    values={editParentId !== null ? [String(editParentId)] : [""]}
+                    onChange={(selectedIds) => {
+                      const selectedId = selectedIds[0] || null;
+                      setEditParentId(selectedId ? Number(selectedId) : null);
+                    }}
+                    singleSelect
+                />
               </div>
             </div>
-        )}
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowEditModal(false)}>
+                Отмена
+              </Button>
+              <Button onClick={handleSaveEdit}>Сохранить</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Модальное окно подтверждения удаления */}
-        <ConfirmDeleteModal
-            show={showConfirmDeleteModal}
-            onHide={() => setShowConfirmDeleteModal(false)}
-            onConfirm={async () => {
-              if (catalogToDeleteId !== null) {
-                try {
-                  await deleteCatalog(catalogToDeleteId)
-                  const updatedCatalogs = await getAllCatalogs()
-                  setCatalogs(updatedCatalogs)
-                  setMessage("Каталог успешно удалён")
-                  setError(null)
-                } catch (err: any) {
-                  setError(err.message || "Ошибка при удалении")
-                  setMessage(null)
-                } finally {
-                  setShowConfirmDeleteModal(false)
-                  setCatalogToDeleteId(null)
-                  setCatalogToDeleteName(null)
-                }
-              }
-            }}
-            itemName={catalogToDeleteName || undefined}
-        />
+        <Dialog open={showConfirmDeleteModal} onOpenChange={setShowConfirmDeleteModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Удалить каталог "{catalogToDeleteName}"?</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p>Вы уверены, что хотите удалить этот каталог? Это действие нельзя отменить.</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowConfirmDeleteModal(false)}>
+                Отмена
+              </Button>
+              <Button
+                  variant="destructive"
+                  onClick={async () => {
+                    if (catalogToDeleteId !== null) {
+                      try {
+                        await deleteCatalog(catalogToDeleteId);
+                        const updatedCatalogs = await getAllCatalogs();
+                        setCatalogs(updatedCatalogs);
+                        setMessage("Каталог успешно удалён");
+                        setError(null);
+                      } catch (err: any) {
+                        setError(err.message || "Ошибка при удалении");
+                        setMessage(null);
+                      } finally {
+                        setShowConfirmDeleteModal(false);
+                        setCatalogToDeleteId(null);
+                        setCatalogToDeleteName(null);
+                      }
+                    }
+                  }}
+              >
+                Удалить
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
   )
 }

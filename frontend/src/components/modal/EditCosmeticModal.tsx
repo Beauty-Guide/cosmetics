@@ -20,6 +20,7 @@ import {Slider} from "@/components/ui/slider.tsx";
 import MarketplaceLinksTable from "@/components/modal/MarketplaceLinksTable.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {API_BASE_URL} from "@/config/consts.ts";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 
 interface EditCosmeticModalProps {
   isOpen: boolean
@@ -51,7 +52,7 @@ interface EditCosmeticModalProps {
 }
 
 const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
-  isOpen,
+  isOpen, onOpenChange,
   onClose,
   onEditSuccess,
   initialData,
@@ -291,101 +292,84 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div
-        className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl"
-        >
-          &times;
-        </button>
-        {/* Modal Content */}
-        <div className="p-6">
-          <h4 className="text-xl font-semibold text-center mb-6">
-            Редактировать косметику
-          </h4>
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="!max-w-[var(--container-4xl)] max-h-screen overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle >
+              Редактирование косметики
+            </DialogTitle>
+          </DialogHeader>
+
           {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-          {message && (
-            <div className="text-green-500 text-sm mb-4">{message}</div>
-          )}
-          <form onSubmit={handleSave} className="space-y-6">
+          {message && <div className="text-green-500 text-sm mb-4">{message}</div>}
+
+          <form onSubmit={handleSave} className="space-y-6 py-4">
             {/* Основные поля */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="editName"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
+                <label htmlFor="editName" className="block text-sm font-medium text-gray-700 mb-1">
                   Название
                 </label>
                 <Input
-                  id="editName"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full"
+                    id="editName"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full"
                 />
               </div>
               <FilterCombobox
-                label="Бренд"
-                options={brands}
-                values={brandId ? [brandId.toString()] : []}
-                onChange={(selected) =>
-                  setBrandId(selected.length > 0 ? parseInt(selected[0]) : null)
-                }
-                singleSelect
+                  label="Бренд"
+                  options={brands}
+                  values={brandId ? [brandId.toString()] : []}
+                  onChange={(selected) =>
+                      setBrandId(selected.length > 0 ? parseInt(selected[0]) : null)
+                  }
+                  singleSelect
               />
             </div>
+
             {/* Каталог, тип кожи */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <FilterCombobox
-                label="Каталог"
-                options={catalogs}
-                values={catalogId ? [catalogId.toString()] : []}
-                onChange={(selected) =>
-                  setCatalogId(
-                    selected.length > 0 ? parseInt(selected[0]) : null
-                  )
-                }
-                singleSelect
+                  label="Каталог"
+                  options={catalogs}
+                  values={catalogId ? [catalogId.toString()] : []}
+                  onChange={(selected) =>
+                      setCatalogId(selected.length > 0 ? parseInt(selected[0]) : null)
+                  }
+                  singleSelect
               />
               <FilterCombobox
-                label="Тип кожи"
-                options={skinTypes}
-                values={skinTypeIdList.map((id) => id.toString())}
-                onChange={(selected) =>
-                  setSkinTypeIdList(selected.map((id) => parseInt(id)))
-                }
+                  label="Тип кожи"
+                  options={skinTypes}
+                  values={skinTypeIdList.map((id) => id.toString())}
+                  onChange={(selected) =>
+                      setSkinTypeIdList(selected.map((id) => parseInt(id)))
+                  }
+              />
+              <FilterCombobox
+                  label="Действия"
+                  options={actions}
+                  values={actionIds.map((id) => id.toString())}
+                  onChange={(selected) =>
+                      setActionIds(selected.map((id) => parseInt(id)))
+                  }
+              />
+              <FilterCombobox
+                  label="Ингредиенты"
+                  options={ingredients}
+                  values={ingredientIds.map((id) => id.toString())}
+                  onChange={(selected) =>
+                      setIngredientIds(selected.map((id) => parseInt(id)))
+                  }
               />
             </div>
-            {/* Действия, ингредиенты */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              <FilterCombobox
-                label="Действия"
-                options={actions}
-                values={actionIds.map((id) => id.toString())}
-                onChange={(selected) =>
-                  setActionIds(selected.map((id) => parseInt(id)))
-                }
-              />
-              <FilterCombobox
-                label="Ингредиенты"
-                options={ingredients}
-                values={ingredientIds.map((id) => id.toString())}
-                onChange={(selected) =>
-                  setIngredientIds(selected.map((id) => parseInt(id)))
-                }
-              />
-            </div>
-            {/* Совместимость, рекомендации, способ применения */}
-            <div className="my-6 h-px bg-gray-300 w-full"></div>
-            <h5 className="text-lg font-semibold">Совместимость</h5>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div>
+
+            {/* Совместимость */}
+            <div className="border-t border-gray-300 pt-6">
+              <h5 className="text-lg font-semibold">Совместимость</h5>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-2">
                 <Textarea
                     id="editCompatibility"
                     rows={3}
@@ -393,8 +377,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                     placeholder="Совместимость (RU)"
                     onChange={(e) => setCompatibility(e.target.value)}
                 />
-              </div>
-              <div>
                 <Textarea
                     id="editCompatibilityEN"
                     rows={3}
@@ -402,8 +384,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                     placeholder="Совместимость (EN)"
                     onChange={(e) => setCompatibilityEN(e.target.value)}
                 />
-              </div>
-              <div>
                 <Textarea
                     id="editCompatibilityKR"
                     rows={3}
@@ -413,10 +393,11 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                 />
               </div>
             </div>
-            <div className="my-6 h-px bg-gray-300 w-full"></div>
-            <h5 className="text-lg font-semibold">Рекомендации по применению</h5>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div>
+
+            {/* Рекомендации по применению */}
+            <div className="border-t border-gray-300 pt-6">
+              <h5 className="text-lg font-semibold">Рекомендации по применению</h5>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-2">
                 <Textarea
                     id="editUsage"
                     rows={3}
@@ -424,8 +405,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                     placeholder="Рекомендации по применению (RU)"
                     onChange={(e) => setUsageRecommendations(e.target.value)}
                 />
-              </div>
-              <div>
                 <Textarea
                     id="editUsageEN"
                     rows={3}
@@ -433,8 +412,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                     placeholder="Рекомендации по применению (EN)"
                     onChange={(e) => setUsageRecommendationsEN(e.target.value)}
                 />
-              </div>
-              <div>
                 <Textarea
                     id="editUsageKR"
                     rows={3}
@@ -444,10 +421,11 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                 />
               </div>
             </div>
-            <div className="my-6 h-px bg-gray-300 w-full"></div>
-            <h5 className="text-lg font-semibold">Способ применения </h5>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div>
+
+            {/* Способ применения */}
+            <div className="border-t border-gray-300 pt-6">
+              <h5 className="text-lg font-semibold">Способ применения</h5>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-2">
                 <Textarea
                     id="editApplication"
                     rows={3}
@@ -455,8 +433,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                     placeholder="Способ применения (RU)"
                     onChange={(e) => setApplicationMethod(e.target.value)}
                 />
-              </div>
-              <div>
                 <Textarea
                     id="editApplicationEN"
                     rows={3}
@@ -464,8 +440,6 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                     placeholder="Способ применения (EN)"
                     onChange={(e) => setApplicationMethodEN(e.target.value)}
                 />
-              </div>
-              <div>
                 <Textarea
                     id="editApplicationKR"
                     rows={3}
@@ -475,154 +449,132 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
                 />
               </div>
             </div>
-            <div className="my-6 h-px bg-gray-300 w-full"></div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+
+            {/* Рейтинг */}
+            <div className="border-t border-gray-300 pt-6">
               <Slider
-                  label="Райтинг"
+                  label="Рейтинг"
                   min={0}
                   max={100}
                   value={rating}
                   onValueChange={setRating}
               />
             </div>
-            <div className="my-6 h-px bg-gray-300 w-full"></div>
-            {/* Marketplace Links Table */}
-            <MarketplaceLinksTable
-                links={marketplaceLinks}
-                onChange={setMarketplaceLinks}
-            />
-            <div className="my-6 h-px bg-gray-300 w-full"></div>
 
-            {/* Файлы для загрузки */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="formMainImage"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Главное изображение
-                </label>
-                <Input
-                  id="formMainImage"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      toggleMainImageMarkForDeletion()
-                      setMainImageFile(e.target.files[0])
-                      const url = URL.createObjectURL(e.target.files[0])
-                      setMainImageUrl(url)
-                    }
-                  }}
-                />
-                <small className="text-gray-500 mt-1 block">
-                  Выберите главное изображение
-                </small>
+            {/* Ссылки маркетплейсов */}
+            <div className="border-t border-gray-300 pt-6">
+              <MarketplaceLinksTable links={marketplaceLinks} onChange={setMarketplaceLinks} />
+            </div>
+
+            {/* Загрузка изображений */}
+            <div className="border-t border-gray-300 pt-6">
+              <h5 className="text-lg font-semibold mb-2">Изображения</h5>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <Input
+                      id="formMainImage"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          if (toggleMainImageMarkForDeletion) toggleMainImageMarkForDeletion();
+                          setMainImageFile(e.target.files[0]);
+                          const url = URL.createObjectURL(e.target.files[0]);
+                          setMainImageUrl(url);
+                        }
+                      }}
+                  />
+                  <small className="text-gray-500 mt-1 block">
+                    Выберите главное изображение
+                  </small>
+                </div>
+                <div>
+                  <Input
+                      id="formImages"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => {
+                        const files = e.target.files;
+                        if (files) {
+                          const newFiles = Array.from(files);
+                          const newUrls = newFiles.map((file) => ({
+                            id: "test",
+                            url: URL.createObjectURL(file),
+                          }));
+                          setImageFiles((prev) => [...prev, ...newFiles]);
+                          setImageUrls((prev) => [...prev, ...newUrls]);
+                        }
+                      }}
+                      onClick={() => {
+                        setImageUrls((prev) => prev.filter((img) => img.id !== "test"));
+                      }}
+                  />
+                  <small className="text-gray-500 mt-1 block">
+                    Можно выбрать несколько изображений
+                  </small>
+                </div>
               </div>
-              <div>
-                <label
-                  htmlFor="formImages"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Изображения
-                </label>
-                <Input
-                  id="formImages"
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={(e) => {
-                    const files = e.target.files
-                    if (!files || files.length === 0) {
-                      // Пользователь отменил выбор файлов
-                      return
-                    }
-                    // Преобразуем файлы в массив
-                    const newFiles = Array.from(files)
-                    // Создаем новый массив для хранения объектов { id, url }
-                    const newImageUrls = newFiles.map((file) => ({
-                      id: "test", // Генерируем уникальный ID
-                      url: URL.createObjectURL(file), // Создаем временный URL для предварительного просмотра
-                    }))
-                    // Обновляем состояние imageFiles и imageUrls
-                    setImageFiles((prev) => [...prev, ...newFiles])
-                    setImageUrls((prev) => [...prev, ...newImageUrls])
-                  }}
-                  onClick={() => {
-                    setImageUrls((prev) =>
-                      prev.filter((img) => img.id !== "test")
-                    )
-                  }}
-                />
-                <small className="text-gray-500 mt-1 block">
-                  Можно выбрать несколько изображений
-                </small>
-              </div>
-              {/* Изображения */}
+
+              {/* Предварительный просмотр */}
               <div className="mt-6">
-                <h5 className="text-lg font-semibold mb-2">
-                  Предварительный просмотр:
-                </h5>
-                {/* Главное изображение */}
+                <h5 className="text-lg font-semibold mb-2">Предварительный просмотр:</h5>
                 {mainImageUrl && (
-                  <div className="mb-2">
-                    <strong>Главное изображение:</strong>
-                    <div className="relative">
+                    <div className="mb-2">
+                      <strong>Главное изображение:</strong>
                       <img
-                        src={mainImageUrl}
-                        alt="Главное изображение"
-                        className="w-full h-40 object-cover rounded-md"
+                          src={mainImageUrl}
+                          alt="Главное изображение"
+                          className="w-full h-40 object-cover rounded-md mt-2"
                       />
                     </div>
-                  </div>
                 )}
-                {/* Дополнительные изображения */}
+
                 {imageUrls.length > 0 && (
-                  <div>
-                    <strong>Дополнительные изображения:</strong>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {imageUrls.map((url, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={url.url}
-                            alt={`Изображение ${index + 1}`}
-                            className={`w-full h-40 object-cover rounded-md ${
-                              imagesMarkedForDeletion.some(
-                                (img) => img.id === url.id
-                              )
-                                ? "opacity-50 grayscale"
-                                : ""
-                            }`}
-                          />
-                          {url.id !== "test" && (
-                            <button
-                              type="button"
-                              onClick={() => toggleImageMarkForDeletion(index)}
-                              className="absolute top-0 right-0 text-white bg-red-500 rounded-full px-2 py-1 text-xs"
-                            >
-                              {imagesMarkedForDeletion.some(
-                                (img) => img.id === url.id
-                              )
-                                ? "Восстановить"
-                                : "Удалить"}
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                    <div>
+                      <strong>Дополнительные изображения:</strong>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                        {imageUrls.map((img, index) => (
+                            <div key={img.id} className="relative">
+                              <img
+                                  src={img.url}
+                                  alt={`Изображение ${index + 1}`}
+                                  className={`w-full h-40 object-cover rounded-md ${
+                                      imagesMarkedForDeletion.some((i) => i.id === img.id)
+                                          ? 'opacity-50 grayscale'
+                                          : ''
+                                  }`}
+                              />
+                              {img.id !== 'test' && (
+                                  <button
+                                      type="button"
+                                      onClick={() => toggleImageMarkForDeletion(index)}
+                                      className="absolute top-1 right-1 text-white bg-red-500 rounded-full px-2 py-1 text-xs"
+                                  >
+                                    {imagesMarkedForDeletion.some((i) => i.id === img.id)
+                                        ? 'Восстановить'
+                                        : 'Удалить'}
+                                  </button>
+                              )}
+                            </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
                 )}
               </div>
             </div>
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button type="button" onClick={onClose}>Отмена</Button>
+
+            {/* Кнопки */}
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={onClose}>
+                Отмена
+              </Button>
               <Button type="submit">Сохранить изменения</Button>
             </div>
           </form>
-        </div>
-      </div>
-    </div>
-  )
-}
+        </DialogContent>
+      </Dialog>
+  );
+};
 
-export default EditCosmeticModal
+export default EditCosmeticModal;

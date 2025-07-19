@@ -19,8 +19,12 @@ export const getAllIngredients = async (): Promise<IngredientView[]> => {
 };
 
 export const updateIngredient = async (id: number, data: { name?: string }) => {
-  const response = await apiClient.put(`/admin/ingredient/updateIngredient/${id}`, data);
-  return response.data;
+  try {
+    const response = await apiClient.put(`/admin/ingredient/updateIngredient/${id}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error('Ошибка обновления ингредиента');
+  }
 };
 
 export const deleteIngredient = async (id: number): Promise<boolean> => {

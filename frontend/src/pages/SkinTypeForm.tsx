@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {PencilIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 
 const SkinTypeForm: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null)
@@ -55,6 +56,7 @@ const SkinTypeForm: React.FC = () => {
   const [name, setName] = useState<string>("")
   const [nameEN, setNameEN] = useState<string>("")
   const [nameKR, setNameKR] = useState<string>("")
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchSkinTypes = async () => {
@@ -120,6 +122,7 @@ const SkinTypeForm: React.FC = () => {
       setName("")
       setNameEN("")
       setNameKR("")
+      setOpen(false)
     } catch (err: any) {
       setError(err.message || "Произошла ошибка при добавлении")
       setMessage("")
@@ -167,65 +170,90 @@ const SkinTypeForm: React.FC = () => {
             Управление типами кожи
           </h4>
 
-          {/* Форма добавления */}
-          <form
-              onSubmit={handleAddSkinType}
-              className="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
-          >
-            <div className="md:col-span-3">
-              <label
-                  htmlFor="formSkinTypeName"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Тип кожи (RU)
-              </label>
-              <Input
-                  id="formSkinTypeName"
-                  placeholder="Введите тип кожи"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-              />
-            </div>
-            <div className="md:col-span-3">
-              <label
-                  htmlFor="formSkinTypeNameEN"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Тип кожи (EN)
-              </label>
-              <Input
-                  id="formSkinTypeNameEN"
-                  placeholder="Введите тип кожи"
-                  value={nameEN}
-                  onChange={(e) => setNameEN(e.target.value)}
-                  required
-              />
-            </div>
-            <div className="md:col-span-3">
-              <label
-                  htmlFor="formSkinTypeNameKR"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Тип кожи (KR)
-              </label>
-              <Input
-                  id="formSkinTypeNameKR"
-                  placeholder="Введите тип кожи"
-                  value={nameKR}
-                  onChange={(e) => setNameKR(e.target.value)}
-                  required
-              />
-            </div>
-            <div className="md:col-span-2">
-              <Button type="submit" className="w-full">
-                Добавить тип кожи
-              </Button>
-            </div>
-          </form>
+          <Button onClick={() => setOpen(true)} className="w-full">
+            Добавить тип кожи
+          </Button>
 
-          {/* Сообщения */}
-          <FeedbackModal message={message} error={error} onClose={() => setMessage(null)} />
+          {/* Модальное окно */}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Добавить тип кожи</DialogTitle>
+              </DialogHeader>
+
+              <form onSubmit={handleAddSkinType} className="space-y-6 py-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div className="sm:col-span-3">
+                    <label
+                        htmlFor="formSkinTypeName"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Тип кожи (RU)
+                    </label>
+                    <Input
+                        id="formSkinTypeName"
+                        placeholder="Введите тип кожи"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                    />
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                        htmlFor="formSkinTypeNameEN"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Тип кожи (EN)
+                    </label>
+                    <Input
+                        id="formSkinTypeNameEN"
+                        placeholder="Введите тип кожи"
+                        value={nameEN}
+                        onChange={(e) => setNameEN(e.target.value)}
+                        required
+                    />
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                        htmlFor="formSkinTypeNameKR"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Тип кожи (KR)
+                    </label>
+                    <Input
+                        id="formSkinTypeNameKR"
+                        placeholder="Введите тип кожи"
+                        value={nameKR}
+                        onChange={(e) => setNameKR(e.target.value)}
+                        required
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Отмена
+                  </Button>
+                  <Button type="submit">Добавить</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <div style={{paddingBottom: "10px"}}></div>
+
+          <FeedbackModal
+              open={!!message || !!error}
+              onOpenChange={(open) => {
+                if (!open) {
+                  // можно сбросить сообщения
+                  setMessage(null);
+                  setError(null);
+                }
+              }}
+              message={message}
+              error={error}
+          />
 
           {/* Поиск и заголовок на одной строке */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
@@ -329,82 +357,91 @@ const SkinTypeForm: React.FC = () => {
         </div>
 
         {/* Модальное окно редактирования */}
-        {showEditModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-              <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h5 className="text-lg font-semibold">Редактировать тип кожи</h5>
-                  <button
-                      onClick={() => setShowEditModal(false)}
-                      className="text-gray-500 hover:text-gray-800"
-                  >
-                    &times;
-                  </button>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Тип кожи (RU)
-                  </label>
-                  <Input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Тип кожи (EN)
-                  </label>
-                  <Input
-                      type="text"
-                      value={editNameEN}
-                      onChange={(e) => setEditNameEN(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Тип кожи (KR)
-                  </label>
-                  <Input
-                      type="text"
-                      value={editNameKR}
-                      onChange={(e) => setEditNameKR(e.target.value)}
-                  />
-                </div>
-                <div className="flex justify-end gap-3">
-                  <Button variant="outline" onClick={() => setShowEditModal(false)}>
-                    Отмена
-                  </Button>
-                  <Button onClick={handleSaveEdit}>Сохранить</Button>
-                </div>
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Редактировать тип кожи</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Тип кожи (RU)
+                </label>
+                <Input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Тип кожи (EN)
+                </label>
+                <Input
+                    type="text"
+                    value={editNameEN}
+                    onChange={(e) => setEditNameEN(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Тип кожи (KR)
+                </label>
+                <Input
+                    type="text"
+                    value={editNameKR}
+                    onChange={(e) => setEditNameKR(e.target.value)}
+                />
               </div>
             </div>
-        )}
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowEditModal(false)}>
+                Отмена
+              </Button>
+              <Button onClick={handleSaveEdit}>Сохранить</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Модальное окно подтверждения удаления */}
-        <ConfirmDeleteModal
-            show={showConfirmDeleteModal}
-            onHide={() => setShowConfirmDeleteModal(false)}
-            onConfirm={async () => {
-              if (skinTypeToDeleteId !== null) {
-                try {
-                  await deleteSkinType(skinTypeToDeleteId)
-                  const updatedTypes = await getAllSkinType()
-                  setSkinTypes(updatedTypes)
-                  setMessage("Тип кожи успешно удалён")
-                  setError(null)
-                } catch (err: any) {
-                  setError(err.message || "Ошибка при удалении")
-                  setMessage(null)
-                } finally {
-                  setShowConfirmDeleteModal(false)
-                  setSkinTypeToDeleteId(null)
-                  setSkinTypeToDeleteName(null)
-                }
-              }
-            }}
-            itemName={skinTypeToDeleteName || undefined}
-        />
+        <Dialog open={showConfirmDeleteModal} onOpenChange={setShowConfirmDeleteModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Удалить тип кожи "{skinTypeToDeleteName}"?</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p>Вы уверены, что хотите удалить этот тип кожи? Это действие нельзя отменить.</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowConfirmDeleteModal(false)}>
+                Отмена
+              </Button>
+              <Button
+                  variant="destructive"
+                  onClick={async () => {
+                    if (skinTypeToDeleteId !== null) {
+                      try {
+                        await deleteSkinType(skinTypeToDeleteId);
+                        const updatedTypes = await getAllSkinType();
+                        setSkinTypes(updatedTypes);
+                        setMessage("Тип кожи успешно удалён");
+                        setError(null);
+                      } catch (err: any) {
+                        setError(err.message || "Ошибка при удалении");
+                        setMessage(null);
+                      } finally {
+                        setShowConfirmDeleteModal(false);
+                        setSkinTypeToDeleteId(null);
+                        setSkinTypeToDeleteName(null);
+                      }
+                    }
+                  }}
+              >
+                Удалить
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
   )
 }

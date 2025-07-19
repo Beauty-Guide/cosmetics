@@ -21,6 +21,7 @@ import { uploadCosmeticImages } from "@/services/fileApi.ts"
 import {Slider} from "@/components/ui/slider.tsx";
 import MarketplaceLinksTable from "@/components/modal/MarketplaceLinksTable.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 
 interface AddCosmeticModalProps {
   onAddSuccess: () => void
@@ -308,286 +309,232 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
   }
 
   return (
-    <>
-      {/* Кнопка для открытия модального окна */}
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="w-full px-4 py-2 text-white rounded-md"
-      >
-        Добавить косметику
-      </Button>
-      {/* Модальное окно */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div
-            className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl"
-            >
-              &times;
-            </button>
-            {/* Modal Content */}
-            <div className="p-6">
-              <h4 className="text-xl font-semibold text-center mb-6">
-                Добавление косметики
-              </h4>
-              {/* Показываем ошибку здесь */}
-              {error && (
-                <div className="text-red-500 text-sm mb-4">{error}</div>
-              )}
-              <form onSubmit={handleAddCosmetic} className="space-y-6">
-                {/* Основные поля */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="formName"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Название
-                    </label>
-                    <Input
+      <>
+        <Button onClick={() => setIsOpen(true)} className="w-full">
+          Добавить косметику
+        </Button>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogContent className="!max-w-[var(--container-4xl)] max-h-screen overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Добавление косметики</DialogTitle>
+            </DialogHeader>
+            {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+            <form onSubmit={handleAddCosmetic} className="space-y-6 py-4">
+              {/* Основные поля */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="formName" className="block text-sm font-medium text-gray-700 mb-1">
+                    Название
+                  </label>
+                  <Input
                       id="formName"
                       type="text"
                       placeholder="Введите название"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <FilterCombobox
+                  />
+                </div>
+                <FilterCombobox
                     label="Бренд"
                     options={brands}
                     values={selectedBrands}
                     onChange={setSelectedBrands}
                     singleSelect
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  <FilterCombobox
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <FilterCombobox
                     label="Каталог"
                     options={catalogs}
                     values={selectedCatalogs}
                     onChange={setSelectedCatalogs}
                     singleSelect
-                  />
-                  <FilterCombobox
+                />
+                <FilterCombobox
                     label="Тип кожи"
                     options={skinTypes}
                     values={selectedSkinTypes}
                     onChange={setSelectedSkinTypes}
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  <FilterCombobox
+                />
+                <FilterCombobox
                     label="Действия"
                     options={actions}
                     values={selectedActions}
                     onChange={setSelectedActions}
-                  />
-                  <FilterCombobox
+                />
+                <FilterCombobox
                     label="Ингредиенты"
                     options={ingredients}
                     values={selectedIngredients}
                     onChange={setSelectedIngredients}
-                  />
-                </div>
-                <div className="my-6 h-px bg-gray-300 w-full"></div>
-                <h5 className="text-lg font-semibold">Совместимость</h5>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={compatibility}
-                              placeholder="Совместимость (RU)"
-                              onChange={(e) => setCompatibility(e.target.value)}
-                          />
-                      </div>
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={compatibilityEN}
-                              placeholder="Совместимость (EN)"
-                              onChange={(e) => setCompatibilityEN(e.target.value)}
-                          />
-                      </div>
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={compatibilityKR}
-                              placeholder="Совместимость (KR)"
-                              onChange={(e) => setCompatibilityKR(e.target.value)}
-                          />
-                      </div>
-                  </div>
-                <div className="my-6 h-px bg-gray-300 w-full"></div>
-                <h5 className="text-lg font-semibold">Рекомендации по применению</h5>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={usageRecommendations}
-                              placeholder="Рекомендации по применению (RU)"
-                              onChange={(e) => setUsageRecommendations(e.target.value)}
-                          />
-                      </div>
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={usageRecommendationsEN}
-                              placeholder="Рекомендации по применению (EN)"
-                              onChange={(e) =>
-                                  setUsageRecommendationsEN(e.target.value)
-                              }
-                          />
-                      </div>
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={usageRecommendationsKR}
-                              placeholder="Рекомендации по применению (KR)"
-                              onChange={(e) =>
-                                  setUsageRecommendationsKR(e.target.value)
-                              }
-                          />
-                      </div>
-                  </div>
-                <div className="my-6 h-px bg-gray-300 w-full"></div>
-                <h5 className="text-lg font-semibold">Способ применения </h5>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={applicationMethod}
-                              placeholder="Способ применения (RU)"
-                              onChange={(e) => setApplicationMethod(e.target.value)}
-                          />
-                      </div>
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={applicationMethodEN}
-                              placeholder="Способ применения (EN)"
-                              onChange={(e) =>
-                                  setApplicationMethodEN(e.target.value)
-                              }
-                          />
-                      </div>
-                      <div>
-                          <Textarea
-                              rows={3}
-                              value={applicationMethodKR}
-                              placeholder="Способ применения (KR)"
-                              onChange={(e) =>
-                                  setApplicationMethodKR(e.target.value)
-                              }
-                          />
-                      </div>
-                  </div>
-                <div className="my-6 h-px bg-gray-300 w-full"></div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <Slider
-                        label="Райтинг"
-                        min={0}
-                        max={100}
-                        value={rating}
-                        onValueChange={setRating}
-                    />
-                  </div>
-                <div className="my-6 h-px bg-gray-300 w-full"></div>
-                <MarketplaceLinksTable
-                    links={marketplaceLinks}
-                    onChange={setMarketplaceLinks}
                 />
-                <div className="my-6 h-px bg-gray-300 w-full"></div>
-                <h5 className="text-lg font-semibold">Изображения</h5>
+              </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="border-t border-gray-300 pt-6">
+                  <h5 className="text-lg font-semibold">Совместимость</h5>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-2">
+                    <Textarea
+                        rows={3}
+                        value={compatibility}
+                        placeholder="Совместимость (RU)"
+                        onChange={(e) => setCompatibility(e.target.value)}
+                    />
+                    <Textarea
+                        rows={3}
+                        value={compatibilityEN}
+                        placeholder="Совместимость (EN)"
+                        onChange={(e) => setCompatibilityEN(e.target.value)}
+                    />
+                    <Textarea
+                        rows={3}
+                        value={compatibilityKR}
+                        placeholder="Совместимость (KR)"
+                        onChange={(e) => setCompatibilityKR(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-300 pt-6">
+                  <h5 className="text-lg font-semibold">Рекомендации по применению</h5>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-2">
+                    <Textarea
+                        rows={3}
+                        value={usageRecommendations}
+                        placeholder="Рекомендации по применению (RU)"
+                        onChange={(e) => setUsageRecommendations(e.target.value)}
+                    />
+                    <Textarea
+                        rows={3}
+                        value={usageRecommendationsEN}
+                        placeholder="Рекомендации по применению (EN)"
+                        onChange={(e) => setUsageRecommendationsEN(e.target.value)}
+                    />
+                    <Textarea
+                        rows={3}
+                        value={usageRecommendationsKR}
+                        placeholder="Рекомендации по применению (KR)"
+                        onChange={(e) => setUsageRecommendationsKR(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-300 pt-6">
+                  <h5 className="text-lg font-semibold">Способ применения</h5>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-2">
+                    <Textarea
+                        rows={3}
+                        value={applicationMethod}
+                        placeholder="Способ применения (RU)"
+                        onChange={(e) => setApplicationMethod(e.target.value)}
+                    />
+                    <Textarea
+                        rows={3}
+                        value={applicationMethodEN}
+                        placeholder="Способ применения (EN)"
+                        onChange={(e) => setApplicationMethodEN(e.target.value)}
+                    />
+                    <Textarea
+                        rows={3}
+                        value={applicationMethodKR}
+                        placeholder="Способ применения (KR)"
+                        onChange={(e) => setApplicationMethodKR(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-gray-300 pt-6">
+                <Slider label="Рейтинг" min={0} max={100} value={rating} onValueChange={setRating} />
+              </div>
+
+              <div className="border-t border-gray-300 pt-6">
+              <MarketplaceLinksTable
+                  links={marketplaceLinks}
+                  onChange={setMarketplaceLinks}
+              />
+              </div>
+
+              <div className="border-t border-gray-300 pt-6">
+                <h5 className="text-lg font-semibold">Изображения</h5>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-2">
                   <div>
                     <Input
-                      id="formMainImage"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setMainImageFile(e.target.files[0])
-                          const url = URL.createObjectURL(e.target.files[0])
-                          setMainImageUrl(url)
-                        }
-                      }}
-                      className=""
+                        id="formMainImage"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            setMainImageFile(e.target.files[0]);
+                            const url = URL.createObjectURL(e.target.files[0]);
+                            setMainImageUrl(url);
+                          }
+                        }}
                     />
-                    <small className="text-gray-500 mt-1 block">
-                      Выберите главное изображение
-                    </small>
+                    <small className="text-gray-500 mt-1 block">Выберите главное изображение</small>
                   </div>
                   <div>
                     <Input
-                      id="formImages"
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          setImageFiles(Array.from(e.target.files))
-                          const urls = Array.from(e.target.files).map((file) =>
-                            URL.createObjectURL(file)
-                          )
-                          setImageUrls(urls)
-                        }
-                      }}
-                      className=""
+                        id="formImages"
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files) {
+                            setImageFiles(Array.from(e.target.files));
+                            const urls = Array.from(e.target.files).map((file) =>
+                                URL.createObjectURL(file)
+                            );
+                            setImageUrls(urls);
+                          }
+                        }}
                     />
-                    <small className="text-gray-500 mt-1 block">
-                      Можно выбрать несколько изображений
-                    </small>
+                    <small className="text-gray-500 mt-1 block">Можно выбрать несколько изображений</small>
                   </div>
-                  <div className="mt-6">
-                    <h5 className="text-lg font-semibold mb-2">
-                      Предварительный просмотр:
-                    </h5>
-                    {mainImageUrl && (
+                </div>
+
+                <div className="mt-6">
+                  <h5 className="text-lg font-semibold mb-2">Предварительный просмотр:</h5>
+                  {mainImageUrl && (
                       <div className="mb-2">
                         <strong>Главное изображение:</strong>
                         <img
-                          src={mainImageUrl}
-                          alt="Главное изображение"
-                          className="w-full h-40 object-cover rounded-md"
+                            src={mainImageUrl}
+                            alt="Главное изображение"
+                            className="w-full h-40 object-cover rounded-md mt-2"
                         />
                       </div>
-                    )}
-                    {imageUrls.length > 0 && (
+                  )}
+                  {imageUrls.length > 0 && (
                       <div>
                         <strong>Дополнительные изображения:</strong>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                           {imageUrls.map((url, index) => (
-                            <div key={index}>
-                              <img
-                                src={url}
-                                alt={`Изображение ${index + 1}`}
-                                className="w-full h-40 object-cover rounded-md"
-                              />
-                            </div>
+                              <div key={index}>
+                                <img
+                                    src={url}
+                                    alt={`Изображение ${index + 1}`}
+                                    className="w-full h-40 object-cover rounded-md"
+                                />
+                              </div>
                           ))}
                         </div>
                       </div>
-                    )}
-                  </div>
+                  )}
                 </div>
-                <div className="flex justify-end space-x-3 pt-4">
-                  <Button type="button" onClick={() => setIsOpen(false)}>Отмена</Button>
-                  <Button type="submit">Добавить косметику</Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  )
-}
+              </div>
 
-export default AddCosmeticModal
+              <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" onClick={() => setIsOpen(false)}>
+                  Отмена
+                </Button>
+                <Button type="submit">Добавить косметику</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </>
+  );
+};
+
+export default AddCosmeticModal;

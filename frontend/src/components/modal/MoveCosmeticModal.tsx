@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import FilterCombobox from "@/components/HomeComponents/FilterCombobox";
 import type { Catalog1 } from "@/model/types";
 import {Button} from "@/components/ui/button.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 
 interface MoveCosmeticModalProps {
     isOpen: boolean;
@@ -29,21 +30,31 @@ const MoveCosmeticModal: React.FC<MoveCosmeticModalProps> = ({
     const selectedCatalog = catalogs.find(c => c.id === Number(selectedCatalogIds[0]));
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-            <div className="bg-white p-6 rounded shadow-lg w-96">
-                <h2 className="text-xl font-semibold mb-4">Выберите новый каталог</h2>
-                <p className="mb-4">Перенести косметику "{currentCosmeticName}" в:</p>
+        <Dialog open={true} onOpenChange={onClose}>
+            <DialogContent className="w-96">
+                <DialogHeader>
+                    <DialogTitle>Выберите новый каталог</DialogTitle>
+                </DialogHeader>
 
-                <FilterCombobox
-                    label=""
-                    options={catalogs.map(cat => ({ name: cat.name, id: String(cat.id) }))}
-                    values={selectedCatalogIds}
-                    onChange={setSelectedCatalogIds}
-                    singleSelect
-                />
+                <div className="py-4">
+                    <p className="mb-4">Перенести косметику "{currentCosmeticName}" в:</p>
 
-                <div className="flex justify-end gap-2 mt-6">
-                    <Button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Отмена</Button>
+                    <FilterCombobox
+                        label=""
+                        options={catalogs.map((cat) => ({
+                            name: cat.name,
+                            id: String(cat.id),
+                        }))}
+                        values={selectedCatalogIds}
+                        onChange={setSelectedCatalogIds}
+                        singleSelect
+                    />
+                </div>
+
+                <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={onClose}>
+                        Отмена
+                    </Button>
                     <Button
                         onClick={() => {
                             if (selectedCatalog) {
@@ -51,12 +62,12 @@ const MoveCosmeticModal: React.FC<MoveCosmeticModalProps> = ({
                             }
                         }}
                         disabled={!selectedCatalog}
-                        className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
-                            !selectedCatalog ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}>Перенести</Button>
+                    >
+                        Перенести
+                    </Button>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 };
 

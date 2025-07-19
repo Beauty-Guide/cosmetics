@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {PencilIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
+import FeedbackModal from "@/components/admin/FeedbackModal.tsx";
 
 const BrandForm: React.FC = () => {
   const [message, setMessage] = useState<string>("")
@@ -34,7 +35,7 @@ const BrandForm: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [currentPage, setCurrentPage] = useState<number>(1)
   const itemsPerPage = 10
-
+  const [open, setOpen] = useState(false);
   const filteredBrands = brands.filter((b) =>
       b.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -70,6 +71,7 @@ const BrandForm: React.FC = () => {
       setName("")
       const updatedBrands = await getAllBrands()
       setBrands(updatedBrands)
+      setOpen(false)
     } catch (err: any) {
       setError(err.message || "Произошла ошибка при добавлении")
       setMessage("")
@@ -102,11 +104,6 @@ const BrandForm: React.FC = () => {
     setShowConfirmDeleteModal(true)
   }
 
-  const handleCloseModal = () => {
-    setMessage("")
-    setError("")
-  }
-
   return (
       <div className="p-4 max-w-7xl mx-auto">
         {/* Card */}
@@ -115,27 +112,45 @@ const BrandForm: React.FC = () => {
             Управление брендами
           </h4>
 
-          {/* Форма добавления */}
-          <form onSubmit={handleAddBrand} className="mb-6 flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <label
-                  htmlFor="formBrandName"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Название бренда
-              </label>
-              <Input
-                  id="formBrandName"
-                  placeholder="Введите название бренда"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-              />
-            </div>
-            <div className="md:w-40">
-              <Button type="submit" className="w-full">Добавить</Button>
-            </div>
-          </form>
+          {/* Кнопка открытия модального окна */}
+          <Button onClick={() => setOpen(true)} className="w-full">
+            Добавить бренд
+          </Button>
+
+          {/* Модальное окно */}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Добавить бренд</DialogTitle>
+              </DialogHeader>
+
+              <form onSubmit={handleAddBrand} className="space-y-6 py-4">
+                <div className="flex-1">
+                  <label
+                      htmlFor="formBrandName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Название бренда
+                  </label>
+                  <Input
+                      id="formBrandName"
+                      placeholder="Введите название бренда"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Отмена
+                  </Button>
+                  <Button type="submit">Добавить</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <div style={{paddingBottom: "10px"}}></div>
 
           {/* Поиск и заголовок на одной строке */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
@@ -170,15 +185,19 @@ const BrandForm: React.FC = () => {
                     {currentItems.map((brand) => (
                         <TableRow key={brand.id}>
                           <TableCell>{brand.name}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="outline" size="sm" onClick={() => handleEditClick(brand)}>
-                                <PencilIcon />
-                              </Button>
-                              <Button variant="destructive" size="sm" onClick={() => handleDelete(brand.id, brand.name)}>
-                                <TrashIcon />
-                              </Button>
-                            </div>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleEditClick(brand)}
+                                title="Редактировать"><PencilIcon />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDelete(brand.id, brand.name)}
+                                title="Удалить"><TrashIcon />
+                            </Button>
                           </TableCell>
                         </TableRow>
                     ))}
@@ -215,6 +234,20 @@ const BrandForm: React.FC = () => {
           )}
         </div>
 
+        {/* Сообщения */}
+        <FeedbackModal
+            open={!!message || !!error}
+            onOpenChange={(open) => {
+              if (!open) {
+                // можно сбросить сообщения
+                setMessage(null);
+                setError(null);
+              }
+            }}
+            message={message}
+            error={error}
+        />
+
         {/* Модальное окно редактирования через Dialog */}
         <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
           <DialogContent>
@@ -241,7 +274,7 @@ const BrandForm: React.FC = () => {
               <DialogTitle>Удалить бренд "{brandToDeleteName}"?</DialogTitle>
             </DialogHeader>
             <p className="text-sm text-gray-500 mt-2">
-              Вы уверены, что хотите удалить этот бренд? Это действие необратимо.
+              Вы уверены, что хотите удалить этот бренд?
             </p>
             <div className="flex justify-end gap-2 mt-4">
               <Button variant="outline" onClick={() => setShowConfirmDeleteModal(false)}>Отмена</Button>
@@ -269,19 +302,6 @@ const BrandForm: React.FC = () => {
                 Удалить
               </Button>
             </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Сообщение успеха или ошибки через Dialog */}
-        <Dialog open={!!message || !!error} onOpenChange={handleCloseModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{error ? "Ошибка" : "Успех"}</DialogTitle>
-            </DialogHeader>
-            <p className={error ? "text-red-500" : "text-green-600"}>
-              {error || message}
-            </p>
-            <Button className="mt-4" onClick={handleCloseModal}>Закрыть</Button>
           </DialogContent>
         </Dialog>
       </div>

@@ -22,6 +22,7 @@ import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
 import {getAllCatalogsForAddCosmetic} from "@/services/adminCatalogApi.ts"
 import {PencilIcon, TransferIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 
 const CosmeticForm: React.FC = () => {
     const [message, setMessage] = useState<string | null>(null)
@@ -278,32 +279,47 @@ const CosmeticForm: React.FC = () => {
                 )}
 
                 {/* Модальные окна */}
-                <ConfirmDeleteModal
-                    show={showConfirmDeleteModal}
-                    onHide={() => setShowConfirmDeleteModal(false)}
-                    onConfirm={async () => {
-                        if (cosmeticToDeleteId !== null) {
-                            try {
-                                await deleteCosmetic(cosmeticToDeleteId)
-                                setMessage("Косметика успешно удалена")
-                                setError(null)
-                                setCosmetics(prev => prev.filter(c => c.id !== cosmeticToDeleteId))
-                            } catch (err: any) {
-                                setError(err.message || "Ошибка при удалении")
-                                setMessage(null)
-                            } finally {
-                                setShowConfirmDeleteModal(false)
-                                setCosmeticToDeleteId(null)
-                                setCosmeticToDeleteName(null)
-                            }
-                        }
-                    }}
-                    itemName={cosmeticToDeleteName || undefined}
-                />
+                <Dialog open={showConfirmDeleteModal} onOpenChange={setShowConfirmDeleteModal}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Удалить косметику "{cosmeticToDeleteName}"?</DialogTitle>
+                        </DialogHeader>
+                        <div className="py-4">
+                            <p>Вы уверены, что хотите удалить эту косметику? Это действие нельзя отменить.</p>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setShowConfirmDeleteModal(false)}>
+                                Отмена
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                onClick={async () => {
+                                    if (cosmeticToDeleteId !== null) {
+                                        try {
+                                            await deleteCosmetic(cosmeticToDeleteId);
+                                            setMessage("Косметика успешно удалена");
+                                            setError(null);
+                                            setCosmetics((prev) => prev.filter((c) => c.id !== cosmeticToDeleteId));
+                                        } catch (err: any) {
+                                            setError(err.message || "Ошибка при удалении");
+                                            setMessage(null);
+                                        } finally {
+                                            setShowConfirmDeleteModal(false);
+                                            setCosmeticToDeleteId(null);
+                                            setCosmeticToDeleteName(null);
+                                        }
+                                    }
+                                }}>
+                                Удалить
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
                 {editingCosmetic && (
                     <EditCosmeticModal
                         isOpen={showEditModal}
+                        onOpenChange={setShowEditModal}
                         onClose={() => setShowEditModal(false)}
                         onEditSuccess={async () => {
                             const updatedData = await getAllCosmetics();
@@ -356,10 +372,18 @@ const CosmeticForm: React.FC = () => {
                     onClose={() => setShowMoveModal(false)}
                 />
 
+                {/* Сообщения */}
                 <FeedbackModal
+                    open={!!message || !!error}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            // можно сбросить сообщения
+                            setMessage(null);
+                            setError(null);
+                        }
+                    }}
                     message={message}
                     error={error}
-                    onClose={() => setMessage(null)}
                 />
             </div>
         </div>

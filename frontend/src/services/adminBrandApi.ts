@@ -3,17 +3,29 @@ import {type BrandView} from '../model/types';
 
 // === API методы ===
 export const getAllBrands = async (): Promise<BrandView[]> => {
-  const response = await apiClient.get('/admin/brand/getAllBrand');
-  return response.data;
+  try {
+    const response = await apiClient.get('/admin/brand/getAllBrand');
+    return response.data;
+  } catch (error) {
+    throw new Error('Ошибка при получении данных');
+  }
 };
 
 export const addBrand = async (brand: { name: string }): Promise<void> => {
-  await apiClient.post('/admin/brand/addBrand', brand);
+  try {
+    await apiClient.post('/admin/brand/addBrand', brand);
+  } catch (error) {
+    throw new Error('Ошибка добавления бренда');
+  }
 };
 
 export const updateBrand = async (id: number, data: { name: string }) => {
-  const response = await apiClient.put(`/admin/brand/updateBrand/${id}`, data);
-  return response.data;
+  try {
+    const response = await apiClient.put(`/admin/brand/updateBrand/${id}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error('Ошибка при обновлении бренда');
+  }
 };
 
 export const deleteBrand = async (id: number): Promise<boolean> => {

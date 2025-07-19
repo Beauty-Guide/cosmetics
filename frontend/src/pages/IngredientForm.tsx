@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {PencilIcon, TrashIcon} from "@/components/modal/ActionIcons.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 
 interface Ingredient {
   name: string
@@ -49,6 +50,7 @@ const IngredientForm: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [currentPage, setCurrentPage] = useState<number>(1)
   const itemsPerPage = 10
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -85,6 +87,7 @@ const IngredientForm: React.FC = () => {
       setName("")
       const updatedIngredients = await getAllIngredients()
       setIngredients(updatedIngredients)
+      setOpen(false)
     } catch (err: any) {
       setError(err.message || "Произошла ошибка при добавлении")
       setMessage("")
@@ -122,29 +125,59 @@ const IngredientForm: React.FC = () => {
         {/* Карточка формы */}
         <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
           <h4 className="text-xl font-semibold text-center mb-4">Управление ингредиентами</h4>
-          {/* Форма добавления */}
-          <form onSubmit={handleAddIngredient} className="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-            <div className="md:col-span-3">
-              <label htmlFor="formIngredientName" className="block text-sm font-medium text-gray-700 mb-1">
-                Название ингредиента
-              </label>
-              <Input
-                  id="formIngredientName"
-                  type="text"
-                  placeholder="Введите название ингредиента"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-              />
-            </div>
-            <div className="md:col-span-2">
-              <Button type="submit" className="w-full">
-                Добавить ингредиент
-              </Button>
-            </div>
-          </form>
+          <Button onClick={() => setOpen(true)} className="w-full">
+            Добавить ингредиент
+          </Button>
+          {/* Модальное окно */}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Добавить ингредиент</DialogTitle>
+              </DialogHeader>
+
+              <form onSubmit={handleAddIngredient} className="space-y-6 py-4">
+                <div className="md:col-span-3">
+                  <label
+                      htmlFor="formIngredientName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Название ингредиента
+                  </label>
+                  <Input
+                      id="formIngredientName"
+                      type="text"
+                      placeholder="Введите название ингредиента"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="w-full"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Отмена
+                  </Button>
+                  <Button type="submit">Добавить</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <div style={{paddingBottom: "10px"}}></div>
+
           {/* Сообщения */}
-          <FeedbackModal message={message} error={error} onClose={() => setMessage(null)} />
+          <FeedbackModal
+              open={!!message || !!error}
+              onOpenChange={(open) => {
+                if (!open) {
+                  // можно сбросить сообщения
+                  setMessage(null);
+                  setError(null);
+                }
+              }}
+              message={message}
+              error={error}
+          />
 
           {/* Поиск и заголовок на одной строке */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
@@ -241,62 +274,71 @@ const IngredientForm: React.FC = () => {
         </div>
 
         {/* Модальное окно редактирования */}
-        {showEditModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-              <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h5 className="text-lg font-semibold">Редактировать ингредиент</h5>
-                  <button
-                      onClick={() => setShowEditModal(false)}
-                      className="text-gray-500 hover:text-gray-800 text-xl"
-                  >
-                    &times;
-                  </button>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Название
-                  </label>
-                  <Input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                  />
-                </div>
-                <div className="flex justify-end gap-3">
-                  <Button variant="outline" onClick={() => setShowEditModal(false)}>
-                    Отмена
-                  </Button>
-                  <Button onClick={handleSaveEdit}>Сохранить</Button>
-                </div>
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Редактировать ингредиент</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Название
+                </label>
+                <Input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                />
               </div>
             </div>
-        )}
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowEditModal(false)}>
+                Отмена
+              </Button>
+              <Button onClick={handleSaveEdit}>Сохранить</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Модальное окно подтверждения удаления */}
-        <ConfirmDeleteModal
-            show={showConfirmDeleteModal}
-            onHide={() => setShowConfirmDeleteModal(false)}
-            onConfirm={async () => {
-              if (ingredientToDeleteId !== null) {
-                try {
-                  await deleteIngredient(ingredientToDeleteId)
-                  const updatedIngredients = await getAllIngredients()
-                  setIngredients(updatedIngredients)
-                  setMessage("Ингредиент успешно удалён")
-                  setError(null)
-                } catch (err: any) {
-                  setError(err.message || "Ошибка при удалении")
-                  setMessage(null)
-                } finally {
-                  setShowConfirmDeleteModal(false)
-                  setIngredientToDeleteId(null)
-                  setIngredientToDeleteName(null)
-                }
-              }
-            }}
-            itemName={ingredientToDeleteName || undefined}
-        />
+        <Dialog open={showConfirmDeleteModal} onOpenChange={setShowConfirmDeleteModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Удалить ингредиент "{ingredientToDeleteName}"?</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p>Вы уверены, что хотите удалить этот ингредиент? Это действие нельзя отменить.</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowConfirmDeleteModal(false)}>
+                Отмена
+              </Button>
+              <Button
+                  variant="destructive"
+                  onClick={async () => {
+                    if (ingredientToDeleteId !== null) {
+                      try {
+                        await deleteIngredient(ingredientToDeleteId);
+                        const updatedIngredients = await getAllIngredients();
+                        setIngredients(updatedIngredients);
+                        setMessage("Ингредиент успешно удалён");
+                        setError(null);
+                      } catch (err: any) {
+                        setError(err.message || "Ошибка при удалении");
+                        setMessage(null);
+                      } finally {
+                        setShowConfirmDeleteModal(false);
+                        setIngredientToDeleteId(null);
+                        setIngredientToDeleteName(null);
+                      }
+                    }
+                  }}
+              >
+                Удалить
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
   )
 }

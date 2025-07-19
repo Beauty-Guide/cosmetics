@@ -19,8 +19,12 @@ export const getAllCosmeticActions = async (): Promise<CosmeticActionView[]> => 
 };
 
 export const updateCosmeticAction = async (id: number, data: { name: string }) => {
-  const response = await apiClient.put(`/admin/cosmetic-action/updateCosmeticAction/${id}`, data);
-  return response.data;
+  try {
+    const response = await apiClient.put(`/admin/cosmetic-action/updateCosmeticAction/${id}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error('Ошибка при обновлении действия косметики');
+  }
 };
 
 export const deleteCosmeticAction = async (id: number): Promise<boolean> => {
