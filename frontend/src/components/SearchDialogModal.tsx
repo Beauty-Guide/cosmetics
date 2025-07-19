@@ -137,6 +137,7 @@ const SearchDialogModal = ({
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div tabIndex={0} className="sr-only" />
+
         <form
           id="search-form"
           onSubmit={handleSearch}
