@@ -13,7 +13,7 @@ import {
 } from "../ui/dialog"
 import type { Option } from "../HomeComponents/FilterCombobox"
 import { Input } from "../ui/input"
-import { useState } from "react"
+import { memo, useMemo, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 
@@ -53,6 +53,21 @@ const MobileProductFilterOption = ({
     }
   }
 
+  const sortedOptions = useMemo(() => {
+    const filtered = options.filter((option) =>
+      option.name.toLowerCase().includes(searchValue.toLowerCase())
+    )
+
+    const selectedOptions = filtered.filter((option) =>
+      values.includes(String(option.id))
+    )
+    const unselectedOptions = filtered.filter(
+      (option) => !values.includes(String(option.id))
+    )
+
+    return [...selectedOptions, ...unselectedOptions]
+  }, [options, searchValue, values])
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -83,25 +98,19 @@ const MobileProductFilterOption = ({
           />
         )}
         <div className="flex items-center justify-start flex-wrap gap-2 max-h-[400px] overflow-y-auto">
-          {options
-            .filter((option) =>
-              option.name
-                .toLocaleLowerCase()
-                .includes(searchValue.toLocaleLowerCase())
-            )
-            .map((option) => (
-              <Badge
-                onClick={() => toggleValue(String(option.id))}
-                key={option.id}
-                className={cn(
-                  "h-8 px-2 py-1 bg-white text-black border border-gray-300",
-                  values.some((v) => String(v) === String(option.id)) &&
-                    "bg-gray-100 border-gray-500"
-                )}
-              >
-                {option.name}
-              </Badge>
-            ))}
+          {sortedOptions.map((option) => (
+            <Badge
+              onClick={() => toggleValue(String(option.id))}
+              key={option.id}
+              className={cn(
+                "h-8 px-2 py-1 bg-white text-black border border-gray-300",
+                values.some((v) => String(v) === String(option.id)) &&
+                  "bg-gray-100 border-gray-500"
+              )}
+            >
+              {option.name}
+            </Badge>
+          ))}
         </div>
         <DialogClose asChild>
           <Button variant="outline">{t("close")}</Button>
@@ -174,4 +183,4 @@ const MobileProductFilters = ({
   )
 }
 
-export default MobileProductFilters
+export default memo(MobileProductFilters)
