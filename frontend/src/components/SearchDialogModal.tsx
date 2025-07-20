@@ -101,10 +101,7 @@ const SearchDialogModal = ({
   }
 
   const handleSelectOption = (option: string) => {
-    const params = new URLSearchParams()
-    params.append("search", option)
     if (searchInputRef.current) searchInputRef.current.value = option
-    setSearchParams(params, { replace: false })
   }
 
   const handleDeleteHistoryOption = (id: number) => {

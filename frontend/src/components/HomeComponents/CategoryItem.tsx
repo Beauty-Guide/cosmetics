@@ -20,19 +20,25 @@ function CategoryItem({
   const location = useLocation()
 
   const fullPath = useMemo(
-    () => `${parentPath}/${category.name}`,
+    () => `${parentPath}/${encodeURIComponent(category.name)}`,
     [parentPath, category.name]
+  )
+  const decodedFullPath = useMemo(
+    () => decodeURIComponent(fullPath),
+    [fullPath]
   )
 
   const isActive = useMemo(() => {
     return decodeURIComponent(location.pathname).startsWith(
-      `/category${fullPath}`
+      `/category${decodedFullPath}`
     )
-  }, [location.pathname, fullPath])
+  }, [location.pathname, decodedFullPath])
 
   const isSelected = useMemo(() => {
-    return decodeURIComponent(location.pathname) === `/category${fullPath}`
-  }, [location.pathname, fullPath])
+    return (
+      decodeURIComponent(location.pathname) === `/category${decodedFullPath}`
+    )
+  }, [location.pathname, decodedFullPath])
 
   const hasChildren = category.children && category.children.length > 0
 
