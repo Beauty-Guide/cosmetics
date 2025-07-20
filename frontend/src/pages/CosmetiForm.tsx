@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react"
 // API
-import {deleteCosmetic, updateCosmetic, updateCosmeticCatalog, getAllCosmetics} from "../services/adminCosmeticApi"
+import {deleteCosmetic, updateCosmetic, updateCosmeticCatalog, getAllCosmetics, getCosmeticById} from "../services/adminCosmeticApi"
 // Типы
 import type {CosmeticsResponse, CosmeticResponse, Catalog1} from "../model/types"
 // Компоненты
@@ -92,11 +92,17 @@ const CosmeticForm: React.FC = () => {
         setShowConfirmDeleteModal(true)
     }
 
-    const handleEditClick = (cosmetic: CosmeticResponse) => {
-        setEditingCosmetic(cosmetic)
-        setEditFormData({...cosmetic}) // Копируем текущие данные
-        setShowEditModal(true)
-    }
+    const handleEditClick = async (cosmeticId: number) => {
+        try {
+            const cosmetic = await getCosmeticById(cosmeticId); // Запрашиваем данные с сервера
+            setEditingCosmetic(cosmetic);
+            setEditFormData({ ...cosmetic }); // Копируем данные в форму
+            setShowEditModal(true);
+        } catch (err) {
+            setError("Ошибка при загрузке данных косметики");
+            console.error(err);
+        }
+    };
 
     const handleSaveEdit = async () => {
         if (!editingCosmetic) return
@@ -197,6 +203,7 @@ const CosmeticForm: React.FC = () => {
                                         <TableHead>Название</TableHead>
                                         <TableHead>Бренд</TableHead>
                                         <TableHead>Каталог</TableHead>
+                                        <TableHead>В избранных</TableHead>
                                         <TableHead>Рейтинг</TableHead>
                                         <TableHead className="text-right">Действия</TableHead>
                                     </TableRow>
@@ -207,12 +214,13 @@ const CosmeticForm: React.FC = () => {
                                             <TableCell>{cosmetic.name}</TableCell>
                                             <TableCell>{cosmetic.brand?.name || '—'}</TableCell>
                                             <TableCell>{cosmetic.catalog?.name || '—'}</TableCell>
+                                            <TableCell>{cosmetic.favoriteCount || '—'}</TableCell>
                                             <TableCell>{cosmetic.rating || '—'}</TableCell>
                                             <TableCell className="text-right space-x-2">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    onClick={() => handleEditClick(cosmetic)}
+                                                    onClick={() => handleEditClick(cosmetic.id)}
                                                     title="Редактировать"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5"

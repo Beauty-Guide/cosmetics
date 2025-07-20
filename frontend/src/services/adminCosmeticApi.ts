@@ -19,6 +19,11 @@ export const getAllCosmetics = async (): Promise<CosmeticResponse[]> => {
   }
 };
 
+export const getCosmeticById = async (id: number): Promise<CosmeticResponse> => {
+  const response = await apiClient.get(`/api/getCosmeticsById/${id}?isAllData=true`);
+  return response.data;
+};
+
 export const updateCosmetic = async (id: number, data: { name: string }) => {
   try {
     const response = await apiClient.put(`/admin/cosmetic/updateCosmetic/${id}`, data);

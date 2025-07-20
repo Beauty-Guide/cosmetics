@@ -33,4 +33,5 @@ public class CosmeticResponse {
     private Boolean has_children;
     private Long rating;
     private List<MarketplaceLinkResponse> marketplaceLinks;
+    private Long favoriteCount;
 }

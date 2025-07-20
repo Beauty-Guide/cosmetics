@@ -6,7 +6,7 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Fragment } from "react"
+import { Fragment, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 
 const hiddenBreadcrumbs = ["category"]
@@ -19,62 +19,68 @@ export default function Breadcrumbs() {
     .split("/")
     .filter((segment) => segment !== "")
 
-  const breadcrumbs = [
-    { name: t("main"), to: "/" },
-    ...pathnames.map((segment, index) => {
-      const to = "/" + pathnames.slice(0, index + 1).join("/")
+  const breadcrumbs = useMemo(
+    () => [
+      { name: t("main"), to: "/" },
+      ...pathnames.map((segment, index) => {
+        const to = "/" + pathnames.slice(0, index + 1).join("/")
 
-      switch (segment) {
-        case "product":
-          return {
-            name: t("breadcrumb.product"),
-            to: "/",
-          }
-        case "favorites":
-          return {
-            name: t("breadcrumb.favorites"),
-            to: "/favorites",
-          }
-      }
+        switch (segment) {
+          case "product":
+            return {
+              name: t("breadcrumb.product"),
+              to: "/",
+            }
+          case "favorites":
+            return {
+              name: t("breadcrumb.favorites"),
+              to: "/favorites",
+            }
+        }
 
-      return {
-        name: decodeURIComponent(segment),
-        to,
-      }
-    }),
-  ]
+        return {
+          name: decodeURIComponent(segment),
+          to,
+        }
+      }),
+    ],
+    [pathnames, t]
+  )
+
+  const filteredBreadcrumbs = useMemo(() => {
+    return breadcrumbs.filter(
+      (crumb) => !hiddenBreadcrumbs.includes(crumb.name)
+    )
+  }, [breadcrumbs])
 
   return (
     <Breadcrumb className="shadow-md py-3 px-sides rounded-b-md bg-white">
       <BreadcrumbList>
-        {breadcrumbs
-          .filter((c) => !hiddenBreadcrumbs.includes(c.name))
-          .map((crumb, index) => {
-            const isLast =
-              index === breadcrumbs.length - 1 - hiddenBreadcrumbs.length
+        {filteredBreadcrumbs.map((crumb, index) => {
+          const isLast = index === filteredBreadcrumbs.length - 1
 
-            return (
-              <Fragment key={crumb.name + index}>
-                <BreadcrumbItem>
-                  <BreadcrumbLink asChild>
-                    {isLast ? (
-                      <span className="font-medium text-muted-foreground">
-                        {crumb.name}
-                      </span>
-                    ) : (
-                      <Link
-                        to={crumb.to}
-                        className="text-primary hover:underline"
-                      >
-                        {crumb.name}
-                      </Link>
-                    )}
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                {!isLast && <BreadcrumbSeparator />}
-              </Fragment>
-            )
-          })}
+          return (
+            <Fragment key={crumb.name + index}>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  {isLast ? (
+                    <span className="font-medium text-muted-foreground">
+                      {crumb.name}
+                    </span>
+                  ) : (
+                    <Link
+                      to={crumb.to}
+                      className="text-primary hover:underline"
+                    >
+                      {crumb.name}
+                    </Link>
+                  )}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              {!isLast && <BreadcrumbSeparator />}
+            </Fragment>
+          )
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   )
