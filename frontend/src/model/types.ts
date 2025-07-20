@@ -96,6 +96,7 @@ export type CosmeticResponse = {
     ingredients: IngredientView[];
     images: ImageResponse[];
     rating: number;
+    favoriteCount: number;
     marketplaceLinks?: MarketplaceLink[];
 };
 

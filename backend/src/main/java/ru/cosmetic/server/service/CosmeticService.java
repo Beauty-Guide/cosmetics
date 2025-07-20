@@ -52,7 +52,7 @@ public class CosmeticService {
         return cosmeticRepo.findAll();
     }
 
-    public CosmeticResponse getCosmeticById(Long id, String lang) {
+    public CosmeticResponse getCosmeticById(Long id, String lang, boolean isAllData) {
         StringBuilder sql = new StringBuilder("""
         SELECT
             c.id AS cosmetic_id,
@@ -105,13 +105,13 @@ public class CosmeticService {
 
         try {
             Map<String, Object> row = jdbcTemplate.queryForMap(sql.toString(), id);
-            return mapRowToCosmeticResponse(row, lang);
+            return mapRowToCosmeticResponse(row, lang, isAllData);
         } catch (EmptyResultDataAccessException ex) {
             return null; // или throw new ResourceNotFoundException("Cosmetic not found")
         }
     }
 
-    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang, User user) {
+    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang, User user, boolean isAllData) {
         List<Object> params = new ArrayList<>();
         boolean isFavoriteJoinNeeded = filter.isByFavourite();
         StringBuilder sql = new StringBuilder("""
@@ -174,11 +174,7 @@ public class CosmeticService {
 
         if (isFavoriteJoinNeeded) {
             sql.append("""
-            LEFT JOIN (
-                SELECT cosmetic_id, COUNT(*) AS favorite_count
-                FROM favorite_cosmetics
-                GROUP BY cosmetic_id
-            ) fav ON c.id = fav.cosmetic_id
+            LEFT JOIN (SELECT cosmetic_id, COUNT(*) AS favorite_count FROM favorite_cosmetics GROUP BY cosmetic_id) fav ON c.id = fav.cosmetic_id
         """);
         }
 
@@ -216,7 +212,69 @@ public class CosmeticService {
         // Выполняем запрос
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
 
-        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang);
+        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang, isAllData);
+        CosmeticsResponse cosmeticsResponse = new CosmeticsResponse();
+        cosmeticsResponse.setCosmetics(cosmeticResponses);
+        cosmeticsResponse.setTotal(getCountOfCosmetics(filter));
+
+        return cosmeticsResponse;
+    }
+
+    public CosmeticsResponse getCosmeticsForTableByFilters(CosmeticFilterRequest filter, String lang, User user, boolean isAllData) {
+        List<Object> params = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+        SELECT
+            c.id AS cosmetic_id,
+            c.name AS cosmetic_name,
+            c.rating,
+            b.name AS brand_name,
+            cat.name AS catalog_name,
+            fav.favorite_count,
+            (SELECT EXISTS (
+                SELECT 1 FROM catalog sub_cat WHERE sub_cat.parent_id = cat.id
+            )) AS has_children""");
+
+
+        sql.append("""
+        FROM cosmetic c
+        JOIN brand b ON c.brand_id = b.id
+        JOIN catalog cat ON c.catalog_id = cat.id
+        LEFT JOIN (SELECT cosmetic_id, COUNT(*) AS favorite_count FROM favorite_cosmetics GROUP BY cosmetic_id) fav ON c.id = fav.cosmetic_id
+
+    
+    """);
+
+        // Добавляем WHERE часть
+        sql.append(buildWhereClause(filter, params, user));
+
+        // GROUP BY
+        sql.append(" GROUP BY c.id, b.id, cat.id, fav.favorite_count");
+
+        // ORDER BY
+        sql.append(" ORDER BY ");
+        if (filter.isByPopularity()) {
+            sql.append("COALESCE(c.rating, 0) DESC");
+        } else if (filter.isByDate()) {
+            sql.append("c.created_date DESC");
+        } else if (filter.isByFavourite()) {
+            sql.append("COALESCE(fav.favorite_count, 0) DESC, c.rating, c.id ASC");
+        } else if ("name".equalsIgnoreCase(filter.getSortBy())) {
+            sql.append("c.name ");
+            String dir = "desc".equalsIgnoreCase(filter.getSortDirection()) ? "DESC" : "ASC";
+            sql.append(dir);
+        } else {
+            sql.append("c.id ASC");
+        }
+
+        // Пагинация
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(filter.getSize());
+        params.add(filter.getPage() * filter.getSize());
+
+        // Выполняем запрос
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
+
+        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang, isAllData);
         CosmeticsResponse cosmeticsResponse = new CosmeticsResponse();
         cosmeticsResponse.setCosmetics(cosmeticResponses);
         cosmeticsResponse.setTotal(getCountOfCosmetics(filter));
@@ -312,32 +370,23 @@ public class CosmeticService {
     }
 
     // Группируем результаты по косметике
-    private List<CosmeticResponse> groupCosmeticResponses(List<Map<String, Object>> rows, String lang) {
+    private List<CosmeticResponse> groupCosmeticResponses(List<Map<String, Object>> rows, String lang, boolean isAllData) {
         List<CosmeticResponse> result = new ArrayList<>();
         for (Map<String, Object> row : rows) {
-            result.add(mapRowToCosmeticResponse(row, lang));
+            result.add(mapRowToCosmeticResponse(row, lang, isAllData));
         }
         return result;
     }
 
-    private CosmeticResponse mapRowToCosmeticResponse(Map<String, Object> row, String lang) {
+    private CosmeticResponse mapRowToCosmeticResponse(Map<String, Object> row, String lang, boolean isAllData) {
         CosmeticResponse response = new CosmeticResponse();
         response.setId(safeGetLong(row, "cosmetic_id"));
         response.setName(safeGetString(row, "cosmetic_name"));
         response.setRating(safeGetLong(row, "rating"));
-        if ("en".equals(lang)) {
-            response.setCompatibility(safeGetString(row, "compatibility_en"));
-            response.setUsageRecommendations(safeGetString(row, "usage_recommendations_en"));
-            response.setApplicationMethod(safeGetString(row, "application_method_en"));
-        } else if ("ko".equals(lang)) {
-            response.setCompatibility(safeGetString(row, "compatibility_kr"));
-            response.setUsageRecommendations(safeGetString(row, "usage_recommendations_kr"));
-            response.setApplicationMethod(safeGetString(row, "application_method_kr"));
-        } else if ("ru".equals(lang)) {
-            response.setCompatibility(safeGetString(row, "compatibility"));
-            response.setUsageRecommendations(safeGetString(row, "usage_recommendations"));
-            response.setApplicationMethod(safeGetString(row, "application_method"));
-        } else {
+        if (row.get("favorite_count") != null){
+            response.setFavoriteCount(safeGetLong(row, "favorite_count"));
+        }
+        if (isAllData) {
             response.setCompatibility(safeGetString(row, "compatibility"));
             response.setCompatibilityEN(safeGetString(row, "compatibility_en"));
             response.setCompatibilityKR(safeGetString(row, "compatibility_kr"));
@@ -349,6 +398,20 @@ public class CosmeticService {
             response.setApplicationMethod(safeGetString(row, "application_method"));
             response.setApplicationMethodEN(safeGetString(row, "application_method_en"));
             response.setApplicationMethodKR(safeGetString(row, "application_method_kr"));
+        } else  {
+            if ("en".equals(lang)) {
+                response.setCompatibility(safeGetString(row, "compatibility_en"));
+                response.setUsageRecommendations(safeGetString(row, "usage_recommendations_en"));
+                response.setApplicationMethod(safeGetString(row, "application_method_en"));
+            } else if ("ko".equals(lang)) {
+                response.setCompatibility(safeGetString(row, "compatibility_kr"));
+                response.setUsageRecommendations(safeGetString(row, "usage_recommendations_kr"));
+                response.setApplicationMethod(safeGetString(row, "application_method_kr"));
+            } else if ("ru".equals(lang)) {
+                response.setCompatibility(safeGetString(row, "compatibility"));
+                response.setUsageRecommendations(safeGetString(row, "usage_recommendations"));
+                response.setApplicationMethod(safeGetString(row, "application_method"));
+            }
         }
 
         // Brand

@@ -46,7 +46,7 @@ public class UserController {
             if (principal != null) {
                 user  = getUser(principal);
             }
-            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request, lang, user));
+            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request, lang, user, false));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики", HttpStatus.BAD_REQUEST);
         }
@@ -54,9 +54,9 @@ public class UserController {
 
     @GetMapping("/getCosmeticsById/{id}")
     @Operation(summary = "Получение косметики по id")
-    public ResponseEntity<?> getCosmeticsById(@PathVariable Long id, @RequestParam(required = false) String lang) {
+    public ResponseEntity<?> getCosmeticsById(@PathVariable Long id, @RequestParam(required = false) String lang, @RequestParam(required = false) boolean isAllData) {
         try {
-            return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang));
+            return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang, isAllData));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики с id = " + id, HttpStatus.BAD_REQUEST);
         }

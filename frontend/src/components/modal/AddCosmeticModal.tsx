@@ -501,7 +501,7 @@ const AddCosmeticModal: React.FC<AddCosmeticModalProps> = ({
                         <img
                             src={mainImageUrl}
                             alt="Главное изображение"
-                            className="w-full h-40 object-cover rounded-md mt-2"
+                            className="h-40 object-cover rounded-md mt-2"
                         />
                       </div>
                   )}
