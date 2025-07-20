@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
 import { memo, useEffect, useRef, useState } from "react"
 import type { TUserHistory } from "@/types"
-import { useNavigate, useSearchParams } from "react-router"
+import { useLocation, useNavigate, useSearchParams } from "react-router"
 import { Button } from "./ui/button"
 import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
 import ProductFilters from "./ProductFilters/ProductFilters"
@@ -29,6 +29,7 @@ const SearchDialogModal = ({
   userHistory,
 }: TSearhInputProps) => {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
@@ -89,14 +90,14 @@ const SearchDialogModal = ({
     }
 
     if (sortBy.length > 0) {
-      console.log("asd", sortBy[0])
-
       params.append("sortBy", sortBy[0])
     }
 
     setSearchParams(params, { replace: false })
 
-    navigate(`/?${params.toString()}`)
+    const finalUrl = `${pathname}?${params.toString()}`
+
+    navigate(finalUrl)
   }
 
   const handleSelectOption = (option: string) => {
@@ -117,10 +118,17 @@ const SearchDialogModal = ({
     setSelectedSkinTypes([])
     setSelectedAction([])
     setSortBy([])
+
+    const params = new URLSearchParams()
+    params.append("search", searchValue || "")
+    setSearchParams(params, { replace: false })
   }
 
   useEffect(() => {
     setSelectedBrands(searchParams.getAll("brand"))
+    setSelectedSkinTypes(searchParams.getAll("skinType"))
+    setSelectedAction(searchParams.getAll("cosmeticAction"))
+    setSortBy(searchParams.getAll("sortBy"))
   }, [searchParams])
 
   useEffect(() => {

@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.CacheControl;
 import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
@@ -17,6 +19,7 @@ import ru.cosmetic.server.utils.JwtTokenUtils;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -170,8 +173,15 @@ public class UserController {
         byte[] fileData = minioService.getFile(String.format(format, cosmeticId, fileName));
         String contentType = minioService.getContentType(fileName);
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(contentType));
+        headers.setCacheControl(CacheControl
+                .maxAge(365, TimeUnit.DAYS)
+                .cachePublic()
+                .immutable());
+
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
+                .headers(headers)
                 .body(new ByteArrayResource(fileData));
     }
 

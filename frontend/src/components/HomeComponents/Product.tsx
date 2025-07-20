@@ -27,7 +27,8 @@ const Product = ({ product }: ProductProps) => {
     >
       <img
         src={getImgUrl(product.images.find((img) => img.isMain)?.url)}
-        alt=""
+        alt={product.name}
+        loading="lazy"
         className="max-h-[300px] max-md:max-w-[350px] max-w-[420px] rounded-md mx-auto"
         onClick={navigateToItem}
       />

@@ -9,6 +9,8 @@ import {
 import { Fragment } from "react"
 import { useTranslation } from "react-i18next"
 
+const hiddenBreadcrumbs = ["category"]
+
 export default function Breadcrumbs() {
   const { t } = useTranslation()
   const location = useLocation()
@@ -23,11 +25,6 @@ export default function Breadcrumbs() {
       const to = "/" + pathnames.slice(0, index + 1).join("/")
 
       switch (segment) {
-        case "category":
-          return {
-            name: t("breadcrumb.category"),
-            to: "/",
-          }
         case "product":
           return {
             name: t("breadcrumb.product"),
@@ -50,31 +47,34 @@ export default function Breadcrumbs() {
   return (
     <Breadcrumb className="shadow-md py-3 px-sides rounded-b-md bg-white">
       <BreadcrumbList>
-        {breadcrumbs.map((crumb, index) => {
-          const isLast = index === breadcrumbs.length - 1
+        {breadcrumbs
+          .filter((c) => !hiddenBreadcrumbs.includes(c.name))
+          .map((crumb, index) => {
+            const isLast =
+              index === breadcrumbs.length - 1 - hiddenBreadcrumbs.length
 
-          return (
-            <Fragment key={crumb.name + index}>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  {isLast ? (
-                    <span className="font-medium text-muted-foreground">
-                      {crumb.name}
-                    </span>
-                  ) : (
-                    <Link
-                      to={crumb.to}
-                      className="text-primary hover:underline"
-                    >
-                      {crumb.name}
-                    </Link>
-                  )}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {!isLast && <BreadcrumbSeparator />}
-            </Fragment>
-          )
-        })}
+            return (
+              <Fragment key={crumb.name + index}>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    {isLast ? (
+                      <span className="font-medium text-muted-foreground">
+                        {crumb.name}
+                      </span>
+                    ) : (
+                      <Link
+                        to={crumb.to}
+                        className="text-primary hover:underline"
+                      >
+                        {crumb.name}
+                      </Link>
+                    )}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                {!isLast && <BreadcrumbSeparator />}
+              </Fragment>
+            )
+          })}
       </BreadcrumbList>
     </Breadcrumb>
   )
