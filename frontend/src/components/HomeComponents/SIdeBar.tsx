@@ -32,21 +32,21 @@ const SideBar = ({ categoryTree, isOpen, setIsOpen }: SideBarProps) => {
       <div className="md:hidden">
         <Drawer open={isOpen} onOpenChange={setIsOpen}>
           <DrawerContent aria-describedby={undefined}>
-            <div className="mx-auto w-full max-w-sm">
+            <div className="mx-auto w-full max-w-sm overflow-y-auto">
               <DrawerHeader>
                 <DrawerTitle>{t("categories")}</DrawerTitle>
               </DrawerHeader>
-              <div>
+              <div className="flex flex-col">
                 {categoryTree.map((cat) => (
                   <CategoryItem key={cat.id} category={cat} />
                 ))}
               </div>
-              <DrawerFooter>
-                <DrawerClose asChild>
-                  <Button variant="outline">{t("close")}</Button>
-                </DrawerClose>
-              </DrawerFooter>
             </div>
+            <DrawerFooter>
+              <DrawerClose asChild>
+                <Button variant="outline">{t("close")}</Button>
+              </DrawerClose>
+            </DrawerFooter>
           </DrawerContent>
         </Drawer>
       </div>
