@@ -25,13 +25,11 @@ databaseChangeLog:
                   type: VARCHAR
                   constraints:
                     nullable: true
-                    unique: true
               - column:
                   name: name_kr
                   type: VARCHAR
                   constraints:
                     nullable: true
-                    unique: true
               - column:
                   name: parent_id
                   type: BIGINT

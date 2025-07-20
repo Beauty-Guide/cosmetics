@@ -1,47 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: insert-catalogs
+      id: insert-skin-care-cleansing
       author: yourname
       changes:
-        # --- Главные каталоги ---
-        - insert:
-            tableName: catalog
-            columns:
-              - column:
-                  name: name
-                  value: "Уход за кожей"
-              - column:
-                  name: name_en
-                  value: "Skincare"
-              - column:
-                  name: name_kr
-                  value: "스킨케어"
-        - insert:
-            tableName: catalog
-            columns:
-              - column:
-                  name: name
-                  value: "Макияж"
-              - column:
-                  name: name_en
-                  value: "Makeup"
-              - column:
-                  name: name_kr
-                  value: "메이크업"
-        - insert:
-            tableName: catalog
-            columns:
-              - column:
-                  name: name
-                  value: "Волосы"
-              - column:
-                  name: name_en
-                  value: "Hair"
-              - column:
-                  name: name_kr
-                  value: "헤어"
 
-        # --- Подкаталоги: Уход за кожей ---
+        # --- Очищение ---
         - insert:
             tableName: catalog
             columns:
@@ -54,115 +17,1049 @@ databaseChangeLog:
               - column:
                   name: name_kr
                   value: "클렌징"
-              - column:
-                  name: parent_id
-                  valueNumeric: 1
+        # --- Тонеры и эссенции (parent_id = 1) ---
         - insert:
             tableName: catalog
             columns:
               - column:
                   name: name
-                  value: "Увлажнение"
+                  value: "Тонеры и эссенции"
               - column:
                   name: name_en
-                  value: "Moisturizing"
+                  value: "Toners and Essences"
+              - column:
+                  name: name_kr
+                  value: "토너와 에센스"
+        # --- Сыворотки и ампулы ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Сыворотки и ампулы"
+              - column:
+                  name: name_en
+                  value: "Serums and Ampoules"
+              - column:
+                  name: name_kr
+                  value: "세럼과 앰풀"
+        # --- Кремы и эмульсии ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Кремы и эмульсии"
+              - column:
+                  name: name_en
+                  value: "Creams and Emulsions"
+              - column:
+                  name: name_kr
+                  value: "크림과 유화제"
+        # --- Уход за кожей вокруг глаз ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Уход за кожей вокруг глаз"
+              - column:
+                  name: name_en
+                  value: "Eye Care"
+              - column:
+                  name: name_kr
+                  value: "아이 케어"
+        # --- Маски ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Маски"
+              - column:
+                  name: name_en
+                  value: "Masks"
+              - column:
+                  name: name_kr
+                  value: "마스크"
+        # --- Солнцезащитные средства ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Солнцезащитные средства"
+              - column:
+                  name: name_en
+                  value: "Sun Protection"
+              - column:
+                  name: name_kr
+                  value: "선 프로텍션"
+        # --- Ночной уход ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Ночной уход"
+              - column:
+                  name: name_en
+                  value: "Night Care"
+              - column:
+                  name: name_kr
+                  value: "나이트 케어"
+        # --- Уход за проблемной кожей ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Уход за проблемной кожей"
+              - column:
+                  name: name_en
+                  value: "Problem Skin Care"
+              - column:
+                  name: name_kr
+                  value: "트러블 케어"
+        # --- Дополнительные средства ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Дополнительные средства"
+              - column:
+                  name: name_en
+                  value: "Additional Products"
+              - column:
+                  name: name_kr
+                  value: "기타 제품"
+        # --- Уход за губами ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Уход за губами"
+              - column:
+                  name: name_en
+                  value: "Lip Care"
+              - column:
+                  name: name_kr
+                  value: "립 케어"
+
+
+        # --- Подкатегория: Очищение ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Гидрофильное масло"
+              - column:
+                  name: name_en
+                  value: "Oil Cleanser"
+              - column:
+                  name: name_kr
+                  value: "오일 클렌저"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Пенки и гели для умывания"
+              - column:
+                  name: name_en
+                  value: "Foaming and Gel Cleansers"
+              - column:
+                  name: name_kr
+                  value: "폼/젤 클렌저"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Мицеллярная вода"
+              - column:
+                  name: name_en
+                  value: "Micellar Water"
+              - column:
+                  name: name_kr
+                  value: "미셀라 워터"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Пудры и желе для умывания"
+              - column:
+                  name: name_en
+                  value: "Powder and Jelly Cleansers"
+              - column:
+                  name: name_kr
+                  value: "파우더/젤리 클렌저"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Пилинги (кислотные, ферментные, гоммаж)"
+              - column:
+                  name: name_en
+                  value: "Exfoliators (AHA/BHA/Enzyme)"
+              - column:
+                  name: name_kr
+                  value: "각질제거 (산/효소)"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Скрабы"
+              - column:
+                  name: name_en
+                  value: "Scrubs"
+              - column:
+                  name: name_kr
+                  value: "스크럽"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Очищающие маски (глиняные, угольные)"
+              - column:
+                  name: name_en
+                  value: "Cleansing Masks (Clay, Charcoal)"
+              - column:
+                  name: name_kr
+                  value: "클렌징 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Тонеры-эксфолианты"
+              - column:
+                  name: name_en
+                  value: "Exfoliating Toners"
+              - column:
+                  name: name_kr
+                  value: "각질토너"
+              - column:
+                  name: parent_id
+                  valueNumeric: 1
+
+
+
+        # --- Подкатегория: Тонеры и эссенции ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Увлажняющие тонеры"
+              - column:
+                  name: name_en
+                  value: "Hydrating Toners"
+              - column:
+                  name: name_kr
+                  value: "보습 토너"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Успокаивающие тонеры"
+              - column:
+                  name: name_en
+                  value: "Soothing Toners"
+              - column:
+                  name: name_kr
+                  value: "진정 토너"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Тонеры с кислотами (AHA/BHA/PHA)"
+              - column:
+                  name: name_en
+                  value: "Acid Toners (AHA/BHA/PHA)"
+              - column:
+                  name: name_kr
+                  value: "산이 들어간 토너"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Эссенции (увлажняющие, антивозрастные, осветляющие и др.)"
+              - column:
+                  name: name_en
+                  value: "Essences"
+              - column:
+                  name: name_kr
+                  value: "에센스"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Бустеры"
+              - column:
+                  name: name_en
+                  value: "Boosters"
+              - column:
+                  name: name_kr
+                  value: "부스터"
+              - column:
+                  name: parent_id
+                  valueNumeric: 2
+
+
+        # --- Подкатегории: Сыворотки и ампулы ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С витамином C"
+              - column:
+                  name: name_en
+                  value: "Vitamin C Serums"
+              - column:
+                  name: name_kr
+                  value: "비타민 C 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С ниацинамидом"
+              - column:
+                  name: name_en
+                  value: "Niacinamide Serums"
+              - column:
+                  name: name_kr
+                  value: "니아신아마이드 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С пептидами"
+              - column:
+                  name: name_en
+                  value: "Peptide Serums"
+              - column:
+                  name: name_kr
+                  value: "펩타이드 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С центеллой"
+              - column:
+                  name: name_en
+                  value: "Centella Serums"
+              - column:
+                  name: name_kr
+                  value: "병풀 추출물 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С керамидами"
+              - column:
+                  name: name_en
+                  value: "Ceramide Serums"
+              - column:
+                  name: name_kr
+                  value: "세라마이드 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С ретинолом"
+              - column:
+                  name: name_en
+                  value: "Retinol Serums"
+              - column:
+                  name: name_kr
+                  value: "레티놀 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С кислотами (AHA, BHA, PHA)"
+              - column:
+                  name: name_en
+                  value: "Acid Serums (AHA/BHA/PHA)"
+              - column:
+                  name: name_kr
+                  value: "산이 들어간 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Увлажняющие"
+              - column:
+                  name: name_en
+                  value: "Hydrating Serums"
+              - column:
+                  name: name_kr
+                  value: "보습 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Противовоспалительные"
+              - column:
+                  name: name_en
+                  value: "Anti-Inflammatory Serums"
+              - column:
+                  name: name_kr
+                  value: "항염 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "От пигментации"
+              - column:
+                  name: name_en
+                  value: "Brightening Serums"
+              - column:
+                  name: name_kr
+                  value: "화이트닝 세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 3
+
+        # --- Подкатегории: Кремы и эмульсии ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Увлажняющие"
+              - column:
+                  name: name_en
+                  value: "Hydrating"
               - column:
                   name: name_kr
                   value: "보습"
               - column:
                   name: parent_id
-                  valueNumeric: 1
-        - insert:
-            tableName: catalog
-            columns:
-              - column:
-                  name: name
-                  value: "Антивозрастной уход"
-              - column:
-                  name: name_en
-                  value: "Anti-Aging Care"
-              - column:
-                  name: name_kr
-                  value: "에이징 케어"
-              - column:
-                  name: parent_id
-                  valueNumeric: 1
+                  valueNumeric: 4
 
-        # --- Подкаталоги: Макияж ---
         - insert:
             tableName: catalog
             columns:
               - column:
                   name: name
-                  value: "Лицо"
+                  value: "Питательные"
               - column:
                   name: name_en
-                  value: "Face"
+                  value: "Nourishing"
               - column:
                   name: name_kr
-                  value: "페이스"
+                  value: "영양"
               - column:
                   name: parent_id
-                  valueNumeric: 2
-        - insert:
-            tableName: catalog
-            columns:
-              - column:
-                  name: name
-                  value: "Глаза"
-              - column:
-                  name: name_en
-                  value: "Eyes"
-              - column:
-                  name: name_kr
-                  value: "아이즈"
-              - column:
-                  name: parent_id
-                  valueNumeric: 2
-        - insert:
-            tableName: catalog
-            columns:
-              - column:
-                  name: name
-                  value: "Губы"
-              - column:
-                  name: name_en
-                  value: "Lips"
-              - column:
-                  name: name_kr
-                  value: "립스"
-              - column:
-                  name: parent_id
-                  valueNumeric: 2
+                  valueNumeric: 4
 
-        # --- Подкаталоги: Волосы ---
         - insert:
             tableName: catalog
             columns:
               - column:
                   name: name
-                  value: "Шампуни"
+                  value: "С керамидами"
               - column:
                   name: name_en
-                  value: "Shampoos"
+                  value: "With Ceramides"
               - column:
                   name: name_kr
-                  value: "샴푸"
+                  value: "세라마이드"
               - column:
                   name: parent_id
-                  valueNumeric: 3
+                  valueNumeric: 4
+
         - insert:
             tableName: catalog
             columns:
               - column:
                   name: name
-                  value: "Кондиционеры"
+                  value: "Матирующие"
               - column:
                   name: name_en
-                  value: "Conditioners"
+                  value: "Mattifying"
               - column:
                   name: name_kr
-                  value: "컨디셔너"
+                  value: "매트 효과"
               - column:
                   name: parent_id
-                  valueNumeric: 3
+                  valueNumeric: 4
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Противовоспалительные"
+              - column:
+                  name: name_en
+                  value: "Anti-Inflammatory"
+              - column:
+                  name: name_kr
+                  value: "항염"
+              - column:
+                  name: parent_id
+                  valueNumeric: 4
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "От морщин"
+              - column:
+                  name: name_en
+                  value: "Anti-Wrinkle"
+              - column:
+                  name: name_kr
+                  value: "주름 개선"
+              - column:
+                  name: parent_id
+                  valueNumeric: 4
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "От пигментации"
+              - column:
+                  name: name_en
+                  value: "Brightening"
+              - column:
+                  name: name_kr
+                  value: "화이트닝"
+              - column:
+                  name: parent_id
+                  valueNumeric: 4
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "С SPF"
+              - column:
+                  name: name_en
+                  value: "With SPF"
+              - column:
+                  name: name_kr
+                  value: "SPF 포함"
+              - column:
+                  name: parent_id
+                  valueNumeric: 4
+
+
+        # --- Подкатегории: Уход за кожей вокруг глаз ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Кремы"
+              - column:
+                  name: name_en
+                  value: "Creams"
+              - column:
+                  name: name_kr
+                  value: "크림"
+              - column:
+                  name: parent_id
+                  valueNumeric: 5
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Патчи"
+              - column:
+                  name: name_en
+                  value: "Patches"
+              - column:
+                  name: name_kr
+                  value: "패치"
+              - column:
+                  name: parent_id
+                  valueNumeric: 5
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Сыворотки"
+              - column:
+                  name: name_en
+                  value: "Serums"
+              - column:
+                  name: name_kr
+                  value: "세럼"
+              - column:
+                  name: parent_id
+                  valueNumeric: 5
+
+        # --- Подкатегории: Маски ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Тканевые"
+              - column:
+                  name: name_en
+                  value: "Sheet Masks"
+              - column:
+                  name: name_kr
+                  value: "시트 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Смываемые (увлажняющие, очищающие, ночные и др.)"
+              - column:
+                  name: name_en
+                  value: "Wash-Off Masks (Hydrating, Cleansing, Night, etc.)"
+              - column:
+                  name: name_kr
+                  value: "워시오프 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Альгинатные"
+              - column:
+                  name: name_en
+                  value: "Alginate Masks"
+              - column:
+                  name: name_kr
+                  value: "알지네이트 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Маски-стики"
+              - column:
+                  name: name_en
+                  value: "Stick Masks"
+              - column:
+                  name: name_kr
+                  value: "스틱 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Сплэш-маски"
+              - column:
+                  name: name_en
+                  value: "Splash Masks"
+              - column:
+                  name: name_kr
+                  value: "스플래시 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 6
+
+
+        # --- Подкатегории: Солнцезащитные средства ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Кремы"
+              - column:
+                  name: name_en
+                  value: "Creams"
+              - column:
+                  name: name_kr
+                  value: "크림"
+              - column:
+                  name: parent_id
+                  valueNumeric: 7
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Гели"
+              - column:
+                  name: name_en
+                  value: "Gels"
+              - column:
+                  name: name_kr
+                  value: "젤"
+              - column:
+                  name: parent_id
+                  valueNumeric: 7
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Стики"
+              - column:
+                  name: name_en
+                  value: "Sticks"
+              - column:
+                  name: name_kr
+                  value: "스틱"
+              - column:
+                  name: parent_id
+                  valueNumeric: 7
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Спреи"
+              - column:
+                  name: name_en
+                  value: "Sprays"
+              - column:
+                  name: name_kr
+                  value: "스프레이"
+              - column:
+                  name: parent_id
+                  valueNumeric: 7
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Пудры с SPF"
+              - column:
+                  name: name_en
+                  value: "Powders with SPF"
+              - column:
+                  name: name_kr
+                  value: "SPF 포함 파우더"
+              - column:
+                  name: parent_id
+                  valueNumeric: 7
+
+
+        # --- Подкатегории: Ночной уход ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Ночные маски"
+              - column:
+                  name: name_en
+                  value: "Night Masks"
+              - column:
+                  name: name_kr
+                  value: "나이트 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 8
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Восстанавливающие кремы"
+              - column:
+                  name: name_en
+                  value: "Restorative Creams"
+              - column:
+                  name: name_kr
+                  value: "복원 크림"
+              - column:
+                  name: parent_id
+                  valueNumeric: 8
+
+        # --- Подкатегории Уход за проблемной кожей ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Средства с салициловой кислотой"
+              - column:
+                  name: name_en
+                  value: "Salicylic Acid Products"
+              - column:
+                  name: name_kr
+                  value: "살리실산 제품"
+              - column:
+                  name: parent_id
+                  valueNumeric: 9
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Средства с центеллой"
+              - column:
+                  name: name_en
+                  value: "Centella Products"
+              - column:
+                  name: name_kr
+                  value: "병풀 추출물 제품"
+              - column:
+                  name: parent_id
+                  valueNumeric: 9
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Точечные средства (гели, кремы, патчи от акне)"
+              - column:
+                  name: name_en
+                  value: "Spot Treatments (Gels, Creams, Patches)"
+              - column:
+                  name: name_kr
+                  value: "스팟 케어 (젤, 크림, 패치)"
+              - column:
+                  name: parent_id
+                  valueNumeric: 9
+
+
+
+        # --- Подкатегории: Дополнительные средства ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Мисты"
+              - column:
+                  name: name_en
+                  value: "Mists"
+              - column:
+                  name: name_kr
+                  value: "미스트"
+              - column:
+                  name: parent_id
+                  valueNumeric: 10
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Праймеры с уходовыми функциями"
+              - column:
+                  name: name_en
+                  value: "Primers with Skincare Benefits"
+              - column:
+                  name: name_kr
+                  value: "케어 기능이 있는 프라이머"
+              - column:
+                  name: parent_id
+                  valueNumeric: 10
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Средства до/после чистки кожи"
+              - column:
+                  name: name_en
+                  value: "Pre/Post Cleansing Products"
+              - column:
+                  name: name_kr
+                  value: "클렌징 전/후 제품"
+              - column:
+                  name: parent_id
+                  valueNumeric: 10
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Патчи для носа/подбородка"
+              - column:
+                  name: name_en
+                  value: "Nose and Chin Patches"
+              - column:
+                  name: name_kr
+                  value: "코/턱 패치"
+              - column:
+                  name: parent_id
+                  valueNumeric: 10
+
+        # --- Подкатегории: Уход за губами ---
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Бальзамы"
+              - column:
+                  name: name_en
+                  value: "Balms"
+              - column:
+                  name: name_kr
+                  value: "발림제"
+              - column:
+                  name: parent_id
+                  valueNumeric: 11
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Скрабы"
+              - column:
+                  name: name_en
+                  value: "Lip Scrubs"
+              - column:
+                  name: name_kr
+                  value: "립 스크럽"
+              - column:
+                  name: parent_id
+                  valueNumeric: 11
+
+        - insert:
+            tableName: catalog
+            columns:
+              - column:
+                  name: name
+                  value: "Маски"
+              - column:
+                  name: name_en
+                  value: "Lip Masks"
+              - column:
+                  name: name_kr
+                  value: "립 마스크"
+              - column:
+                  name: parent_id
+                  valueNumeric: 11
