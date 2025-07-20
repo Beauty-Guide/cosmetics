@@ -117,6 +117,10 @@ const SearchDialogModal = ({
     setSelectedSkinTypes([])
     setSelectedAction([])
     setSortBy([])
+
+    const params = new URLSearchParams()
+    params.append("search", searchValue || "")
+    setSearchParams(params, { replace: false })
   }
 
   useEffect(() => {
