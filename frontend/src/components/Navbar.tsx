@@ -1,44 +1,46 @@
 import { Link, useNavigate, useSearchParams } from "react-router"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
-import { User2Icon } from "lucide-react"
-import { memo, useState } from "react"
+import { Heart, List, SearchIcon } from "lucide-react"
+import { memo, useMemo, useState } from "react"
+import { buildCategoryTree } from "@/lib/buildCategoryTree"
+import { useGetCategories } from "@/hooks/getCategories"
 import SearchDialogModal from "./SearchDialogModal"
-import { Input } from "./ui/input"
-import { cn } from "@/lib/utils"
+import MobileCatalogModal from "./HeaderComponents/MobileCatalogModal"
+import DropDownMenu from "./HeaderComponents/DropDownMenu"
 
 const AppNavbar: React.FC = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const user = useAuth()
   const navigate = useNavigate()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+  const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false)
   const [searchParams] = useSearchParams()
 
-  const searchValue = searchParams.get("search")
-  const isAdmin = user?.role.includes(ROLES.ADMIN)
-  const isUser = user?.role.includes(ROLES.USER)
+  const isAdmin = user?.role?.includes(ROLES.ADMIN)
+  const isUser = user?.role?.includes(ROLES.USER)
   const isAuthenticated = isAdmin || isUser
 
   const { data: favorites } = useGetAllFavProducts({
     enabled: !!isAuthenticated,
   })
+
+  const { data: categories, isLoading: isLoadingCategories } =
+    useGetCategories()
+  const categoryTree = useMemo(
+    () => buildCategoryTree(isLoadingCategories ? [] : categories),
+    [categories, isLoadingCategories]
+  )
+
+  const getFiltersQuantity = () => {
+    if (searchParams.size > 0) {
+      return searchParams.size
+    }
+    return 0
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -54,137 +56,92 @@ const AppNavbar: React.FC = () => {
     navigate(path)
   }
 
-  const handleOpenSearchModal = () => setIsOpen(true)
+  const handleOpenSearchModal = () => {
+    user?.refetch()
+    setIsSearchOpen(true)
+  }
 
   return (
-    <nav className="flex flex-col w-full shadow-md px-sides border-b-1">
-      <div className="flex items-center justify-between py-4 max-md:py-3 flex-wrap gap-2">
+    <header className="flex flex-col w-full shadow-md px-sides border-b-1">
+      <nav className="flex items-center justify-between py-4 max-md:py-3 flex-wrap gap-2">
         <Link to="/" className="text-xl font-bold tracking-tight text-blue-900">
           Beauty Guide
         </Link>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="secondary"
-              size="icon"
-              className="rounded-full p-0"
-            >
-              <User2Icon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="start">
-            <DropdownMenuLabel className="font-bold select-none">
-              {t("my_account")} {`(${user?.name})`}
-            </DropdownMenuLabel>
-            {isAdmin && (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>{t("ADMIN")}</DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent className="flex flex-col p-2 gap-2">
-                    <DropdownMenuItem
-                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                      onClick={() => handleNagivate("/admin")}
-                    >
-                      {t("nav.cosmetic")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                      onClick={() => handleNagivate("/admin/catalog")}
-                    >
-                      {t("nav.catalogs")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                      onClick={() => handleNagivate("/admin/brand")}
-                    >
-                      {t("nav.brands")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                      onClick={() => handleNagivate("/admin/skinType")}
-                    >
-                      {t("nav.skinTypes")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                      onClick={() => handleNagivate("/admin/action")}
-                    >
-                      {t("nav.actions")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                      onClick={() => handleNagivate("/admin/ingredient")}
-                    >
-                      {t("nav.ingredients")}
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-            )}
-            <DropdownMenuSeparator />
-            {isAuthenticated && (
-              <DropdownMenuGroup>
-                <DropdownMenuItem onClick={() => handleNagivate("/favorites")}>
-                  {t("favorites")}
-                  <DropdownMenuShortcut>
-                    {favorites?.length}
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            )}
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>{t("lang")}</DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem onClick={() => i18n.changeLanguage("en")}>
-                    EN
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => i18n.changeLanguage("ru")}>
-                    RU
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => i18n.changeLanguage("ko")}>
-                    KO
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-            <DropdownMenuSeparator />
-            {isAuthenticated ? (
-              <DropdownMenuItem onClick={handleLogout}>
-                {t("logout")}
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem onClick={handleLogin}>
-                {t("login")}
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="relative flex w-full items-center justify-start mb-4 z-40">
-        {searchParams.size > 0 && (
-          <div className="absolute left-2 top-1/2 -translate-y-1/2 bg-blue-900 text-white text-xs px-2 py-0.5 rounded-full">
-            {searchParams.size}
-          </div>
-        )}
-        <Input
-          placeholder={t("search")}
-          value={searchValue || ""}
-          className={cn(
-            "max-w-[550px] border-r-0",
-            searchParams.size > 0 && "pl-9"
-          )}
-          readOnly
+        <Button
+          variant="outline"
+          size="icon"
+          className="relative rounded-full ml-auto"
           onClick={handleOpenSearchModal}
+        >
+          <p className="absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center">
+            {getFiltersQuantity()}
+          </p>
+          <SearchIcon />
+        </Button>
+        <DropDownMenu
+          handleNagivate={handleNagivate}
+          handleLogin={handleLogin}
+          handleLogout={handleLogout}
+          user={user}
+          isAdmin={isAdmin || false}
+          isAuthenticated={isAuthenticated || false}
+          favorites={favorites || []}
         />
-        <SearchDialogModal
-          open={isOpen}
-          setOpen={setIsOpen}
-          userHistory={user?.history || []}
+      </nav>
+
+      <SearchDialogModal
+        open={isSearchOpen}
+        setOpen={setIsSearchOpen}
+        userHistory={user?.history || []}
+      />
+
+      <div className="fixed bg-gray-300/60 backdrop-blur-xl left-0 bottom-0 hidden max-md:flex items-center gap-4 p-4 h-[80px] w-full z-10">
+        {/* <span className="flex flex-col items-center">
+          <Button
+            variant="default"
+            className=" bg-white/80 backdrop-blur-xl text-black"
+            onClick={() => handleNagivate("/")}
+          >
+            <HomeIcon />
+          </Button>
+          <p className="text-neutral-800 font-semibold text-xs">
+            {t("nav.home")}
+          </p>
+        </span> */}
+        <span className="flex flex-col items-center">
+          <Button
+            variant="outline"
+            className=" bg-white/80 backdrop-blur-xl text-black shadow-2xl"
+            onClick={() => setIsCatalogOpen(true)}
+          >
+            <List />
+          </Button>
+          <p className="text-neutral-800 font-semibold text-xs">
+            {t("nav.catalogs")}
+          </p>
+        </span>
+        {isAuthenticated && (
+          <span className="flex flex-col items-center">
+            <Button
+              variant="default"
+              className=" bg-white/80 backdrop-blur-xl text-black"
+              onClick={() => handleNagivate("/favorites")}
+            >
+              <Heart />
+            </Button>
+            <p className="text-neutral-800 font-semibold text-xs">
+              {t("favorites")}
+            </p>
+          </span>
+        )}
+        <MobileCatalogModal
+          categoryTree={categoryTree}
+          isOpen={isCatalogOpen}
+          setIsOpen={setIsCatalogOpen}
         />
       </div>
-    </nav>
+    </header>
   )
 }
 

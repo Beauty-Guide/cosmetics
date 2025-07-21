@@ -52,6 +52,7 @@ export type TUser = {
   name: string
   role: TRole
   history: TUserHistory[]
+  refetch: () => void
 }
 
 export type TUserHistory = {

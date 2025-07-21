@@ -57,10 +57,6 @@ const SearchDialogModal = ({
 
     if (searchValue && searchValue.length > 2) {
       params.append("search", searchValue)
-      setSearchHistory((prev) => [
-        ...prev,
-        { id: prev.length + 1, searchQuery: searchValue },
-      ])
     } else if (!searchValue) {
       params.delete("search")
     }

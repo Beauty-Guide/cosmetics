@@ -68,7 +68,7 @@ const Pagination: React.FC<PaginationProps> = ({
   }
 
   return (
-    <div className="flex items-center justify-center space-x-2 my-6">
+    <div className="flex items-center justify-center space-x-2 my-10 max-md:pb-12">
       <Button
         onClick={onPrev}
         disabled={currentPage === 1}
