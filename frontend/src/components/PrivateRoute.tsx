@@ -8,7 +8,7 @@ const PrivateRoute: React.FC<{
 }> = ({ children, allowedRoles }) => {
   const user = useAuth()
   const navigate = useNavigate()
-  const hasPermission = allowedRoles?.some((role) => user?.role.includes(role))
+  const hasPermission = allowedRoles?.some((role) => user?.role?.includes(role))
 
   if (!hasPermission && user) {
     navigate("/login", { replace: true })

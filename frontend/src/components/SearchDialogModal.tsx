@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
 import { memo, useEffect, useRef, useState } from "react"
 import type { TUserHistory } from "@/types"
-import { useNavigate, useSearchParams } from "react-router"
+import { useLocation, useNavigate, useSearchParams } from "react-router"
 import { Button } from "./ui/button"
 import { useDeleteSearchHistory } from "@/hooks/useDeleteSearhHistory"
 import ProductFilters from "./ProductFilters/ProductFilters"
@@ -30,6 +30,7 @@ const SearchDialogModal = ({
 }: TSearhInputProps) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { pathname } = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.getAll("brand")
@@ -89,6 +90,11 @@ const SearchDialogModal = ({
     }
 
     setSearchParams(params, { replace: false })
+
+    if (pathname.startsWith("/category")) {
+      navigate(`${pathname}?${params.toString()}`)
+      return
+    }
 
     const finalUrl = `/?${params.toString()}`
 
