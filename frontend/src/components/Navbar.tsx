@@ -4,7 +4,7 @@ import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useTranslation } from "react-i18next"
-import { Heart, List, SearchIcon } from "lucide-react"
+import { Heart, HomeIcon, List, SearchIcon } from "lucide-react"
 import { memo, useMemo, useState } from "react"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useGetCategories } from "@/hooks/getCategories"
@@ -99,16 +99,35 @@ const AppNavbar: React.FC = () => {
       <div className="fixed bg-gray-300/60 backdrop-blur-xl left-0 bottom-0 hidden max-md:flex items-center gap-4 p-4 h-[80px] w-full z-10">
         {/* <span className="flex flex-col items-center">
           <Button
-            variant="default"
+            variant="outline"
+            size="icon"
+            className="relative rounded-full"
+            // onClick={handleOpenSearchModal}
+          >
+            <p className="absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center">
+              {getFiltersQuantity()}
+            </p>
+            <SearchIcon />
+          </Button>
+          <p className="text-neutral-800 font-semibold text-xs">
+            {t("Search")}
+          </p>
+        </span> */}
+        <span className="flex flex-col items-center">
+          <Button
+            variant="outline"
             className=" bg-white/80 backdrop-blur-xl text-black"
-            onClick={() => handleNagivate("/")}
+            onClick={() => {
+              navigate("/")
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }}
           >
             <HomeIcon />
           </Button>
           <p className="text-neutral-800 font-semibold text-xs">
             {t("nav.home")}
           </p>
-        </span> */}
+        </span>
         <span className="flex flex-col items-center">
           <Button
             variant="outline"
@@ -124,7 +143,7 @@ const AppNavbar: React.FC = () => {
         {isAuthenticated && (
           <span className="flex flex-col items-center">
             <Button
-              variant="default"
+              variant="outline"
               className=" bg-white/80 backdrop-blur-xl text-black"
               onClick={() => handleNagivate("/favorites")}
             >

@@ -18,8 +18,8 @@ const ProductPage = () => {
     productId || ""
   )
   const user = useAuth()
-  const isAdmin = user?.role.includes(ROLES.ADMIN)
-  const isUser = user?.role.includes(ROLES.USER)
+  const isAdmin = user?.role?.includes(ROLES.ADMIN)
+  const isUser = user?.role?.includes(ROLES.USER)
   const isAuthenticated = isAdmin || isUser
 
   const handleShare = () => {
