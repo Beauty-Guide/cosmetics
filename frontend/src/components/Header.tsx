@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
-import { useTranslation } from "react-i18next"
 import { Heart, HomeIcon, List, SearchIcon } from "lucide-react"
 import { memo, useMemo, useState } from "react"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
@@ -12,8 +11,7 @@ import SearchDialogModal from "./SearchDialogModal"
 import MobileCatalogModal from "./HeaderComponents/MobileCatalogModal"
 import DropDownMenu from "./HeaderComponents/DropDownMenu"
 
-const AppNavbar: React.FC = () => {
-  const { t } = useTranslation()
+const Header: React.FC = () => {
   const user = useAuth()
   const navigate = useNavigate()
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
@@ -71,7 +69,7 @@ const AppNavbar: React.FC = () => {
         <Button
           variant="outline"
           size="icon"
-          className="relative rounded-full ml-auto"
+          className="relative rounded-full ml-auto max-md:hidden"
           onClick={handleOpenSearchModal}
         >
           <p className="absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center">
@@ -79,6 +77,66 @@ const AppNavbar: React.FC = () => {
           </p>
           <SearchIcon />
         </Button>
+        <div className="max-md:hidden">
+          <DropDownMenu
+            handleNagivate={handleNagivate}
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            user={user}
+            isAdmin={isAdmin || false}
+            isAuthenticated={isAuthenticated || false}
+            favorites={favorites || []}
+          />
+        </div>
+      </nav>
+
+      <SearchDialogModal
+        open={isSearchOpen}
+        setOpen={setIsSearchOpen}
+        userHistory={user?.history || []}
+      />
+
+      <div className="hidden max-md:flex fixed bg-gray-300/60 backdrop-blur-xl left-0 bottom-0 items-center justify-center gap-4 py-4 h-fit w-full z-10">
+        <Button
+          variant="outline"
+          className="text-black rounded-full"
+          size="icon"
+          onClick={() => setIsCatalogOpen(true)}
+        >
+          <List />
+        </Button>
+        <Button
+          variant="outline"
+          className="relative rounded-full"
+          size="icon"
+          onClick={handleOpenSearchModal}
+        >
+          <p className="absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center">
+            {getFiltersQuantity()}
+          </p>
+          <SearchIcon />
+        </Button>
+        <Button
+          variant="outline"
+          className="text-black rounded-full"
+          size="icon"
+          onClick={() => {
+            navigate("/")
+            window.scrollTo({ top: 0, behavior: "smooth" })
+          }}
+        >
+          <HomeIcon />
+        </Button>
+        {isAuthenticated && (
+          <Button
+            variant="outline"
+            className="text-black rounded-full"
+            size="icon"
+            onClick={() => handleNagivate("/favorites")}
+          >
+            <Heart />
+          </Button>
+        )}
         <DropDownMenu
           handleNagivate={handleNagivate}
           handleLogin={handleLogin}
@@ -88,72 +146,6 @@ const AppNavbar: React.FC = () => {
           isAuthenticated={isAuthenticated || false}
           favorites={favorites || []}
         />
-      </nav>
-
-      <SearchDialogModal
-        open={isSearchOpen}
-        setOpen={setIsSearchOpen}
-        userHistory={user?.history || []}
-      />
-
-      <div className="fixed bg-gray-300/60 backdrop-blur-xl left-0 bottom-0 hidden max-md:flex items-center gap-4 p-4 h-[80px] w-full z-10">
-        {/* <span className="flex flex-col items-center">
-          <Button
-            variant="outline"
-            size="icon"
-            className="relative rounded-full"
-            // onClick={handleOpenSearchModal}
-          >
-            <p className="absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center">
-              {getFiltersQuantity()}
-            </p>
-            <SearchIcon />
-          </Button>
-          <p className="text-neutral-800 font-semibold text-xs">
-            {t("Search")}
-          </p>
-        </span> */}
-        <span className="flex flex-col items-center">
-          <Button
-            variant="outline"
-            className=" bg-white/80 backdrop-blur-xl text-black"
-            onClick={() => {
-              navigate("/")
-              window.scrollTo({ top: 0, behavior: "smooth" })
-            }}
-          >
-            <HomeIcon />
-          </Button>
-          <p className="text-neutral-800 font-semibold text-xs">
-            {t("nav.home")}
-          </p>
-        </span>
-        <span className="flex flex-col items-center">
-          <Button
-            variant="outline"
-            className=" bg-white/80 backdrop-blur-xl text-black shadow-2xl"
-            onClick={() => setIsCatalogOpen(true)}
-          >
-            <List />
-          </Button>
-          <p className="text-neutral-800 font-semibold text-xs">
-            {t("nav.catalogs")}
-          </p>
-        </span>
-        {isAuthenticated && (
-          <span className="flex flex-col items-center">
-            <Button
-              variant="outline"
-              className=" bg-white/80 backdrop-blur-xl text-black"
-              onClick={() => handleNagivate("/favorites")}
-            >
-              <Heart />
-            </Button>
-            <p className="text-neutral-800 font-semibold text-xs">
-              {t("favorites")}
-            </p>
-          </span>
-        )}
         <MobileCatalogModal
           categoryTree={categoryTree}
           isOpen={isCatalogOpen}
@@ -164,4 +156,4 @@ const AppNavbar: React.FC = () => {
   )
 }
 
-export default memo(AppNavbar)
+export default memo(Header)

@@ -27,10 +27,7 @@ const MobileCatalogModal = ({
   return (
     <div className="md:hidden">
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent
-          aria-describedby={undefined}
-          className="bg-gray-100/60 backdrop-blur-xl"
-        >
+        <DrawerContent aria-describedby={undefined}>
           <div className="mx-auto w-full max-w-sm overflow-y-auto">
             <DrawerHeader>
               <DrawerTitle className="text-gray-800">

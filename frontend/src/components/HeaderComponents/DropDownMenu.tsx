@@ -42,7 +42,11 @@ const DropDownMenu = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="icon" className="rounded-full p-0">
+        <Button
+          variant="secondary"
+          size="icon"
+          className="rounded-full p-0 max-md:bg-white"
+        >
           <User2Icon />
         </Button>
       </DropdownMenuTrigger>

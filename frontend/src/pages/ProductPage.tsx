@@ -46,7 +46,7 @@ const ProductPage = () => {
   }
 
   return (
-    <main className="flex flex-col w-full justify-start gap-5 p-4 px-sides">
+    <main className="flex flex-col w-full justify-start gap-5 p-4 px-sides max-md:mb-15">
       <span className="flex flex-col items-start justify-center gap-2 my-2 max-md:my-0">
         <h1 className="text-3xl font-bold text-left max-md:text-xl">
           {product.name}

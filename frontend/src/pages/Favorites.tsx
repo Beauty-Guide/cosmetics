@@ -9,7 +9,7 @@ const Favorites = () => {
   if (isLoading) return <div>Loading...</div>
 
   return (
-    <div className="flex flex-col items-start justify-start w-full p-4 px-sides">
+    <div className="flex flex-col items-start justify-start w-full p-4 px-sides max-md:mb-15">
       <h1 className="text-2xl font-semibold text-left select-none my-2">
         {t("favorites")}
       </h1>
