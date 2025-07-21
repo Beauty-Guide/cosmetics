@@ -3,10 +3,10 @@ import { useCurrentUser } from "@/hooks/getCurrentUser"
 import type { TUser } from "@/types"
 
 export const AuthProvider = ({ children }) => {
-  const { data: user } = useCurrentUser()
+  const { data: user, refetch } = useCurrentUser()
 
   return (
-    <AuthContext.Provider value={user as TUser}>
+    <AuthContext.Provider value={{ ...user, refetch } as TUser}>
       {children}
     </AuthContext.Provider>
   )

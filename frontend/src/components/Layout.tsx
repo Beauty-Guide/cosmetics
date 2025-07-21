@@ -1,12 +1,12 @@
 import { Outlet } from "react-router"
-import AppNavbar from "./Navbar"
+import Header from "./Header"
 import { Toaster } from "./ui/sonner"
 import Breadcrumbs from "./Breadcrumbs"
 
 const Layout = () => {
   return (
     <div className="max-w-7xl mx-auto">
-      <AppNavbar />
+      <Header />
       <Breadcrumbs />
       <Outlet />
       <Toaster />

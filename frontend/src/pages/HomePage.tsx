@@ -1,5 +1,5 @@
 import Products from "@/components/HomeComponents/Products"
-import SideBar from "@/components/HomeComponents/SIdeBar"
+import Catalog from "@/components/HomeComponents/Catalog"
 import Pagination from "@/components/Pagination"
 import { useGetAllItems } from "@/hooks/getAllItems"
 import { useGetCategories } from "@/hooks/getCategories"
@@ -9,8 +9,7 @@ import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTranslation } from "react-i18next"
-import { Button } from "@/components/ui/button"
-import { List } from "lucide-react"
+import getCategoryId from "@/lib/getCategoryId"
 
 const HomePage = () => {
   const { pathname } = useLocation()
@@ -31,7 +30,6 @@ const HomePage = () => {
     searchParams.get("search")
   )
   const [sortBy, setSortBy] = useState<string[]>([])
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
 
   const { data: products, isLoading: isLoadingItems } = useGetAllItems({
     page: page - 1,
@@ -52,16 +50,13 @@ const HomePage = () => {
     useGetCategories()
 
   useEffect(() => {
-    const id = categories?.find(
-      (c) => c.name === decodeURIComponent(pathname.split("/").at(-1) || "")
-    )?.id
+    const id = getCategoryId(categories || [], pathname)
 
     if (id) {
       setCategoryId(String(id))
     } else {
       setCategoryId(null)
     }
-    setPage(1)
   }, [categories, searchParams, pathname])
 
   useEffect(() => {
@@ -94,27 +89,12 @@ const HomePage = () => {
     }
   }
 
-  const handleOpenDrawer = () => {
-    setIsDrawerOpen(true)
-  }
-
   return (
     <main className="w-full flex max-md:flex-col items-start justify-center p-4 mt-2 max-md:pt-0 px-sides">
-      <SideBar
-        categoryTree={categoryTree}
-        isOpen={isDrawerOpen}
-        setIsOpen={setIsDrawerOpen}
-      />
+      <Catalog categoryTree={categoryTree} />
       <div className="flex flex-col items-center justify-center w-full mt-1">
         <div className="flex items-center justify-between w-full gap-3">
-          <Button
-            variant="outline"
-            className="my-2 hidden max-md:block"
-            onClick={handleOpenDrawer}
-          >
-            <List />
-          </Button>
-          <h2 className="flex gap-2 text-md font-semibold mr-auto">
+          <h2 className="flex gap-2 text-md font-semibold mr-auto max-md:text-sm">
             {isLoadingItems ? (
               <Skeleton className="w-[100px] h-[24px]" />
             ) : (
