@@ -30,6 +30,16 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/015-create-cosmetic-marketplace-link-schema.yaml
   - include:
+      file: db/changelog/indexes/001-indexes-cosmetic.yaml
+  - include:
+      file: db/changelog/indexes/002-indexes-brand-catalog-ingredient.yaml
+  - include:
+      file: db/changelog/indexes/003-indexes-cosmetic-image.yaml
+  - include:
+      file: db/changelog/indexes/004-indexes-cosmetic-ingredient.yaml
+  - include:
+      file: db/changelog/indexes/005-indexes-favorite-cosmetics.yaml
+  - include:
       file: db/changelog/changesTestData/test-data-brands.yaml
   - include:
       file: db/changelog/changesTestData/test-data-ingredients.yaml

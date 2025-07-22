@@ -18,8 +18,6 @@ databaseChangeLog:
               - column:
                   name: url
                   type: TEXT
-                  constraints:
-                    nullable: false
               - column:
                   name: cosmetic_id
                   type: BIGINT

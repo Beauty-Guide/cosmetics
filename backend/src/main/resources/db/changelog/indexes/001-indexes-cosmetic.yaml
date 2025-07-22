@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-add-cosmetic-indexes
+      author: yourname
+      comment: Индексы для ускорения фильтрации и сортировки косметики
+
+      changes:
+        # 1. Покрывающий индекс для фильтров catalog_id, brand_id и сортировки id
+        - createIndex:
+            indexName: idx_cosmetic_filter
+            tableName: cosmetic
+            columns:
+              - column:
+                  name: catalog_id
+              - column:
+                  name: brand_id
+              - column:
+                  name: id
+
+        # 2. Отдельный индекс по catalog_id (если catalog_id часто используется без brand_id)
+        - createIndex:
+            indexName: idx_cosmetic_catalog_id
+            tableName: cosmetic
+            columns:
+              - column:
+                  name: catalog_id
+
+        # 3. Отдельный индекс по brand_id (если brand_id используется отдельно)
+        - createIndex:
+            indexName: idx_cosmetic_brand_id
+            tableName: cosmetic
+            columns:
+              - column:
+                  name: brand_id
+
+        # 4. Составной индекс для связи косметики и действий
+        - createIndex:
+            indexName: idx_cca_cosmetic_action
+            tableName: cosmetic_cosmetic_action
+            columns:
+              - column:
+                  name: cosmetic_id
+              - column:
+                  name: action_id
+
+        # 5. Составной индекс для связи косметики и типов кожи
+        - createIndex:
+            indexName: idx_cst_cosmetic_skin
+            tableName: cosmetic_skin_type
+            columns:
+              - column:
+                  name: cosmetic_id
+              - column:
+                  name: skin_type_id

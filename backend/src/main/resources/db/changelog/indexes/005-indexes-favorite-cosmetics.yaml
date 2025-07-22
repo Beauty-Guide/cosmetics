@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-indexes-favorite-cosmetics
+      author: yourname
+      comment: Дополнительные индексы для favorite_cosmetics
+
+      changes:
+        # для подсчёта «избранное» по cosmetic_id
+        - createIndex:
+            tableName: favorite_cosmetics
+            indexName: idx_fc_cosmetic_id
+            columns:
+              - column:
+                  name: cosmetic_id
+
+        # для фильтра по пользователю
+        - createIndex:
+            tableName: favorite_cosmetics
+            indexName: idx_fc_user_id
+            columns:
+              - column:
+                  name: user_id

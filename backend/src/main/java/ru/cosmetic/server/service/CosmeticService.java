@@ -53,10 +53,10 @@ public class CosmeticService {
     }
 
     public CosmeticResponse getCosmeticById(Long id, String lang, boolean isAllData) {
-        StringBuilder sql = new StringBuilder("""
+        String sql = """
         SELECT
-            c.id AS cosmetic_id,
-            c.name AS cosmetic_name,
+            c.id                                           AS cosmetic_id,
+            c.name                                         AS cosmetic_name,
             c.compatibility,
             c.compatibility_en,
             c.compatibility_kr,
@@ -67,57 +67,78 @@ public class CosmeticService {
             c.application_method_en,
             c.application_method_kr,
             c.rating,
-            b.id AS brand_id,
-            b.name AS brand_name,
-            cat.id AS catalog_id,
-            cat.name AS catalog_name,
-            cat.name_EN AS catalog_name_en,
-            cat.name_KR AS catalog_name_ko,
-            ARRAY_AGG(DISTINCT a.id) AS action_ids,
-            ARRAY_AGG(DISTINCT a.name) AS action_names,
-            ARRAY_AGG(DISTINCT a.name_EN) AS action_names_en,
-            ARRAY_AGG(DISTINCT a.name_KR) AS action_names_ko,
-            ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
-            ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
-            ARRAY_AGG(DISTINCT st.name_EN) AS skin_type_names_en,
-            ARRAY_AGG(DISTINCT st.name_KR) AS skin_type_names_ko,
-            ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
-            ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
-            (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
-            (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
-            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main,
-            (SELECT ARRAY_AGG(cml.id) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_ids,
-            (SELECT ARRAY_AGG(cml.marketplace_name) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_names,
-            (SELECT ARRAY_AGG(cml.location) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_locations,
-            (SELECT ARRAY_AGG(cml.product_link) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_product_links
+            b.id                                           AS brand_id,
+            b.name                                         AS brand_name,
+            cat.id                                         AS catalog_id,
+            cat.name                                       AS catalog_name,
+            cat.name_en                                    AS catalog_name_en,
+            cat.name_kr                                    AS catalog_name_ko,
+            EXISTS (SELECT 1 FROM catalog sub WHERE sub.parent_id = cat.id) AS has_children,
+
+            /* actions */
+            array_agg(DISTINCT a.id)            FILTER (WHERE a.id IS NOT NULL) AS action_ids,
+            array_agg(DISTINCT a.name)          FILTER (WHERE a.id IS NOT NULL) AS action_names,
+            array_agg(DISTINCT a.name_en)       FILTER (WHERE a.id IS NOT NULL) AS action_names_en,
+            array_agg(DISTINCT a.name_kr)       FILTER (WHERE a.id IS NOT NULL) AS action_names_ko,
+
+            /* skin types */
+            array_agg(DISTINCT st.id)           FILTER (WHERE st.id IS NOT NULL) AS skin_type_ids,
+            array_agg(DISTINCT st.name)         FILTER (WHERE st.id IS NOT NULL) AS skin_type_names,
+            array_agg(DISTINCT st.name_en)      FILTER (WHERE st.id IS NOT NULL) AS skin_type_names_en,
+            array_agg(DISTINCT st.name_kr)      FILTER (WHERE st.id IS NOT NULL) AS skin_type_names_ko,
+
+            /* ingredients */
+            array_agg(DISTINCT i.id)            FILTER (WHERE i.id IS NOT NULL) AS ingredient_ids,
+            array_agg(DISTINCT i.name)          FILTER (WHERE i.id IS NOT NULL) AS ingredient_names,
+
+            /* images */
+            array_agg(DISTINCT img.id)          FILTER (WHERE img.id IS NOT NULL) AS image_ids,
+            array_agg(DISTINCT img.url)         FILTER (WHERE img.id IS NOT NULL) AS image_urls,
+            array_agg(DISTINCT img.is_main)     FILTER (WHERE img.id IS NOT NULL) AS image_is_main,
+
+            /* marketplace links */
+            array_agg(DISTINCT cml.id)          FILTER (WHERE cml.id IS NOT NULL) AS marketplace_ids,
+            array_agg(DISTINCT cml.marketplace_name)
+                                               FILTER (WHERE cml.id IS NOT NULL) AS marketplace_names,
+            array_agg(DISTINCT cml.location)    FILTER (WHERE cml.id IS NOT NULL) AS marketplace_locations,
+            array_agg(DISTINCT cml.product_link)
+                                               FILTER (WHERE cml.id IS NOT NULL) AS marketplace_product_links
         FROM cosmetic c
-        JOIN brand b ON c.brand_id = b.id
-        JOIN catalog cat ON c.catalog_id = cat.id
-        LEFT JOIN cosmetic_cosmetic_action cca ON c.id = cca.cosmetic_id
-        LEFT JOIN cosmetic_action a ON cca.action_id = a.id
-        LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
-        LEFT JOIN skin_type st ON cst.skin_type_id = st.id
-        LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
-        LEFT JOIN ingredient i ON ci.ingredient_id = i.id
+        JOIN brand      b   ON b.id   = c.brand_id
+        JOIN catalog    cat ON cat.id = c.catalog_id
+        LEFT JOIN cosmetic_cosmetic_action cca ON cca.cosmetic_id = c.id
+        LEFT JOIN cosmetic_action          a   ON a.id   = cca.action_id
+        LEFT JOIN cosmetic_skin_type       cst ON cst.cosmetic_id = c.id
+        LEFT JOIN skin_type                st  ON st.id  = cst.skin_type_id
+        LEFT JOIN cosmetic_ingredient      ci  ON ci.cosmetic_id = c.id
+        LEFT JOIN ingredient               i   ON i.id   = ci.ingredient_id
+        LEFT JOIN cosmetic_image           img ON img.cosmetic_id = c.id
+        LEFT JOIN cosmetic_marketplace_link cml ON cml.cosmetic_id = c.id
         WHERE c.id = ?
         GROUP BY c.id, b.id, cat.id
-    """);
+        """;
 
         try {
-            Map<String, Object> row = jdbcTemplate.queryForMap(sql.toString(), id);
+            Map<String, Object> row = jdbcTemplate.queryForMap(sql, id);
             return mapRowToCosmeticResponse(row, lang, isAllData);
         } catch (EmptyResultDataAccessException ex) {
-            return null; // или throw new ResourceNotFoundException("Cosmetic not found")
+            return new CosmeticResponse();
         }
     }
 
-    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang, User user, boolean isAllData) {
+    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter,
+                                                   String lang,
+                                                   User user,
+                                                   boolean isAllData) {
+
         List<Object> params = new ArrayList<>();
         boolean isFavoriteJoinNeeded = filter.isByFavourite();
+
+        /* ------------------ SELECT ------------------ */
         StringBuilder sql = new StringBuilder("""
         SELECT
-            c.id AS cosmetic_id,
-            c.name AS cosmetic_name,
+            c.id                                           AS cosmetic_id,
+            c.name                                         AS cosmetic_name,
             c.compatibility,
             c.compatibility_en,
             c.compatibility_kr,
@@ -128,96 +149,111 @@ public class CosmeticService {
             c.application_method_en,
             c.application_method_kr,
             c.rating,
-            b.id AS brand_id,
-            b.name AS brand_name,
-            cat.id AS catalog_id,
-            cat.name AS catalog_name,
-            cat.name_EN AS catalog_name_en,
-            cat.name_KR AS catalog_name_ko,
-            (SELECT EXISTS (
-                SELECT 1 FROM catalog sub_cat WHERE sub_cat.parent_id = cat.id
-            )) AS has_children,
-            ARRAY_AGG(DISTINCT a.id) AS action_ids,
-            ARRAY_AGG(DISTINCT a.name) AS action_names,
-            ARRAY_AGG(DISTINCT a.name_EN) AS action_names_en,
-            ARRAY_AGG(DISTINCT a.name_KR) AS action_names_ko,
-            ARRAY_AGG(DISTINCT st.id) AS skin_type_ids,
-            ARRAY_AGG(DISTINCT st.name) AS skin_type_names,
-            ARRAY_AGG(DISTINCT st.name_EN) AS skin_type_names_en,
-            ARRAY_AGG(DISTINCT st.name_KR) AS skin_type_names_ko,
-            ARRAY_AGG(DISTINCT i.id) AS ingredient_ids,
-            ARRAY_AGG(DISTINCT i.name) AS ingredient_names,
-            (SELECT ARRAY_AGG(img.id) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_ids,
-            (SELECT ARRAY_AGG(img.url) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_urls,
-            (SELECT ARRAY_AGG(CASE WHEN img.is_main THEN 1 ELSE 0 END) FROM cosmetic_image img WHERE img.cosmetic_id = c.id) AS image_is_main,
-            (SELECT ARRAY_AGG(cml.id) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_ids,
-            (SELECT ARRAY_AGG(cml.marketplace_name) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_names,
-            (SELECT ARRAY_AGG(cml.location) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_locations,
-            (SELECT ARRAY_AGG(cml.product_link) FROM cosmetic_marketplace_link cml WHERE cml.cosmetic_id = c.id) AS marketplace_product_links
-    """);
+            b.id                                           AS brand_id,
+            b.name                                         AS brand_name,
+            cat.id                                         AS catalog_id,
+            cat.name                                       AS catalog_name,
+            cat.name_en                                    AS catalog_name_en,
+            cat.name_kr                                    AS catalog_name_ko,
+            EXISTS (SELECT 1 FROM catalog sub WHERE sub.parent_id = cat.id) AS has_children,
+
+            /* агрегация вместо коррелированных подзапросов */
+            array_agg(DISTINCT a.id)                    FILTER (WHERE a.id IS NOT NULL) AS action_ids,
+            array_agg(DISTINCT a.name)                  FILTER (WHERE a.id IS NOT NULL) AS action_names,
+            array_agg(DISTINCT a.name_en)               FILTER (WHERE a.id IS NOT NULL) AS action_names_en,
+            array_agg(DISTINCT a.name_kr)               FILTER (WHERE a.id IS NOT NULL) AS action_names_ko,
+            array_agg(DISTINCT st.id)                   FILTER (WHERE st.id IS NOT NULL) AS skin_type_ids,
+            array_agg(DISTINCT st.name)                 FILTER (WHERE st.id IS NOT NULL) AS skin_type_names,
+            array_agg(DISTINCT st.name_en)              FILTER (WHERE st.id IS NOT NULL) AS skin_type_names_en,
+            array_agg(DISTINCT st.name_kr)              FILTER (WHERE st.id IS NOT NULL) AS skin_type_names_ko,
+            array_agg(DISTINCT i.id)                    FILTER (WHERE i.id IS NOT NULL) AS ingredient_ids,
+            array_agg(DISTINCT i.name)                  FILTER (WHERE i.id IS NOT NULL) AS ingredient_names,
+            array_agg(DISTINCT img.id)                  FILTER (WHERE img.id IS NOT NULL) AS image_ids,
+            array_agg(DISTINCT img.url)                 FILTER (WHERE img.id IS NOT NULL) AS image_urls,
+            array_agg(DISTINCT img.is_main)             FILTER (WHERE img.id IS NOT NULL) AS image_is_main,
+            array_agg(DISTINCT cml.id)                  FILTER (WHERE cml.id IS NOT NULL) AS marketplace_ids,
+            array_agg(DISTINCT cml.marketplace_name)    FILTER (WHERE cml.id IS NOT NULL) AS marketplace_names,
+            array_agg(DISTINCT cml.location)            FILTER (WHERE cml.id IS NOT NULL) AS marketplace_locations,
+            array_agg(DISTINCT cml.product_link)        FILTER (WHERE cml.id IS NOT NULL) AS marketplace_product_links
+        """);
 
         if (isFavoriteJoinNeeded) {
-            sql.append(", fav.favorite_count");
+            sql.append(", COALESCE(fav.cnt,0) AS favorite_count");
         }
 
+        /* ------------------ FROM / JOIN ------------------ */
         sql.append("""
         FROM cosmetic c
-        JOIN brand b ON c.brand_id = b.id
-        JOIN catalog cat ON c.catalog_id = cat.id
-        LEFT JOIN cosmetic_cosmetic_action cca ON c.id = cca.cosmetic_id
-        LEFT JOIN cosmetic_action a ON cca.action_id = a.id
-        LEFT JOIN cosmetic_skin_type cst ON c.id = cst.cosmetic_id
-        LEFT JOIN skin_type st ON cst.skin_type_id = st.id
-        LEFT JOIN cosmetic_ingredient ci ON c.id = ci.cosmetic_id
-        LEFT JOIN ingredient i ON ci.ingredient_id = i.id
-    """);
+        JOIN brand      b   ON b.id = c.brand_id
+        JOIN catalog    cat ON cat.id = c.catalog_id
+        LEFT JOIN cosmetic_cosmetic_action cca ON cca.cosmetic_id = c.id
+        LEFT JOIN cosmetic_action          a   ON a.id = cca.action_id
+        LEFT JOIN cosmetic_skin_type       cst ON cst.cosmetic_id = c.id
+        LEFT JOIN skin_type                st  ON st.id = cst.skin_type_id
+        LEFT JOIN cosmetic_ingredient      ci  ON ci.cosmetic_id = c.id
+        LEFT JOIN ingredient               i   ON i.id = ci.ingredient_id
+        LEFT JOIN cosmetic_image           img ON img.cosmetic_id = c.id
+        LEFT JOIN cosmetic_marketplace_link cml ON cml.cosmetic_id = c.id
+        """);
 
         if (isFavoriteJoinNeeded) {
             sql.append("""
-            LEFT JOIN (SELECT cosmetic_id, COUNT(*) AS favorite_count FROM favorite_cosmetics GROUP BY cosmetic_id) fav ON c.id = fav.cosmetic_id
-        """);
+            LEFT JOIN LATERAL (
+                SELECT cosmetic_id, COUNT(*) AS cnt
+                FROM favorite_cosmetics
+                GROUP BY cosmetic_id
+            ) fav ON fav.cosmetic_id = c.id
+            """);
         }
 
-        // Добавляем WHERE часть
+        /* ------------------ WHERE ------------------ */
         sql.append(buildWhereClause(filter, params, user));
 
-        // GROUP BY
+        /* ------------------ GROUP BY ------------------ */
         sql.append(" GROUP BY c.id, b.id, cat.id");
+        if (isFavoriteJoinNeeded) sql.append(", fav.cnt");
 
-        if (isFavoriteJoinNeeded) {
-            sql.append(", fav.favorite_count");
-        }
-
-        // ORDER BY
+        /* ------------------ ORDER BY ------------------ */
         sql.append(" ORDER BY ");
         if (filter.isByPopularity()) {
-            sql.append("COALESCE(c.rating, 0) DESC");
+            sql.append("COALESCE(c.rating,0) DESC");
         } else if (filter.isByDate()) {
             sql.append("c.created_date DESC");
         } else if (filter.isByFavourite()) {
-            sql.append("COALESCE(fav.favorite_count, 0) DESC, c.rating, c.id ASC");
+            sql.append("COALESCE(fav.cnt,0) DESC, c.rating, c.id");
         } else if ("name".equalsIgnoreCase(filter.getSortBy())) {
-            sql.append("c.name ");
-            String dir = "desc".equalsIgnoreCase(filter.getSortDirection()) ? "DESC" : "ASC";
-            sql.append(dir);
+            sql.append("c.name ").append(
+                    "desc".equalsIgnoreCase(filter.getSortDirection()) ? "DESC" : "ASC");
         } else {
-            sql.append("c.id ASC");
+            sql.append("c.id");
         }
 
-        // Пагинация
-        sql.append(" LIMIT ? OFFSET ?");
+        /* ------------------ LIMIT / OFFSET (key-set ready) ------------------ */
+        // Если захотите key-set пагинацию — раскомментируйте ниже и передавайте lastSeenId
+        // if (filter.getLastSeenId() != null) {
+        //     sql.append(" AND c.id > ? ");
+        //     params.add(filter.getLastSeenId());
+        // }
+        sql.append(" LIMIT ?");
         params.add(filter.getSize());
+        sql.append(" OFFSET ?");
         params.add(filter.getPage() * filter.getSize());
 
-        // Выполняем запрос
+        /* ------------------ Выполнение ------------------ */
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
 
-        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang, isAllData);
-        CosmeticsResponse cosmeticsResponse = new CosmeticsResponse();
-        cosmeticsResponse.setCosmetics(cosmeticResponses);
-        cosmeticsResponse.setTotal(getCountOfCosmetics(filter));
+        /* ------------------ total через WINDOW ------------------ */
+        // Если нужно получить общее количество без дополнительного запроса:
+        // 1) добавьте в SELECT:
+        //    , count(*) OVER() AS total
+        // 2) заберите первое значение total из результата.
+        // Для простоты ниже оставлен существующий метод getCountOfCosmetics.
 
-        return cosmeticsResponse;
+        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang, isAllData);
+        CosmeticsResponse response = new CosmeticsResponse();
+        response.setCosmetics(cosmeticResponses);
+        response.setTotal(getCountOfCosmetics(filter)); // при желании замените на total из окна
+        return response;
     }
 
     public CosmeticsResponse getCosmeticsForTableByFilters(CosmeticFilterRequest filter, String lang, User user, boolean isAllData) {
@@ -614,13 +650,8 @@ public class CosmeticService {
                 List<Boolean> result = new ArrayList<>(array.length);
                 for (Object obj : array) {
                     if (obj != null) {
-                        if (obj instanceof Integer str) {
-                            if (obj.equals(1)){
-                                result.add(true);
-                            }else {
-                                result.add(false);
-                            }
-
+                        if (obj instanceof Boolean str) {
+                            result.add(str);
                         }
                     }
                 }
