@@ -73,7 +73,12 @@ const Header: React.FC = () => {
           className="relative rounded-full ml-auto max-md:hidden"
           onClick={handleOpenSearchModal}
         >
-          <p className="absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center">
+          <p
+            className={cn(
+              "absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center",
+              !getFiltersQuantity() && "hidden"
+            )}
+          >
             {getFiltersQuantity()}
           </p>
           <SearchIcon />
