@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-indexes-cosmetic-ingredient
+      author: yourname
+      comment: Индексы для cosmetic_ingredient
+
+      changes:
+        - createIndex:
+            tableName: cosmetic_ingredient
+            indexName: idx_ci_ingredient_id
+            columns:
+              - column:
+                  name: ingredient_id

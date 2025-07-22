@@ -239,6 +239,7 @@ public class TestDataController {
                     }
                 };
 
+                cosmeticImage = cosmeticImageService.save(cosmeticImage);
                 // Генерируем имя файла в MinIO
                 String fileName = cosmetic.getId() + "_" + cosmeticImage.getId() + ".jpg";
 

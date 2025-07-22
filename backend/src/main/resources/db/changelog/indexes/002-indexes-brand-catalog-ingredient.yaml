@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-indexes-brand-catalog-ingredient
+      author: yourname
+      comment: Индексы для brand, catalog, ingredient
+
+      changes:
+        # --- brand ---
+        - createIndex:
+            tableName: brand
+            indexName: idx_brand_name
+            columns:
+              - column:
+                  name: name
+
+        # --- catalog ---
+        - createIndex:
+            tableName: catalog
+            indexName: idx_catalog_parent_id
+            columns:
+              - column:
+                  name: parent_id
+
+        # --- ingredient ---
+        - createIndex:
+            tableName: ingredient
+            indexName: idx_ingredient_name
+            columns:
+              - column:
+                  name: name

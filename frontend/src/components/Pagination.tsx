@@ -72,8 +72,9 @@ const Pagination: React.FC<PaginationProps> = ({
       <Button
         onClick={onPrev}
         disabled={currentPage === 1}
-        size="sm"
+        size="icon"
         variant="outline"
+        className="max-md:w-7 max-md:h-7 max-md:rounded-full"
       >
         {"<"}
       </Button>
@@ -89,6 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({
             variant={page === currentPage ? "default" : "outline"}
             onClick={() => onPageChange(page)}
             size="sm"
+            className="max-md:w-8 max-md:h-8 max-md:rounded-full"
           >
             {page}
           </Button>
@@ -99,7 +101,8 @@ const Pagination: React.FC<PaginationProps> = ({
         onClick={onNext}
         disabled={currentPage === totalPages}
         variant="outline"
-        size="sm"
+        size="icon"
+        className="max-md:w-7 max-md:h-7 max-md:rounded-full"
       >
         {">"}
       </Button>
