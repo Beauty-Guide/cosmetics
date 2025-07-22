@@ -10,6 +10,7 @@ import { useGetCategories } from "@/hooks/getCategories"
 import SearchDialogModal from "./SearchDialogModal"
 import MobileCatalogModal from "./HeaderComponents/MobileCatalogModal"
 import DropDownMenu from "./HeaderComponents/DropDownMenu"
+import { cn } from "@/lib/utils"
 
 const Header: React.FC = () => {
   const user = useAuth()
@@ -96,62 +97,70 @@ const Header: React.FC = () => {
         userHistory={user?.history || []}
       />
 
-      <div className="hidden max-md:flex fixed bg-gray-300/60 backdrop-blur-xl left-0 bottom-0 items-center justify-center gap-4 py-4 h-fit w-full z-10">
-        <Button
-          variant="outline"
-          className="text-black rounded-full"
-          size="icon"
-          onClick={() => setIsCatalogOpen(true)}
-        >
-          <List />
-        </Button>
-        <Button
-          variant="outline"
-          className="relative rounded-full"
-          size="icon"
-          onClick={handleOpenSearchModal}
-        >
-          <p className="absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center">
-            {getFiltersQuantity()}
-          </p>
-          <SearchIcon />
-        </Button>
-        <Button
-          variant="outline"
-          className="text-black rounded-full"
-          size="icon"
-          onClick={() => {
-            navigate("/")
-            window.scrollTo({ top: 0, behavior: "smooth" })
-          }}
-        >
-          <HomeIcon />
-        </Button>
-        {isAuthenticated && (
+      <div className="hidden max-md:flex fixed bg-gray-300/60 backdrop-blur-xl left-0 bottom-0 items-center justify-center gap-4 py-3 h-fit w-full z-10">
+        <span className="flex items-center justify-between w-3/4">
           <Button
             variant="outline"
-            className="text-black rounded-full"
+            className="text-black rounded-full w-12 h-12"
+            size="icon"
+            onClick={() => setIsCatalogOpen(true)}
+          >
+            <List />
+          </Button>
+          <Button
+            variant="outline"
+            className="relative rounded-full w-12 h-12"
+            size="icon"
+            onClick={handleOpenSearchModal}
+          >
+            <p
+              className={cn(
+                "absolute -top-2 -left-2 bg-blue-900 text-center text-white rounded-full w-5 h-5 flex items-center justify-center",
+                !getFiltersQuantity() && "hidden"
+              )}
+            >
+              {getFiltersQuantity()}
+            </p>
+            <SearchIcon />
+          </Button>
+          <Button
+            variant="outline"
+            className="text-black rounded-full w-12 h-12"
+            size="icon"
+            onClick={() => {
+              navigate("/")
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }}
+          >
+            <HomeIcon />
+          </Button>
+          <Button
+            variant="outline"
+            className={cn(
+              "text-black rounded-full w-12 h-12",
+              !isAuthenticated && "hidden"
+            )}
             size="icon"
             onClick={() => handleNagivate("/favorites")}
           >
             <Heart />
           </Button>
-        )}
-        <DropDownMenu
-          handleNagivate={handleNagivate}
-          handleLogin={handleLogin}
-          handleLogout={handleLogout}
-          user={user}
-          isAdmin={isAdmin || false}
-          isAuthenticated={isAuthenticated || false}
-          favorites={favorites || []}
-        />
-        <MobileCatalogModal
-          categoryTree={categoryTree}
-          isOpen={isCatalogOpen}
-          setIsOpen={setIsCatalogOpen}
-        />
+          <DropDownMenu
+            handleNagivate={handleNagivate}
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            user={user}
+            isAdmin={isAdmin || false}
+            isAuthenticated={isAuthenticated || false}
+            favorites={favorites || []}
+          />
+        </span>
       </div>
+      <MobileCatalogModal
+        categoryTree={categoryTree}
+        isOpen={isCatalogOpen}
+        setIsOpen={setIsCatalogOpen}
+      />
     </header>
   )
 }

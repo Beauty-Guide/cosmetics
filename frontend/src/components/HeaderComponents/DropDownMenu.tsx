@@ -45,7 +45,7 @@ const DropDownMenu = ({
         <Button
           variant="secondary"
           size="icon"
-          className="rounded-full p-0 max-md:bg-white"
+          className="rounded-full p-0 max-md:bg-white max-md:w-12 max-md:h-12"
         >
           <User2Icon />
         </Button>
