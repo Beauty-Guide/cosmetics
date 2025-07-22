@@ -46,7 +46,7 @@ public class UserController {
             if (principal != null) {
                 user  = getUser(principal);
             }
-            return ResponseEntity.ok(cosmeticService.getCosmeticsByFilters(request, lang, user, false));
+            return ResponseEntity.ok(cosmeticService.getCosmeticsForCatalogByFilters(request, lang, user, false));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики", HttpStatus.BAD_REQUEST);
         }

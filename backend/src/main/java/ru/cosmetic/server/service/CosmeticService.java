@@ -126,15 +126,9 @@ public class CosmeticService {
         }
     }
 
-    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter,
-                                                   String lang,
-                                                   User user,
-                                                   boolean isAllData) {
-
+    public CosmeticsResponse getCosmeticsByFilters(CosmeticFilterRequest filter, String lang, User user, boolean isAllData) {
         List<Object> params = new ArrayList<>();
         boolean isFavoriteJoinNeeded = filter.isByFavourite();
-
-        /* ------------------ SELECT ------------------ */
         StringBuilder sql = new StringBuilder("""
         SELECT
             c.id                                           AS cosmetic_id,
@@ -176,12 +170,9 @@ public class CosmeticService {
             array_agg(DISTINCT cml.location)            FILTER (WHERE cml.id IS NOT NULL) AS marketplace_locations,
             array_agg(DISTINCT cml.product_link)        FILTER (WHERE cml.id IS NOT NULL) AS marketplace_product_links
         """);
-
         if (isFavoriteJoinNeeded) {
             sql.append(", COALESCE(fav.cnt,0) AS favorite_count");
         }
-
-        /* ------------------ FROM / JOIN ------------------ */
         sql.append("""
         FROM cosmetic c
         JOIN brand      b   ON b.id = c.brand_id
@@ -195,7 +186,6 @@ public class CosmeticService {
         LEFT JOIN cosmetic_image           img ON img.cosmetic_id = c.id
         LEFT JOIN cosmetic_marketplace_link cml ON cml.cosmetic_id = c.id
         """);
-
         if (isFavoriteJoinNeeded) {
             sql.append("""
             LEFT JOIN LATERAL (
@@ -205,15 +195,9 @@ public class CosmeticService {
             ) fav ON fav.cosmetic_id = c.id
             """);
         }
-
-        /* ------------------ WHERE ------------------ */
         sql.append(buildWhereClause(filter, params, user));
-
-        /* ------------------ GROUP BY ------------------ */
         sql.append(" GROUP BY c.id, b.id, cat.id");
         if (isFavoriteJoinNeeded) sql.append(", fav.cnt");
-
-        /* ------------------ ORDER BY ------------------ */
         sql.append(" ORDER BY ");
         if (filter.isByPopularity()) {
             sql.append("COALESCE(c.rating,0) DESC");
@@ -228,27 +212,84 @@ public class CosmeticService {
             sql.append("c.id");
         }
 
-        /* ------------------ LIMIT / OFFSET (key-set ready) ------------------ */
-        // Если захотите key-set пагинацию — раскомментируйте ниже и передавайте lastSeenId
-        // if (filter.getLastSeenId() != null) {
-        //     sql.append(" AND c.id > ? ");
-        //     params.add(filter.getLastSeenId());
-        // }
         sql.append(" LIMIT ?");
         params.add(filter.getSize());
         sql.append(" OFFSET ?");
         params.add(filter.getPage() * filter.getSize());
 
-        /* ------------------ Выполнение ------------------ */
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
+        List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang, isAllData);
+        CosmeticsResponse response = new CosmeticsResponse();
+        response.setCosmetics(cosmeticResponses);
+        response.setTotal(getCountOfCosmetics(filter)); // при желании замените на total из окна
+        return response;
+    }
 
-        /* ------------------ total через WINDOW ------------------ */
-        // Если нужно получить общее количество без дополнительного запроса:
-        // 1) добавьте в SELECT:
-        //    , count(*) OVER() AS total
-        // 2) заберите первое значение total из результата.
-        // Для простоты ниже оставлен существующий метод getCountOfCosmetics.
+    public CosmeticsResponse getCosmeticsForCatalogByFilters(CosmeticFilterRequest filter, String lang, User user, boolean isAllData) {
+        List<Object> params = new ArrayList<>();
+        boolean isFavoriteJoinNeeded = filter.isByFavourite();
+        StringBuilder sql = new StringBuilder("""
+        SELECT
+            c.id                                           AS cosmetic_id,
+            c.name                                         AS cosmetic_name,
+            c.compatibility,
+            c.usage_recommendations,
+            c.application_method,
+            c.rating,
+            b.name                                         AS brand_name,
+            EXISTS (SELECT 1 FROM catalog sub WHERE sub.parent_id = cat.id) AS has_children,
 
+            /* агрегация вместо коррелированных подзапросов */
+            array_agg(DISTINCT img.id)                  FILTER (WHERE img.id IS NOT NULL) AS image_ids,
+            array_agg(DISTINCT img.url)                 FILTER (WHERE img.id IS NOT NULL) AS image_urls,
+            array_agg(DISTINCT img.is_main)             FILTER (WHERE img.id IS NOT NULL) AS image_is_main
+
+        """);
+        if (isFavoriteJoinNeeded) {
+            sql.append(", COALESCE(fav.cnt,0) AS favorite_count");
+        }
+        sql.append("""
+        FROM cosmetic c
+        JOIN brand      b   ON b.id = c.brand_id
+        JOIN catalog    cat ON cat.id = c.catalog_id
+        LEFT JOIN cosmetic_cosmetic_action cca ON cca.cosmetic_id = c.id
+        LEFT JOIN cosmetic_action          a   ON a.id = cca.action_id
+        LEFT JOIN cosmetic_skin_type       cst ON cst.cosmetic_id = c.id
+        LEFT JOIN skin_type                st  ON st.id = cst.skin_type_id
+        LEFT JOIN cosmetic_image           img ON img.cosmetic_id = c.id
+        """);
+        if (isFavoriteJoinNeeded) {
+            sql.append("""
+            LEFT JOIN LATERAL (
+                SELECT cosmetic_id, COUNT(*) AS cnt
+                FROM favorite_cosmetics
+                GROUP BY cosmetic_id
+            ) fav ON fav.cosmetic_id = c.id
+            """);
+        }
+        sql.append(buildWhereClause(filter, params, user));
+        sql.append(" GROUP BY c.id, b.id, cat.id");
+        if (isFavoriteJoinNeeded) sql.append(", fav.cnt");
+        sql.append(" ORDER BY ");
+        if (filter.isByPopularity()) {
+            sql.append("COALESCE(c.rating,0) DESC");
+        } else if (filter.isByDate()) {
+            sql.append("c.created_date DESC");
+        } else if (filter.isByFavourite()) {
+            sql.append("COALESCE(fav.cnt,0) DESC, c.rating, c.id");
+        } else if ("name".equalsIgnoreCase(filter.getSortBy())) {
+            sql.append("c.name ").append(
+                    "desc".equalsIgnoreCase(filter.getSortDirection()) ? "DESC" : "ASC");
+        } else {
+            sql.append("c.id");
+        }
+
+        sql.append(" LIMIT ?");
+        params.add(filter.getSize());
+        sql.append(" OFFSET ?");
+        params.add(filter.getPage() * filter.getSize());
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), params.toArray());
         List<CosmeticResponse> cosmeticResponses = groupCosmeticResponses(rows, lang, isAllData);
         CosmeticsResponse response = new CosmeticsResponse();
         response.setCosmetics(cosmeticResponses);
