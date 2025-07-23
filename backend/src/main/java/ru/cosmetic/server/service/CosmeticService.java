@@ -246,7 +246,7 @@ public class CosmeticService {
 
         """);
         if (isFavoriteJoinNeeded) {
-            sql.append(", COALESCE(fav.cnt,0) AS favorite_count");
+            sql.append(", COALESCE(fav.cnt,0) AS favorite_count ");
         }
         sql.append("""
         FROM cosmetic c
