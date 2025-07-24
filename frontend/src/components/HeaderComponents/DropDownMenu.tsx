@@ -108,6 +108,13 @@ const DropDownMenu = ({
             </DropdownMenuItem>
           </DropdownMenuGroup>
         )}
+        {isAuthenticated && (
+          <DropdownMenuGroup className="max-sm:hidden">
+            <DropdownMenuItem onClick={() => handleNagivate("/cosmetic-bag")}>
+              {t("cosmetic-bag")}
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        )}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>{t("lang")}</DropdownMenuSubTrigger>
           <DropdownMenuPortal>

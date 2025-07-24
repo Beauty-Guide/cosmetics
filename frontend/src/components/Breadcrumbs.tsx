@@ -36,6 +36,11 @@ export default function Breadcrumbs() {
               name: t("breadcrumb.favorites"),
               to: "/favorites",
             }
+          case "cosmetic-bag":
+            return {
+              name: t("cosmetic-bag"),
+              to: "/cosmetic-bag",
+            }
         }
 
         return {

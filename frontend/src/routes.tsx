@@ -16,6 +16,8 @@ import ProductPage from "./pages/ProductPage"
 import Layout from "./components/Layout"
 import Favorites from "./pages/Favorites"
 import LoginSuccess from "@/pages/LoginSuccess.tsx"
+import CosmeticBag from "./pages/сosmetic-bag"
+import CosmeticBugItems from "./pages/сosmetic-bag/CosmeticBugItems"
 
 const AppRoutes = () => {
   return (
@@ -32,6 +34,8 @@ const AppRoutes = () => {
 
         <Route path="/product/:productId" element={<ProductPage />} />
 
+        <Route path="/cosmetic-bag/:id" element={<CosmeticBugItems />} />
+
         <Route path="*" element={<h1>404</h1>} />
 
         {/* Защищённые маршруты */}
@@ -40,6 +44,15 @@ const AppRoutes = () => {
           element={
             <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
               <Favorites />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/cosmetic-bag"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
+              <CosmeticBag />
             </PrivateRoute>
           }
         />
