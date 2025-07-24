@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/config/consts"
-import axios from "axios"
+import apiClient from "./apiClient"
 
 type TAction = "VIEW" | "CLICK"
 type TEvent = {
@@ -10,7 +10,7 @@ type TEvent = {
 }
 
 export const postAnalyticsOnMarketPlaceURLClick = async (data: TEvent) => {
-  await axios.post(`${API_BASE_URL}/api/analytics/event`, {
+  await apiClient.post(`${API_BASE_URL}/api/analytics/event`, {
     ...data,
     brandIds: [],
     actionIds: [],
