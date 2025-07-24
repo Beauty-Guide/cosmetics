@@ -61,7 +61,7 @@ const DropDownMenu = ({
               <DropdownMenuSubContent className="flex flex-col p-2 gap-2">
                 <DropdownMenuItem
                   className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                  onClick={() => handleNagivate("/admin")}
+                  onClick={() => handleNagivate("/admin/cosmetic")}
                 >
                   {t("nav.cosmetic")}
                 </DropdownMenuItem>

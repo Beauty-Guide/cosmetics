@@ -5,17 +5,17 @@ import PrivateRoute from "./components/PrivateRoute"
 import LoginForm from "./pages/LoginForm"
 import HomePage from "./pages/HomePage"
 
-import Cosmetic from "./pages/CosmetiForm"
-import ActionForm from "./pages/ActionForm"
-import CatalogForm from "./pages/CatalogForm"
-import SkinTypeForm from "./pages/SkinTypeForm"
-import BrandForm from "./pages/BrandForm"
-import IngredientForm from "./pages/IngredientForm"
+import Cosmetic from "./pages/admin/CosmetiForm"
+import ActionForm from "./pages/admin/ActionForm"
+import CatalogForm from "./pages/admin/CatalogForm"
+import SkinTypeForm from "./pages/admin/SkinTypeForm"
+import BrandForm from "./pages/admin/BrandForm"
+import IngredientForm from "./pages/admin/IngredientForm"
 import Sandbox from "./pages/Sandbox"
 import ProductPage from "./pages/ProductPage"
 import Layout from "./components/Layout"
 import Favorites from "./pages/Favorites"
-import LoginSuccess from "@/pages/LoginSuccess.tsx";
+import LoginSuccess from "@/pages/LoginSuccess.tsx"
 
 const AppRoutes = () => {
   return (
@@ -43,54 +43,58 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <Cosmetic />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin/catalog"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <CatalogForm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin/brand"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <BrandForm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin/action"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <ActionForm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin/skinType"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <SkinTypeForm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin/ingredient"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <IngredientForm />
-            </PrivateRoute>
-          }
-        />
+
+        {/* Админка */}
+        <Route path="/admin">
+          <Route
+            path="/admin/cosmetic"
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                <Cosmetic />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/catalog"
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                <CatalogForm />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/brand"
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                <BrandForm />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/action"
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                <ActionForm />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/skinType"
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                <SkinTypeForm />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/ingredient"
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                <IngredientForm />
+              </PrivateRoute>
+            }
+          />
+        </Route>
       </Route>
     </Routes>
   )
