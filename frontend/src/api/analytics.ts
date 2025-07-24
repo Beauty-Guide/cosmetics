@@ -7,14 +7,9 @@ type TEvent = {
   location: string | null
   device: string | null
   cosmeticId: string
+  marketPlaceId: string
 }
 
 export const postAnalyticsOnMarketPlaceURLClick = async (data: TEvent) => {
-  await apiClient.post(`${API_BASE_URL}/api/analytics/event`, {
-    ...data,
-    brandIds: [],
-    actionIds: [],
-    skinTypeIds: [],
-    query: "",
-  })
+  await apiClient.post(`${API_BASE_URL}/api/analytics/event`, data)
 }

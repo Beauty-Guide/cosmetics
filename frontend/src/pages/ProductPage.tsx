@@ -28,12 +28,13 @@ const ProductPage = () => {
     toast.success(t("product.linkCopied"))
   }
 
-  const handleAnalytics = async () => {
+  const handleAnalytics = async (marketPlaceId: string) => {
     await postAnalyticsOnMarketPlaceURLClick({
       action: "CLICK",
       location: null,
       device: null,
       cosmeticId: String(product?.id),
+      marketPlaceId: String(marketPlaceId),
     })
   }
 
@@ -177,7 +178,7 @@ const ProductPage = () => {
                     href={marketplaceLink.url}
                     target="_blank"
                     rel="noreferrer"
-                    onClick={handleAnalytics}
+                    onClick={() => handleAnalytics(marketplaceLink.id)}
                   >
                     <Badge
                       className="w-25 h-8 max-md:w-45 max-md:h-8"
