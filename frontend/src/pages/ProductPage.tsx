@@ -1,3 +1,4 @@
+import { postAnalyticsOnMarketPlaceURLClick } from "@/api/analytics"
 import FavoriteButton from "@/components/HomeComponents/FavoriteButton"
 import { ImageCarousel } from "@/components/ImageCarousel"
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +26,15 @@ const ProductPage = () => {
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
     toast.success(t("product.linkCopied"))
+  }
+
+  const handleAnalytics = async () => {
+    await postAnalyticsOnMarketPlaceURLClick({
+      action: "CLICK",
+      location: null,
+      device: window.navigator.userAgent,
+      cosmeticId: String(product?.id),
+    })
   }
 
   if (isLoadingProduct) {
@@ -167,6 +177,7 @@ const ProductPage = () => {
                     href={marketplaceLink.url}
                     target="_blank"
                     rel="noreferrer"
+                    onClick={handleAnalytics}
                   >
                     <Badge
                       className="w-25 h-8 max-md:w-45 max-md:h-8"

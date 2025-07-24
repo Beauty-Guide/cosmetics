@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/config/consts"
-import apiClient from "./apiClient"
+import apiClient from "../api/apiClient"
 import type { TProduct } from "@/types"
 import { useQuery } from "@tanstack/react-query"
 
