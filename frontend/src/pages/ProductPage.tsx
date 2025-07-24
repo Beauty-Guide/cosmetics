@@ -7,7 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useItemById } from "@/hooks/getItemById"
-import { Share2Icon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Share2Icon, ShoppingBasketIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useParams } from "react-router"
 import { toast } from "sonner"
@@ -83,6 +84,16 @@ const ProductPage = () => {
                 onClick={handleShare}
               >
                 <Share2Icon className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                className={cn(
+                  "text-black rounded-full",
+                  !isAuthenticated && "hidden"
+                )}
+                size="icon"
+              >
+                <ShoppingBasketIcon />
               </Button>
             </span>
           )}
@@ -179,11 +190,11 @@ const ProductPage = () => {
                     target="_blank"
                     rel="noreferrer"
                     onClick={() => handleAnalytics(marketplaceLink.id)}
+                    key={marketplaceLink.id}
                   >
                     <Badge
                       className="w-25 h-8 max-md:w-45 max-md:h-8"
                       variant="outline"
-                      key={marketplaceLink.id}
                     >
                       {marketplaceLink.name}
                     </Badge>
