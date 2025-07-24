@@ -32,7 +32,7 @@ const ProductPage = () => {
     await postAnalyticsOnMarketPlaceURLClick({
       action: "CLICK",
       location: null,
-      device: window.navigator.userAgent,
+      device: null,
       cosmeticId: String(product?.id),
     })
   }
