@@ -97,12 +97,11 @@ public class CosmeticService {
             array_agg(DISTINCT img.is_main)     FILTER (WHERE img.id IS NOT NULL) AS image_is_main,
 
             /* marketplace links */
-            array_agg(DISTINCT cml.id)          FILTER (WHERE cml.id IS NOT NULL) AS marketplace_ids,
-            array_agg(DISTINCT cml.marketplace_name)
-                                               FILTER (WHERE cml.id IS NOT NULL) AS marketplace_names,
-            array_agg(DISTINCT cml.location)    FILTER (WHERE cml.id IS NOT NULL) AS marketplace_locations,
-            array_agg(DISTINCT cml.product_link)
-                                               FILTER (WHERE cml.id IS NOT NULL) AS marketplace_product_links
+            array_agg( cml.id)                  FILTER (WHERE cml.id IS NOT NULL) AS marketplace_ids,
+            array_agg( cml.user_id)             FILTER (WHERE cml.id IS NOT NULL) AS seller_ids,
+            array_agg( cml.marketplace_name)    FILTER (WHERE cml.id IS NOT NULL) AS marketplace_names,
+            array_agg( cml.location)            FILTER (WHERE cml.id IS NOT NULL) AS marketplace_locations,
+            array_agg( cml.product_link)        FILTER (WHERE cml.id IS NOT NULL) AS marketplace_product_links
         FROM cosmetic c
         JOIN brand      b   ON b.id   = c.brand_id
         JOIN catalog    cat ON cat.id = c.catalog_id
@@ -569,6 +568,7 @@ public class CosmeticService {
         response.setImages(images);
 
         List<Long> marketplaceIds = safeGetLongList(row, "marketplace_ids");
+        List<Long> sellerIds = safeGetLongList(row, "seller_ids");
         List<String> marketplaceNames = safeGetStringList(row, "marketplace_names");
         List<String> marketplaceLocations = safeGetStringList(row, "marketplace_locations");
         List<String> marketplaceProductUrls = safeGetStringList(row, "marketplace_product_links");
@@ -577,6 +577,7 @@ public class CosmeticService {
             if (marketplaceIds.get(i) != null && marketplaceNames.get(i) != null && marketplaceLocations.get(i) != null && marketplaceProductUrls.get(i) != null) {
                 marketplaces.add(MarketplaceLinkResponse.builder()
                         .id(marketplaceIds.get(i))
+                        .sellerId(sellerIds.get(i))
                         .name(marketplaceNames.get(i))
                         .url(marketplaceProductUrls.get(i))
                         .locale(marketplaceLocations.get(i))

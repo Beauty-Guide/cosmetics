@@ -15,6 +15,12 @@ export type SkinTypeView = {
     nameKR: string;
 };
 
+export type User = {
+    id: number;
+    username: string;
+    email: string;
+};
+
 export type CosmeticActionAdd = {
     name: string;
 };

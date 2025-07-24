@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import ru.cosmetic.server.models.Catalog;
-import ru.cosmetic.server.models.Cosmetic;
-import ru.cosmetic.server.models.CosmeticImage;
-import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.models.*;
 import ru.cosmetic.server.service.*;
 
 import java.io.*;
@@ -43,6 +40,7 @@ public class TestDataController {
     private final FavoriteService favoriteService;
     private final MinioService minioService;
     private final CosmeticImageService cosmeticImageService;
+    private final CosmeticMarketplaceLinkService cosmeticMarketplaceLinkService;
     // Ключ — ID родительской категории (например, "Очищение" = 1)
     public static final Map<Long, List<String>> COSMETIC_TEMPLATES = Map.ofEntries(
             // --- Очищение ---
@@ -166,6 +164,14 @@ public class TestDataController {
                 // Рандомные ингредиенты
                 cosmetic.setIngredients(getRandomList(ingredientService::findById, 1, 149, 1, 5));
                 cosmetic = cosmeticService.save(cosmetic); // Сохраняем, чтобы получить ID
+
+                CosmeticMarketplaceLink link = new CosmeticMarketplaceLink();
+                link.setCosmetic(cosmetic);
+                link.setUser(new User(3l));
+                link.setProductLink("http://localhost:3000");
+                link.setLocation("RU");
+                link.setMarketplaceName("OZON");
+                cosmeticMarketplaceLinkService.save(link);
 
                 // Теперь добавляем изображение
                 CosmeticImage cosmeticImage = new CosmeticImage();

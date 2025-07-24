@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 006-create-user-search-history-table
+      id: 014-create-user-search-history-table
       author: yourname
 
       changes:

@@ -10,6 +10,7 @@ import ru.cosmetic.server.exceptions.AppError;
 import ru.cosmetic.server.models.Catalog;
 import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.models.CosmeticMarketplaceLink;
+import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.CosmeticAddRequest;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.requestDto.CosmeticUpdateCatalogRequest;
@@ -76,6 +77,7 @@ public class CosmeticController {
                         .productLink(marketplaceLink.getUrl())
                         .location(marketplaceLink.getLocale())
                         .cosmetic(savedCosmetic)
+                        .user(new User(marketplaceLink.getSellerId()))
                         .build();
                 marketplaceLinkService.save(cosmeticMarketplaceLink);
             }
@@ -139,6 +141,7 @@ public class CosmeticController {
                         .productLink(marketplaceLink.getUrl())
                         .location(marketplaceLink.getLocale())
                         .cosmetic(findCosmetic)
+                        .user(new User(marketplaceLink.getSellerId()))
                         .build();
                 marketplaceLinkService.save(cosmeticMarketplaceLink);
             }

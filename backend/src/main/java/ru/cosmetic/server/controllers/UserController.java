@@ -10,8 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.CacheControl;
+import ru.cosmetic.server.enums.ActionType;
 import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.requestDto.AnalyticsRequest;
 import ru.cosmetic.server.requestDto.CosmeticFilterRequest;
 import ru.cosmetic.server.responseDto.UserResponse;
 import ru.cosmetic.server.service.*;
@@ -36,6 +38,7 @@ public class UserController {
     private final UserService userService;
     private final UserSearchHistoryService userSearchHistoryService;
     private final JwtTokenUtils jwtTokenUtils;
+    private final AnalyticsService analyticsService;
 
 
     @PostMapping("/getCosmeticsByFilters")
@@ -46,6 +49,21 @@ public class UserController {
             if (principal != null) {
                 user  = getUser(principal);
             }
+            boolean hasData = (request.getBrandIds() != null && !request.getBrandIds().isEmpty()) ||
+                    (request.getSkinTypeIds() != null && !request.getSkinTypeIds().isEmpty()) ||
+                    (request.getActionIds() != null && !request.getActionIds().isEmpty()) ||
+                    (request.getName() != null && !request.getName().isEmpty());
+            if (hasData) {
+                AnalyticsRequest analyticsRequest = AnalyticsRequest.builder()
+                        .action(ActionType.SEARCH_FILTER)
+                        .brandIds(request.getBrandIds())
+                        .skinTypeIds(request.getSkinTypeIds())
+                        .actionIds(request.getActionIds())
+                        .query(request.getName())
+                        .build();
+                analyticsService.save(analyticsRequest, user);
+            }
+
             return ResponseEntity.ok(cosmeticService.getCosmeticsForCatalogByFilters(request, lang, user, false));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики", HttpStatus.BAD_REQUEST);
@@ -54,8 +72,12 @@ public class UserController {
 
     @GetMapping("/getCosmeticsById/{id}")
     @Operation(summary = "Получение косметики по id")
-    public ResponseEntity<?> getCosmeticsById(@PathVariable Long id, @RequestParam(required = false) String lang, @RequestParam(required = false) boolean isAllData) {
+    public ResponseEntity<?> getCosmeticsById(@PathVariable Long id,
+                                              @RequestParam(required = false) String lang,
+                                              @RequestHeader(name = "Authorization", required = false) String authHeader,
+                                              @RequestParam(required = false) boolean isAllData) {
         try {
+            analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).build(), authHeader);
             return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang, isAllData));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики с id = " + id, HttpStatus.BAD_REQUEST);

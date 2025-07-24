@@ -31,6 +31,19 @@ databaseChangeLog:
                   name: email
                   value: admin@gmail.com
 
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: seller
+              - column:
+                  name: password
+                  value: '$2a$10$CaGfkaeMUjmltsrqezrKd.cmryZLs2.db2CeVD66VLh.7J4Wdm5MG'
+              - column:
+                  name: email
+                  value: seller@gmail.com
+
         # --- Связь пользователей и ролей ---
         - insert:
             tableName: users_roles
@@ -51,3 +64,13 @@ databaseChangeLog:
               - column:
                   name: role_id
                   valueNumeric: 2
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 3
+              - column:
+                  name: role_id
+                  valueNumeric: 3
