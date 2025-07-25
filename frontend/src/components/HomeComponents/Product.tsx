@@ -4,6 +4,8 @@ import { getImgUrl } from "@/lib/utils"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import FavoriteButton from "./FavoriteButton"
+import { ShoppingBasketIcon } from "lucide-react"
+import { Button } from "../ui/button"
 
 type ProductProps = {
   product: TProduct
@@ -37,8 +39,15 @@ const Product = ({ product }: ProductProps) => {
         <p className="">{product.brand.name}</p>
       </span>
       {isAuthenticated && (
-        <span className="flex absolute top-8 right-5 max-md:top-2 max-md:right-2">
+        <span className="flex flex-col absolute top-8 right-5 max-md:top-2 max-md:right-2">
           <FavoriteButton productId={String(product.id)} />
+          <Button
+            variant="ghost"
+            className="text-black rounded-full"
+            size="icon"
+          >
+            <ShoppingBasketIcon />
+          </Button>
         </span>
       )}
     </div>
