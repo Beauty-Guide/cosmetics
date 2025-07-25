@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 018-create-favorite-bags
+      author: yourname
+      comment: Избранные косметички (лайки)
+
+      changes:
+        - createTable:
+            tableName: favorite_bags
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bag_id
+                  type: UUID  # <-- исправлено на UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: liked_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: favorite_bags
+            baseColumnNames: user_id
+            constraintName: fk_favorite_bags_user
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: favorite_bags
+            baseColumnNames: bag_id
+            constraintName: fk_favorite_bags_bag
+            referencedTableName: cosmetic_bag
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - createIndex:
+            tableName: favorite_bags
+            indexName: uq_user_bag
+            unique: true
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: bag_id

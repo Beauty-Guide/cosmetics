@@ -1,0 +1,117 @@
+databaseChangeLog:
+  - changeSet:
+      id: 020-create-cosmetic-bag-schema
+      author: yourname
+      comment: Таблица косметичек пользователей + связь косметика↔косметичка
+
+      changes:
+
+        # --- Таблица косметичек ---
+        - createTable:
+            tableName: cosmetic_bag
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: TIMESTAMP
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: likes
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+        # --- FK на владельца и создателя с каскадным удалением ---
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_bag
+            baseColumnNames: owner_id
+            constraintName: fk_cosmetic_bag_owner
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        # --- Таблица связи косметика ↔ косметичка ---
+        - createTable:
+            tableName: cosmetic_bag_item
+            columns:
+              - column:
+                  name: bag_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: cosmetic_bag_item
+            columnNames: bag_id, cosmetic_id
+            constraintName: pk_cosmetic_bag_item
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_bag_item
+            baseColumnNames: bag_id
+            constraintName: fk_bag_item_bag
+            referencedTableName: cosmetic_bag
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_bag_item
+            baseColumnNames: cosmetic_id
+            constraintName: fk_bag_item_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        # --- Индексы ---
+        - createIndex:
+            tableName: cosmetic_bag
+            indexName: idx_bag_owner
+            columns:
+              - column:
+                  name: owner_id
+        - createIndex:
+            tableName: cosmetic_bag
+            indexName: idx_bag_deleted
+            columns:
+              - column:
+                  name: is_deleted
+        - createIndex:
+            tableName: cosmetic_bag
+            indexName: idx_bag_owner_deleted
+            columns:
+              - column:
+                  name: owner_id
+              - column:
+                  name: is_deleted
