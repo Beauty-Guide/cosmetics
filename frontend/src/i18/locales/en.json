@@ -27,6 +27,7 @@
   "my-cosmetic-bag": "MY COSMETIC BAG",
 
   "nav.cosmetic": "Cosmetics",
+  "nav.analytics": "Analytics",
   "nav.catalogs": "Catalogs",
   "nav.brands": "Brands",
   "nav.skinTypes": "Skin Type",
@@ -39,6 +40,7 @@
 
   "breadcrumb.product": "Product",
   "breadcrumb.favorites": "Favorites",
+  "breadcrumb.analytics": "Analytics",
   "breadcrumb.category": "Catalog",
 
   "filter.brand": "Brand",

@@ -27,6 +27,7 @@
   "my-cosmetic-bag": "내 쉽티박",
 
   "nav.cosmetic": "화장품",
+  "nav.analytics": "분석",
   "nav.catalogs": "카탈로그",
   "nav.brands": "브랜드",
   "nav.skinTypes": "피부 타입",
@@ -39,6 +40,7 @@
 
   "breadcrumb.product": "상품",
   "breadcrumb.favorites": "즐겨찾기",
+  "breadcrumb.analytics": "분석",
   "breadcrumb.category": "카탈로그",
 
   "filter.brand": "브랜드",

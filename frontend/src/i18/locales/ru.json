@@ -27,6 +27,7 @@
   "my-cosmetic-bag": "МОЯ КОСМЕТИЧКА",
 
   "nav.cosmetic": "Косметика",
+  "nav.analytics": "Статистика",
   "nav.catalogs": "Каталоги",
   "nav.brands": "Бренды",
   "nav.skinTypes": "Тип кожи",
@@ -39,6 +40,7 @@
 
   "breadcrumb.product": "Товар",
   "breadcrumb.favorites": "Избранное",
+  "breadcrumb.analytics": "Статистика",
   "breadcrumb.category": "Каталог",
 
   "filter.brand": "Бренд",

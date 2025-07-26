@@ -54,6 +54,11 @@ const DropDownMenu = ({
         <DropdownMenuLabel className="font-bold select-none">
           {t("my_account")} {`(${user?.name})`}
         </DropdownMenuLabel>
+        <DropdownMenuItem
+            className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+            onClick={() => handleNagivate("/analytics")}>
+          {t("nav.analytics")}
+        </DropdownMenuItem>
         {isAdmin && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>{t("ADMIN")}</DropdownMenuSubTrigger>

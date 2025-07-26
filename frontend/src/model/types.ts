@@ -14,7 +14,10 @@ export type SkinTypeView = {
     nameEN: string;
     nameKR: string;
 };
-
+export interface CountItem {
+    label: string;
+    count: number;
+}
 export type User = {
     id: number;
     username: string;

@@ -18,6 +18,7 @@ import Favorites from "./pages/Favorites"
 import LoginSuccess from "@/pages/LoginSuccess.tsx"
 import CosmeticBag from "./pages/сosmetic-bag"
 import CosmeticBugItems from "./pages/сosmetic-bag/CosmeticBugItems"
+import AnalyticsPage from "@/pages/analytics/AnalyticsPage.tsx";
 
 const AppRoutes = () => {
   return (
@@ -56,7 +57,7 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
-
+          <Route path="/analytics" element={<AnalyticsPage />} />
         {/* Админка */}
         <Route path="/admin">
           <Route
