@@ -19,7 +19,7 @@ const UserCosmeticBags = () => {
   if (isLoadingCosmeticBags) return <div>Loading...</div>
 
   return (
-    <main className="flex flex-col items-center justify-center w-full h-full my-2 max-md:px-sides">
+    <main className="flex flex-col items-center justify-center w-full h-full my-2 max-md:px-sides max-md:mb-20">
       <div className="flex items-center justify-between w-full">
         <h1 className="text-xl font-bold text-black my-4 mr-auto">
           {t("my-cosmetic-bags")}
@@ -28,7 +28,7 @@ const UserCosmeticBags = () => {
           handleCreateCosmeticBag={handleCreateCosmeticBag}
         />
       </div>
-      <div className="flex flex-col gap-4 items-center justify-start max-md:justify-center w-full">
+      <div className="flex flex-col gap-4 items-center justify-start max-md:justify-center w-full h-full">
         {cosmeticBags?.map((bag) => (
           <CosmeticBag
             key={bag.id}

@@ -21,7 +21,7 @@ import { ShoppingBasketIcon } from "lucide-react"
 import { memo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
-import { useToggleCosmeticBagProduct } from "@/hooks/cosmetic-bag/useToggleCosmeticBag"
+import { useToggleCosmeticBagProduct } from "@/hooks/cosmetic-bag/useToggleCosmeticBagProduct"
 import { Skeleton } from "@/components/ui/skeleton"
 
 type TAddProductToCosmeticBagModalProps = {
