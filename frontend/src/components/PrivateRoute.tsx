@@ -1,5 +1,6 @@
 import { useAuth } from "@/config/auth-context"
 import type { TRole } from "@/types"
+import { useEffect } from "react"
 import { useNavigate } from "react-router"
 
 const PrivateRoute: React.FC<{
@@ -10,10 +11,12 @@ const PrivateRoute: React.FC<{
   const navigate = useNavigate()
   const hasPermission = allowedRoles?.some((role) => user?.role?.includes(role))
 
-  if (!hasPermission && user) {
-    navigate("/login", { replace: true })
-    return
-  }
+  useEffect(() => {
+    if (!hasPermission && user) {
+      navigate("/login", { replace: true })
+      return
+    }
+  }, [navigate, hasPermission, user])
 
   return <>{children}</>
 }
