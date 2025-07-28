@@ -3,15 +3,28 @@ import { API_BASE_URL } from "@/config/consts"
 import type { TCosmeticBag } from "@/types"
 import { useQuery } from "@tanstack/react-query"
 
-const fetchCosmeticBags = async (liked: boolean): Promise<TCosmeticBag[]> => {
+type TCosmeticBags = {
+  liked: boolean
+  cosmeticId?: string
+}
+
+const fetchCosmeticBags = async ({
+  liked,
+  cosmeticId,
+}: TCosmeticBags): Promise<TCosmeticBag[]> => {
   const response = await apiClient.get(
-    `${API_BASE_URL}/api/bags${liked ? "/liked" : ""}`
+    `${API_BASE_URL}/api/bags${liked ? "/liked" : ""}`,
+    {
+      params: {
+        cosmeticId,
+      },
+    }
   )
   return response.data
 }
-export const useCosmeticBags = ({ liked }: { liked: boolean }) => {
+export const useCosmeticBags = (data: TCosmeticBags) => {
   return useQuery({
     queryKey: ["cosmeticBags"],
-    queryFn: () => fetchCosmeticBags(liked),
+    queryFn: () => fetchCosmeticBags(data),
   })
 }

@@ -36,7 +36,7 @@ const AddProductToCosmeticBagModal = ({
   const [selectedCosmeticBag, setSelectedCosmeticBag] = useState<string>("")
 
   const { data: cosmeticBags, isLoading: isLoadingCosmeticBags } =
-    useCosmeticBags({ liked: false })
+    useCosmeticBags({ liked: false, cosmeticId: cosmeticId })
   const { mutate: toggleCosmeticBagProduct } = useToggleCosmeticBagProduct()
 
   const handleAdd = () => {
