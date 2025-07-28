@@ -34,9 +34,14 @@ export const useToggleCosmeticBagProduct = () => {
   return useMutation({
     mutationFn: (data: ToggleCosmeticBag) =>
       fetchToggleCosmeticBagProduct(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cosmeticBags"] })
-      toast.success(t("cosmeticBag-add-success"))
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["cosmeticBag"] })
+
+      if (variables.action === "remove") {
+        toast.success(t("cosmeticBag-remove-product-success"))
+      } else if (variables.action === "add") {
+        toast.success(t("cosmeticBag-add-success"))
+      }
     },
     onError: (error: AxiosError) => {
       toast.error(error.message)

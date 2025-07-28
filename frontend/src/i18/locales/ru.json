@@ -33,6 +33,7 @@
   "cosmeticBag-add-product": "Добавить товар в косметичку",
   "cosmeticBag-add-success": "Товар добавлен в косметичку",
   "cosmeticBag-add-error-name": "Название коллекции должно быть больше 2 или больше символов",
+  "cosmeticBag-remove-product-success": "Товар удален из косметички",
   "cosmeticBag-create-success": "Косметичка создана",
   "cosmeticBag-create": "Создание косметички",
   "cosmeticBag-create-button": "Создать",
