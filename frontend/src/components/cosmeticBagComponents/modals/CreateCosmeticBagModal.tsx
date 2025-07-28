@@ -17,7 +17,7 @@ type TProps = {
   handleCreateCosmeticBag: ({ name }: { name: string }) => void
 }
 
-const CreateCosmeticBugModal = ({ handleCreateCosmeticBag }: TProps) => {
+const CreateCosmeticBagModal = ({ handleCreateCosmeticBag }: TProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [name, setName] = useState<string>("")
@@ -62,4 +62,4 @@ const CreateCosmeticBugModal = ({ handleCreateCosmeticBag }: TProps) => {
   )
 }
 
-export default CreateCosmeticBugModal
+export default CreateCosmeticBagModal

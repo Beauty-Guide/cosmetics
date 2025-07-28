@@ -1,44 +1,43 @@
 import apiClient from "@/api/apiClient"
 import { API_BASE_URL } from "@/config/consts"
 import { queryClient } from "@/config/query-client"
-import type { TCosmeticBag } from "@/types"
 import { useMutation } from "@tanstack/react-query"
 import type { AxiosError } from "axios"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
 type TToggleCosmeticBagAction = "add" | "remove"
-
-type TToggleCosmeticBagData = {
-  name: string
+type ToggleCosmeticBag = {
+  bagId: string
   action: TToggleCosmeticBagAction
+  cosmeticId: string
 }
 
-const fetchToggleCosmeticBag = async (
-  data: TToggleCosmeticBagData
-): Promise<TCosmeticBag | null> => {
+const fetchToggleCosmeticBagProduct = async (data: ToggleCosmeticBag) => {
   if (data.action === "add") {
     const response = await apiClient.post(
-      `${API_BASE_URL}/api/bags/createBug`,
-      data
+      `${API_BASE_URL}/api/bags/${data.bagId}/cosmetics/${data.cosmeticId}`,
+      data.bagId
     )
     return response.data
   } else if (data.action === "remove") {
     const response = await apiClient.delete(
-      `${API_BASE_URL}/api/bags/delete/${data.name}`
+      `${API_BASE_URL}/api/bags/${data.bagId}/cosmetics/${data.cosmeticId}`
     )
     return response.data
   }
   return null
 }
-export const useToggleCosmeticBag = () => {
+
+export const useToggleCosmeticBagProduct = () => {
   const { t } = useTranslation()
 
   return useMutation({
-    mutationFn: (data: TToggleCosmeticBagData) => fetchToggleCosmeticBag(data),
+    mutationFn: (data: ToggleCosmeticBag) =>
+      fetchToggleCosmeticBagProduct(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cosmeticBags"] })
-      toast.success(t("bag.created"))
+      toast.success(t("bag.product_added"))
     },
     onError: (error: AxiosError) => {
       toast.error(error.message)
