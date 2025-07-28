@@ -67,16 +67,18 @@ const AddProductToCosmeticBagModal = ({
         className="w-2/3 max-md:w-full max-w-none sm:max-w-full flex flex-col justify-start items-start top-[5vh] max-md:top-0 translate-y-0 gap-1 rounded-md"
       >
         <DialogHeader className="my-5 w-full">
-          <DialogTitle>Добавление косметики в коллекцию</DialogTitle>
+          <DialogTitle>{t("cosmeticBag-add-product")}</DialogTitle>
         </DialogHeader>
         <div className="w-full flex flex-col gap-2 my-3">
           <Select onValueChange={setSelectedCosmeticBag}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Выберите коллекцию" />
+              <SelectValue
+                placeholder={t("cosmeticBag-select-my-cosmetic-bags")}
+              />
             </SelectTrigger>
             <SelectContent className="w-full">
               <SelectGroup>
-                <SelectLabel>Мои коллекции</SelectLabel>
+                <SelectLabel>{t("cosmeticBag-my-cosmetic-bags")}</SelectLabel>
                 {cosmeticBags &&
                   cosmeticBags.map((cosmeticBag) => (
                     <SelectItem key={cosmeticBag.id} value={cosmeticBag.id}>
@@ -89,7 +91,7 @@ const AddProductToCosmeticBagModal = ({
         </div>
         <DialogFooter className="w-full flex items-center">
           <Button variant="outline" form="search-form" onClick={handleAdd}>
-            {t("add")}
+            {t("cosmeticBag-add-product")}
           </Button>
         </DialogFooter>
       </DialogContent>

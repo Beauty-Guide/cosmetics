@@ -40,7 +40,7 @@ const CosmeticBugItems = () => {
         </div>
       </div>
       <Button onClick={handleDeleteCosmeticBag} className="m-2">
-        Удалить коллекцию
+        {t("cosmeticBag-delete")}
       </Button>
     </main>
   )

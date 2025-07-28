@@ -36,7 +36,7 @@ export const useToggleCosmeticBagProduct = () => {
       fetchToggleCosmeticBagProduct(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cosmeticBags"] })
-      toast.success(t("bag.product_added"))
+      toast.success(t("cosmeticBag-add-success"))
     },
     onError: (error: AxiosError) => {
       toast.error(error.message)
