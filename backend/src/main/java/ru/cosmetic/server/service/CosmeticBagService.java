@@ -22,10 +22,9 @@ public class CosmeticBagService {
 
     public void create(CosmeticBagRequest request, User creater) {
         jdbcTemplate.update(
-                "INSERT INTO cosmetic_bag (name, owner_id, creater_id, created_at, is_deleted, likes) " +
-                        "VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO cosmetic_bag (name, owner_id, created_at, is_deleted, likes) " +
+                        "VALUES (?, ?, ?, ?, ?)",
                 request.getName(),
-                creater.getId(),
                 creater.getId(),
                 LocalDateTime.now(),
                 false,
@@ -74,7 +73,6 @@ public class CosmeticBagService {
                     b.id,
                     b.name,
                     b.owner_id,
-                    b.creater_id,
                     b.created_at,
                     b.likes,
                     c.id        AS cosmetic_id,
@@ -97,7 +95,6 @@ public class CosmeticBagService {
                                     .id(bagId)
                                     .name(rs.getString("name"))
                                     .ownerId(rs.getLong("owner_id"))
-                                    .createrId(rs.getLong("creater_id"))
                                     .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
                                     .likes(rs.getInt("likes"))
                                     .cosmetics(new ArrayList<>())
