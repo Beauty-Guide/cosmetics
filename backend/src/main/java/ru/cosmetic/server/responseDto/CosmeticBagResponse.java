@@ -14,7 +14,6 @@ public class CosmeticBagResponse {
     private UUID id;
     private String name;
     private Long ownerId;
-    private Long createrId;
     private LocalDateTime createdAt;
     private Integer likes;
     private List<CosmeticResponse> cosmetics;
