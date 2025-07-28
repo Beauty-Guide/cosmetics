@@ -39,6 +39,10 @@ const ProductPage = () => {
     })
   }
 
+  const handleAddToCosmeticBag = (id: string) => {
+    console.log(id)
+  }
+
   if (isLoadingProduct) {
     return (
       <div className="flex items-center justify-start w-full p-4 px-sides">
@@ -92,6 +96,7 @@ const ProductPage = () => {
                   !isAuthenticated && "hidden"
                 )}
                 size="icon"
+                onClick={() => handleAddToCosmeticBag(String(product.id))}
               >
                 <ShoppingBasketIcon />
               </Button>
