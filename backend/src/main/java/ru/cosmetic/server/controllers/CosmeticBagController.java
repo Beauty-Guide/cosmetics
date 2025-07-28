@@ -85,10 +85,10 @@ public class CosmeticBagController {
 
     @GetMapping
     @Operation(summary = "Получение своих косметичек")
-    public ResponseEntity<?> list(Principal principal) {
+    public ResponseEntity<?> list(Principal principal, @RequestParam(required = false) Long cosmeticId) {
         try {
             User user = userService.findByEmail(principal.getName());
-            return ResponseEntity.ok(cosmeticBagService.listByOwner(user.getId()));
+            return ResponseEntity.ok(cosmeticBagService.listByOwner(user.getId(),cosmeticId));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения своих косметичек", HttpStatus.BAD_REQUEST);
         }

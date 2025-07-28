@@ -1,8 +1,12 @@
 package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.cosmetic.server.dtos.AnalyticFavoriteCosmeticCount;
 import ru.cosmetic.server.models.*;
 import ru.cosmetic.server.repo.FavoriteCosmeticRepo;
 import ru.cosmetic.server.repo.UserRepository;
@@ -19,6 +23,7 @@ public class FavoriteService {
     private final UserRepository userRepo;
     private final CosmeticService cosmeticService;
     private final CosmeticImageService cosmeticImageService;
+    private final JdbcTemplate jdbcTemplate;
     private final String IMAGE_URL = "/api/getFile?cosmeticId=%s&fileName=%s";
 
     public void addToFavorites(String email, Long cosmeticId) {
@@ -128,5 +133,29 @@ public class FavoriteService {
             images.add(imageResponse);
         }
         return images;
+    }
+
+    public List<AnalyticFavoriteCosmeticCount> getTopFavoriteCosmetics() {
+        String sql = """
+        SELECT c.id, c.name, COUNT(fc.cosmetic_id) AS favorite_count
+        FROM favorite_cosmetics fc
+        JOIN cosmetic c ON fc.cosmetic_id = c.id
+        GROUP BY c.id, c.name
+        ORDER BY favorite_count DESC
+        LIMIT 15
+        """;
+
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        return namedParameterJdbcTemplate.query(
+                sql,
+                params,
+                (rs, rowNum) -> new AnalyticFavoriteCosmeticCount(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getInt("favorite_count")
+                )
+        );
     }
 }

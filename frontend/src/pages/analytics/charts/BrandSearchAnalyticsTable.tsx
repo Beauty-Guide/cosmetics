@@ -35,12 +35,17 @@ const BrandSearchAnalyticsTable: React.FC<BrandSearchAnalyticsTableProps> = ({ d
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     if (loading) return <p>Загрузка аналитики по брендам...</p>;
-    if (data.length === 0) return <p>Нет данных о поисковых фильтрах.</p>;
-
+    if (data.length === 0) {
+        return (
+            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
+                <h2 className="text-xl font-semibold mb-4">Аналитика по брендам и фильтрам</h2>
+            <p>Нет данных для отображения</p>
+        </div>);
+    }
     return (
         <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Аналитика по брендам и фильтрам</h2>
             <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
+                <h2 className="text-xl font-semibold mb-4">Аналитика по брендам и фильтрам</h2>
                 <div className="mb-4">
                     <Input
                         placeholder="Поиск по бренду..."

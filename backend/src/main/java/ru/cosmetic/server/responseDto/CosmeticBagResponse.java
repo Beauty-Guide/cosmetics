@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 public class CosmeticBagResponse {
 
-    private UUID id;
+    private String id;
     private String name;
     private Long ownerId;
     private LocalDateTime createdAt;

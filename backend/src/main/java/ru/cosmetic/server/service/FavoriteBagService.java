@@ -59,7 +59,7 @@ public class FavoriteBagService {
         return favoriteRepo.findAllLikedBagsByUser(user.getId())
                 .stream()
                 .map(bag -> CosmeticBagResponse.builder()
-                        .id(bag.getId())
+                        .id("cosmeticBag_" + bag.getId())
                         .name(bag.getName())
                         .likes(bag.getLikes())
                         .build()

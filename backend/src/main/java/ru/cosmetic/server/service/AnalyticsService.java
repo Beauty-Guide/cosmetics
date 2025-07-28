@@ -2,6 +2,7 @@ package ru.cosmetic.server.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,9 +16,12 @@ import ru.cosmetic.server.repo.AnalyticsRepo;
 import ru.cosmetic.server.requestDto.AnalyticsRequest;
 import ru.cosmetic.server.utils.JwtTokenUtils;
 
-import java.sql.ResultSet;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,16 +76,17 @@ public class AnalyticsService {
 
 
     public List<AnalyticSearchFilterCountItem> countByBrand(LocalDate startDate, LocalDate endDate) {
+        endDate = endDate.plusDays(1);
         String sql = """
-        SELECT b.name AS label, COUNT(*) AS total_count
-        FROM cosmetic_analytics ca
-        JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
-        JOIN brand b ON abi.brand_id = b.id
-        WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= (:endDate + INTERVAL '1 day')
-        GROUP BY b.name
-        ORDER BY total_count DESC
-        LIMIT 15
-        """;
+                SELECT b.name AS label, COUNT(*) AS total_count
+                FROM cosmetic_analytics ca
+                JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
+                JOIN brand b ON abi.brand_id = b.id
+                WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= :endDate
+                GROUP BY b.name
+                ORDER BY total_count DESC
+                LIMIT 15
+                """;
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -97,14 +102,14 @@ public class AnalyticsService {
 
     public List<AnalyticSearchFilterCountItem> countBySkinType(LocalDate startDate, LocalDate endDate) {
         String sql = """
-        SELECT st.name AS label, COUNT(*) AS total_count
-        FROM cosmetic_analytics ca
-        JOIN analytics_skin_type_ids asti ON ca.id = asti.analytics_id
-        JOIN skin_type st ON asti.skin_type_id = st.id
-        WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= (:endDate + INTERVAL '1 day')
-        GROUP BY st.name
-        ORDER BY total_count DESC
-        """;
+                SELECT st.name AS label, COUNT(*) AS total_count
+                FROM cosmetic_analytics ca
+                JOIN analytics_skin_type_ids asti ON ca.id = asti.analytics_id
+                JOIN skin_type st ON asti.skin_type_id = st.id
+                WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= :endDate
+                GROUP BY st.name
+                ORDER BY total_count DESC
+                """;
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDate", startDate);
@@ -119,14 +124,14 @@ public class AnalyticsService {
 
     public List<AnalyticSearchFilterCountItem> countByAction(LocalDate startDate, LocalDate endDate) {
         String sql = """
-        SELECT cact.name AS label, COUNT(*) AS total_count
-        FROM cosmetic_analytics ca
-        JOIN analytics_action_ids aai ON ca.id = aai.analytics_id
-        JOIN cosmetic_action cact ON aai.action_id = cact.id
-        WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= (:endDate + INTERVAL '1 day')
-        GROUP BY cact.name
-        ORDER BY total_count DESC
-        """;
+                SELECT cact.name AS label, COUNT(*) AS total_count
+                FROM cosmetic_analytics ca
+                JOIN analytics_action_ids aai ON ca.id = aai.analytics_id
+                JOIN cosmetic_action cact ON aai.action_id = cact.id
+                WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= :endDate
+                GROUP BY cact.name
+                ORDER BY total_count DESC
+                """;
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDate", startDate);
@@ -147,60 +152,60 @@ public class AnalyticsService {
         );
     }
 
-    public  List<AnalyticSearchFilterBrand> getBrandSearchAnalytics(LocalDate startDate, LocalDate endDate) {
-
+    public List<AnalyticSearchFilterBrand> getBrandSearchAnalytics(LocalDate startDate, LocalDate endDate) {
+        endDate = endDate.plusDays(1);
         String sqlSkinType = """
-        SELECT
-            b.id AS brand_id,
-            b.name AS brand_name,
-            st.name AS skin_type_name,
-            COUNT(*) AS count
-        FROM cosmetic_analytics ca
-            JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
-            JOIN brand b ON abi.brand_id = b.id
-            JOIN analytics_skin_type_ids asti ON ca.id = asti.analytics_id
-            JOIN skin_type st ON asti.skin_type_id = st.id
-        WHERE ca.action = 'SEARCH_FILTER'
-            AND DATE(ca.created_at) >= :startDate
-            AND DATE(ca.created_at) <= (:endDate + INTERVAL '1 day')
-        GROUP BY b.id, b.name, st.id, st.name
-        ORDER BY count DESC;
-        """;
+                SELECT
+                    b.id AS brand_id,
+                    b.name AS brand_name,
+                    st.name AS skin_type_name,
+                    COUNT(*) AS count
+                FROM cosmetic_analytics ca
+                    JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
+                    JOIN brand b ON abi.brand_id = b.id
+                    JOIN analytics_skin_type_ids asti ON ca.id = asti.analytics_id
+                    JOIN skin_type st ON asti.skin_type_id = st.id
+                WHERE ca.action = 'SEARCH_FILTER'
+                    AND DATE(ca.created_at) >= :startDate
+                    AND DATE(ca.created_at) <= :endDate
+                GROUP BY b.id, b.name, st.id, st.name
+                ORDER BY count DESC;
+                """;
 
         String sqlAction = """
-        SELECT
-            b.id AS brand_id,
-            b.name AS brand_name,
-            ca2.name AS action_name,
-            COUNT(*) AS count
-        FROM cosmetic_analytics ca
-            JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
-            JOIN brand b ON abi.brand_id = b.id
-            JOIN analytics_action_ids aai ON ca.id = aai.analytics_id
-            JOIN cosmetic_action ca2 ON ca2.id = aai.action_id
-        WHERE ca.action = 'SEARCH_FILTER'
-            AND DATE(ca.created_at) >= :startDate
-            AND DATE(ca.created_at) <= (:endDate + INTERVAL '1 day')
-        GROUP BY b.id, b.name, ca2.id, ca2.name
-        ORDER BY count DESC;
-        """;
+                SELECT
+                    b.id AS brand_id,
+                    b.name AS brand_name,
+                    ca2.name AS action_name,
+                    COUNT(*) AS count
+                FROM cosmetic_analytics ca
+                    JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
+                    JOIN brand b ON abi.brand_id = b.id
+                    JOIN analytics_action_ids aai ON ca.id = aai.analytics_id
+                    JOIN cosmetic_action ca2 ON ca2.id = aai.action_id
+                WHERE ca.action = 'SEARCH_FILTER'
+                    AND DATE(ca.created_at) >= :startDate
+                    AND DATE(ca.created_at) <= :endDate
+                GROUP BY b.id, b.name, ca2.id, ca2.name
+                ORDER BY count DESC;
+                """;
 
         String sqlQuery = """
-        SELECT
-            b.id AS brand_id,
-            b.name AS brand_name,
-            ca.query AS search_query,
-            COUNT(*) AS count
-        FROM cosmetic_analytics ca
-            JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
-            JOIN brand b ON abi.brand_id = b.id
-        WHERE ca.action = 'SEARCH_FILTER'
-            AND DATE(ca.created_at) >= :startDate
-            AND DATE(ca.created_at) <= (:endDate + INTERVAL '1 day')
-          AND ca.query IS NOT NULL
-        GROUP BY b.id, b.name, ca.query
-        ORDER BY count DESC;
-        """;
+                SELECT
+                    b.id AS brand_id,
+                    b.name AS brand_name,
+                    ca.query AS search_query,
+                    COUNT(*) AS count
+                FROM cosmetic_analytics ca
+                    JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
+                    JOIN brand b ON abi.brand_id = b.id
+                WHERE ca.action = 'SEARCH_FILTER'
+                    AND DATE(ca.created_at) >= :startDate
+                    AND DATE(ca.created_at) <= :endDate
+                  AND ca.query IS NOT NULL
+                GROUP BY b.id, b.name, ca.query
+                ORDER BY count DESC;
+                """;
 
         // Карта: brandName -> BrandSearchStats
         Map<String, AnalyticSearchFilterBrand> statsMap = new LinkedHashMap<>();
@@ -264,4 +269,118 @@ public class AnalyticsService {
         return new ArrayList<>(statsMap.values());
     }
 
+    public List<AnalyticProductViewCount> getAnalyticViewsDayAllProducts(LocalDate startDate, LocalDate endDate) {
+        String sql = """
+                SELECT DATE(ca.created_at) AS date, COUNT(ca.cosmetic_id) AS view_count
+                FROM cosmetic_analytics ca
+                WHERE ca.action = 'VIEW'
+                  AND ca.created_at >= :startDate
+                  AND ca.created_at < :endDate + INTERVAL '1 day'
+                GROUP BY DATE(ca.created_at)
+                ORDER BY date ASC
+                """;
+
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDate", startDate);
+        params.addValue("endDate", endDate);
+
+        return namedParameterJdbcTemplate.query(
+                sql,
+                params,
+                (rs, rowNum) -> new AnalyticProductViewCount(
+                        rs.getDate("date").toLocalDate(),
+                        rs.getInt("view_count")
+                )
+        );
+    }
+
+    public List<AnalyticViewedCosmetic> getTopViewedCosmetics(LocalDate startDate, LocalDate endDate) {
+        String sql = """
+                SELECT ca.cosmetic_id, c.name, COUNT(ca.cosmetic_id) AS view_count
+                FROM cosmetic_analytics ca
+                JOIN cosmetic c ON ca.cosmetic_id = c.id
+                WHERE ca.action = 'VIEW'
+                  AND ca.created_at >= :startDate
+                  AND ca.created_at < :endDate + INTERVAL '1 day'
+                GROUP BY ca.cosmetic_id, c.name
+                ORDER BY view_count DESC
+                LIMIT 10
+                """;
+
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDate", startDate);
+        params.addValue("endDate", endDate);
+
+        return namedParameterJdbcTemplate.query(
+                sql,
+                params,
+                (rs, rowNum) -> new AnalyticViewedCosmetic(
+                        rs.getLong("cosmetic_id"),
+                        rs.getString("name"),
+                        rs.getInt("view_count")
+                )
+        );
+    }
+
+    public Map<Long, List<AnalyticViewedCosmetic>> getViewedProducts(
+            List<Long> cosmeticIds,
+            LocalDate startDate,
+            LocalDate endDate) {
+
+        String baseSql = """
+    
+                SELECT DATE(ca.created_at) AS date,
+                                   ca.cosmetic_id,
+                                   c.name,
+                                   COUNT(ca.cosmetic_id) AS view_count
+                            FROM cosmetic_analytics ca
+                                     JOIN cosmetic c ON c.id = ca.cosmetic_id
+                            WHERE ca.action = 'VIEW'
+    """;
+
+        StringBuilder whereClause = new StringBuilder();
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        if (cosmeticIds != null && !cosmeticIds.isEmpty()) {
+            whereClause.append(" AND ca.cosmetic_id IN (:cosmeticIds)");
+            params.addValue("cosmeticIds", cosmeticIds);
+        }
+
+        if (startDate != null) {
+            whereClause.append(" AND ca.created_at >= :startDate");
+            params.addValue("startDate", startDate.atStartOfDay());
+        }
+
+        if (endDate != null) {
+            whereClause.append(" AND ca.created_at < :endDate");
+            params.addValue("endDate", endDate.plusDays(1).atStartOfDay());
+        }
+
+        String sql = baseSql + whereClause + """
+        GROUP BY DATE(ca.created_at), ca.cosmetic_id, c.name
+        ORDER BY ca.cosmetic_id, date ASC
+    """;
+
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(this.jdbcTemplate);
+
+        try {
+            List<AnalyticViewedCosmetic> results = jdbcTemplate.query(
+                    sql,
+                    params,
+                    (rs, rowNum) -> new AnalyticViewedCosmetic(
+                            rs.getLong("cosmetic_id"),
+                            rs.getString("name"),
+                            rs.getInt("view_count"),
+                            rs.getDate("date").toLocalDate()
+                    )
+            );
+
+            return results.stream()
+                    .collect(Collectors.groupingBy(AnalyticViewedCosmetic::getCosmeticId));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Failed to fetch viewed products", e);
+        }
+    }
 }

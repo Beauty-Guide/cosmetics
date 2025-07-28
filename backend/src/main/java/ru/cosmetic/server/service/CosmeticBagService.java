@@ -60,14 +60,22 @@ public class CosmeticBagService {
 
     public CosmeticBagResponse findById(UUID bagId) {
         List<CosmeticBagResponse> result = buildBagResponse("b.id = ?", bagId);
-        return result.isEmpty() ? null : result.getFirst();
+        return result.isEmpty() ? null : result.get(0);
     }
 
-    public List<CosmeticBagResponse> listByOwner(Long ownerId) {
-        return buildBagResponse("b.owner_id = ?", ownerId);
+    public List<CosmeticBagResponse> listByOwner(Long ownerId, Long cosmeticId) {
+        StringBuilder whereClause = new StringBuilder("b.owner_id = ? AND b.is_deleted = false");
+        Object[] params = new Object[]{ownerId};
+
+        if (cosmeticId != null) {
+            whereClause.append(" AND c.id != ?");
+            params = new Object[]{ownerId, cosmeticId};
+        }
+
+        return buildBagResponse(whereClause.toString(), params);
     }
 
-    private List<CosmeticBagResponse> buildBagResponse(String whereClause, Object param) {
+    private List<CosmeticBagResponse> buildBagResponse(String whereClause, Object... params) {
         String sql = """
                 SELECT
                     b.id,
@@ -75,46 +83,52 @@ public class CosmeticBagService {
                     b.owner_id,
                     b.created_at,
                     b.likes,
-                    c.id        AS cosmetic_id,
-                    c.name      AS cosmetic_name
+                    c.id AS cosmetic_id,
+                    c.name AS cosmetic_name
                 FROM cosmetic_bag b
                 LEFT JOIN cosmetic_bag_item cbi ON b.id = cbi.bag_id
-                LEFT JOIN cosmetic c             ON c.id = cbi.cosmetic_id
+                LEFT JOIN cosmetic c ON c.id = cbi.cosmetic_id
                 WHERE %s
                 ORDER BY b.id, c.id
                 """.formatted(whereClause);
 
         Map<UUID, CosmeticBagResponse> map = new LinkedHashMap<>();
 
-        jdbcTemplate.query(sql, rs -> {
-            UUID bagId = (UUID) rs.getObject("id");
-            CosmeticBagResponse bag = map.computeIfAbsent(bagId, k ->
-                    {
-                        try {
-                            return CosmeticBagResponse.builder()
-                                    .id(bagId)
-                                    .name(rs.getString("name"))
-                                    .ownerId(rs.getLong("owner_id"))
-                                    .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
-                                    .likes(rs.getInt("likes"))
-                                    .cosmetics(new ArrayList<>())
-                                    .build();
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-            );
+        jdbcTemplate.query(
+                sql,
+                params,
+                (rs, rowNum) -> {
+                    UUID bagId = (UUID) rs.getObject("id");
+                    CosmeticBagResponse bag = map.computeIfAbsent(
+                            bagId,
+                            k -> {
+                                try {
+                                    return CosmeticBagResponse.builder()
+                                            .id("cosmeticBag_" + bagId)
+                                            .name(rs.getString("name"))
+                                            .ownerId(rs.getLong("owner_id"))
+                                            .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                                            .likes(rs.getInt("likes"))
+                                            .cosmetics(new ArrayList<>())
+                                            .build();
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                    );
 
-            long cosmeticId = rs.getLong("cosmetic_id");
-            if (!rs.wasNull()) {
-                bag.getCosmetics().add(
-                        CosmeticResponse.builder()
-                                .id(cosmeticId)
-                                .name(rs.getString("cosmetic_name"))
-                                .build()
-                );
-            }
-        }, param);
+                    Long cosmeticId = rs.getObject("cosmetic_id", Long.class);
+                    if (cosmeticId != null) {
+                        bag.getCosmetics().add(
+                                CosmeticResponse.builder()
+                                        .id(cosmeticId)
+                                        .name(rs.getString("cosmetic_name"))
+                                        .build()
+                        );
+                    }
+                    return null;
+                }
+        );
 
         return new ArrayList<>(map.values());
     }
