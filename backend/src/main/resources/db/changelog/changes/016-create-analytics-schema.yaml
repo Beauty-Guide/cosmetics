@@ -1,0 +1,178 @@
+databaseChangeLog:
+  - changeSet:
+      id: 016-create-cosmetic-analytics-schema
+      author: yourname
+      comment: Полная схема аналитики косметики
+
+      changes:
+        # --- Основная таблица аналитики ---
+        - createTable:
+            tableName: cosmetic_analytics
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cosmetic_id
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: action
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: marketplace_link_id
+                  type: BIGINT
+              - column:
+                  name: location
+                  type: VARCHAR(100)
+              - column:
+                  name: device
+                  type: VARCHAR(50)
+              - column:
+                  name: query
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        # --- Внешние ключи ---
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_analytics
+            baseColumnNames: cosmetic_id
+            constraintName: fk_cosmetic_analytics_cosmetic
+            referencedTableName: cosmetic
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_analytics
+            baseColumnNames: user_id
+            constraintName: fk_cosmetic_analytics_user
+            referencedTableName: users
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_analytics
+            baseColumnNames: marketplace_link_id
+            constraintName: fk_cosmetic_analytics_marketplace_link
+            referencedTableName: cosmetic_marketplace_link
+            referencedColumnNames: id
+
+        # --- analytics_action_ids ---
+        - createTable:
+            tableName: analytics_action_ids
+            columns:
+              - column:
+                  name: analytics_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: action_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: analytics_action_ids
+            baseColumnNames: analytics_id
+            constraintName: fk_analytics_action_ids_analytics
+            referencedTableName: cosmetic_analytics
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: analytics_action_ids
+            baseColumnNames: action_id
+            constraintName: fk_analytics_action_ids_action
+            referencedTableName: cosmetic_action
+            referencedColumnNames: id
+
+        # --- analytics_skin_type_ids ---
+        - createTable:
+            tableName: analytics_skin_type_ids
+            columns:
+              - column:
+                  name: analytics_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: skin_type_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: analytics_skin_type_ids
+            baseColumnNames: analytics_id
+            constraintName: fk_analytics_skin_type_ids_analytics
+            referencedTableName: cosmetic_analytics
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: analytics_skin_type_ids
+            baseColumnNames: skin_type_id
+            constraintName: fk_analytics_skin_type_ids_skin_type
+            referencedTableName: skin_type
+            referencedColumnNames: id
+
+        # --- analytics_brand_ids ---
+        - createTable:
+            tableName: analytics_brand_ids
+            columns:
+              - column:
+                  name: analytics_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: brand_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: analytics_brand_ids
+            baseColumnNames: analytics_id
+            constraintName: fk_analytics_brand_ids_analytics
+            referencedTableName: cosmetic_analytics
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: analytics_brand_ids
+            baseColumnNames: brand_id
+            constraintName: fk_analytics_brand_ids_brand
+            referencedTableName: brand
+            referencedColumnNames: id
+
+        # --- Индексы ---
+        - createIndex:
+            tableName: cosmetic_analytics
+            indexName: idx_analytics_cosmetic
+            columns:
+              - column:
+                  name: cosmetic_id
+        - createIndex:
+            tableName: cosmetic_analytics
+            indexName: idx_analytics_action
+            columns:
+              - column:
+                  name: action
+        - createIndex:
+            tableName: cosmetic_analytics
+            indexName: idx_analytics_created
+            columns:
+              - column:
+                  name: created_at
+        - createIndex:
+            tableName: cosmetic_analytics
+            indexName: idx_analytics_marketplace_link
+            columns:
+              - column:
+                  name: marketplace_link_id

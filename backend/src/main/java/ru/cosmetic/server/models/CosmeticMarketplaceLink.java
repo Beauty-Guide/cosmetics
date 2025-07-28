@@ -29,7 +29,15 @@ public class CosmeticMarketplaceLink {
     @JoinColumn(name = "cosmetic_id")
     private Cosmetic cosmetic;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public CosmeticMarketplaceLink() {
 
+    }
+
+    public CosmeticMarketplaceLink(Long id) {
+        this.id = id;
     }
 }

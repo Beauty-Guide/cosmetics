@@ -52,6 +52,23 @@ public class JwtTokenUtils {
         }
     }
 
+    public User getUser(String authHeader) {
+        if (authHeader != null && !authHeader.startsWith("Bearer ")) {
+            String refreshToken = authHeader.substring(7);
+            if (validateRefreshToken(refreshToken)) {
+                String email;
+                try {
+                    email = extractUserName(refreshToken);
+                    return userService.findByEmail(email);
+                } catch (Exception e) {
+
+                }
+            }
+
+        }
+        return null;
+    }
+
     private String buildToken(String email, boolean isAccessToken) {
         Map<String, Object> claims = new HashMap<>();
         User user = userService.findByEmail(email);

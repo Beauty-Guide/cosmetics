@@ -96,13 +96,12 @@ public class CosmeticService {
             array_agg(DISTINCT img.url)         FILTER (WHERE img.id IS NOT NULL) AS image_urls,
             array_agg(DISTINCT img.is_main)     FILTER (WHERE img.id IS NOT NULL) AS image_is_main,
 
-            /* marketplace links */
-            array_agg(DISTINCT cml.id)          FILTER (WHERE cml.id IS NOT NULL) AS marketplace_ids,
-            array_agg(DISTINCT cml.marketplace_name)
-                                               FILTER (WHERE cml.id IS NOT NULL) AS marketplace_names,
-            array_agg(DISTINCT cml.location)    FILTER (WHERE cml.id IS NOT NULL) AS marketplace_locations,
-            array_agg(DISTINCT cml.product_link)
-                                               FILTER (WHERE cml.id IS NOT NULL) AS marketplace_product_links
+            /* marketplace links — подзапрос, чтобы не было дублей */
+            (SELECT array_agg(id ORDER BY id)           FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_ids,
+            (SELECT array_agg(user_id ORDER BY id)      FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS seller_ids,
+            (SELECT array_agg(marketplace_name ORDER BY id) FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_names,
+            (SELECT array_agg(location ORDER BY id)     FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_locations,
+            (SELECT array_agg(product_link ORDER BY id) FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_product_links
         FROM cosmetic c
         JOIN brand      b   ON b.id   = c.brand_id
         JOIN catalog    cat ON cat.id = c.catalog_id
@@ -569,6 +568,7 @@ public class CosmeticService {
         response.setImages(images);
 
         List<Long> marketplaceIds = safeGetLongList(row, "marketplace_ids");
+        List<Long> sellerIds = safeGetLongList(row, "seller_ids");
         List<String> marketplaceNames = safeGetStringList(row, "marketplace_names");
         List<String> marketplaceLocations = safeGetStringList(row, "marketplace_locations");
         List<String> marketplaceProductUrls = safeGetStringList(row, "marketplace_product_links");
@@ -577,6 +577,7 @@ public class CosmeticService {
             if (marketplaceIds.get(i) != null && marketplaceNames.get(i) != null && marketplaceLocations.get(i) != null && marketplaceProductUrls.get(i) != null) {
                 marketplaces.add(MarketplaceLinkResponse.builder()
                         .id(marketplaceIds.get(i))
+                        .sellerId(sellerIds.get(i))
                         .name(marketplaceNames.get(i))
                         .url(marketplaceProductUrls.get(i))
                         .locale(marketplaceLocations.get(i))

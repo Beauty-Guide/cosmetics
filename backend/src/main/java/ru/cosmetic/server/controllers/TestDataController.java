@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import ru.cosmetic.server.models.Catalog;
-import ru.cosmetic.server.models.Cosmetic;
-import ru.cosmetic.server.models.CosmeticImage;
-import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.enums.ActionType;
+import ru.cosmetic.server.models.*;
 import ru.cosmetic.server.service.*;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Типы кожи", description = "Доступен только авторизованным пользователям с ролью ADMIN")
+@Tag(name = "Генерация", description = "Доступен только авторизованным пользователям с ролью ADMIN")
 @RequestMapping("/api")
 public class TestDataController {
 
@@ -43,6 +42,8 @@ public class TestDataController {
     private final FavoriteService favoriteService;
     private final MinioService minioService;
     private final CosmeticImageService cosmeticImageService;
+    private final CosmeticMarketplaceLinkService cosmeticMarketplaceLinkService;
+    private final AnalyticsService analyticsService;
     // Ключ — ID родительской категории (например, "Очищение" = 1)
     public static final Map<Long, List<String>> COSMETIC_TEMPLATES = Map.ofEntries(
             // --- Очищение ---
@@ -139,7 +140,7 @@ public class TestDataController {
             count = allCosmetics.size() + 5000;
             countI = allCosmetics.size() + 1;
         } else {
-            count = 10000;
+            count = 100;
         }
         int imageCount = 18; // картинок от 1.jpg до 18.jpg
         for (int i = countI; i < count; i++) {
@@ -166,6 +167,14 @@ public class TestDataController {
                 // Рандомные ингредиенты
                 cosmetic.setIngredients(getRandomList(ingredientService::findById, 1, 149, 1, 5));
                 cosmetic = cosmeticService.save(cosmetic); // Сохраняем, чтобы получить ID
+
+                CosmeticMarketplaceLink link = new CosmeticMarketplaceLink();
+                link.setCosmetic(cosmetic);
+                link.setUser(new User(3l));
+                link.setProductLink("http://localhost:3000");
+                link.setLocation("RU");
+                link.setMarketplaceName("OZON");
+                cosmeticMarketplaceLinkService.save(link);
 
                 // Теперь добавляем изображение
                 CosmeticImage cosmeticImage = new CosmeticImage();
@@ -340,5 +349,32 @@ public class TestDataController {
 
     private Cosmetic getRandomCosmetic(List<Cosmetic> cosmetics) {
         return cosmetics.get(random.nextInt(cosmetics.size()));
+    }
+
+    private static final List<String> LOCATIONS = List.of("RU", "US", "KR", "EU");
+    private static final List<String> DEVICES   = List.of("mobile", "desktop", "tablet");
+    private static final List<ActionType> ACTIONS = List.of(ActionType.VIEW);
+
+    @GetMapping("/generate-analitic")
+    public void generateRandomAnalytics() {
+        // 100 существующих товаров
+        List<Cosmetic> cosmetics = cosmeticService.findAll().stream().limit(100).toList();
+
+
+        for (int i = 0; i < cosmetics.size(); i++) {
+            Cosmetic cosmetic = cosmetics.get(random.nextInt(cosmetics.size()));
+            User user = userService.findByEmail("admin@gmail.com");
+            CosmeticAnalytic analytic = CosmeticAnalytic.builder()
+                    .cosmetic(cosmetic)
+                    .user(user)
+                    .action(ACTIONS.get(random.nextInt(ACTIONS.size())))
+                    .location(LOCATIONS.get(random.nextInt(LOCATIONS.size())))
+                    .device(DEVICES.get(random.nextInt(DEVICES.size())))
+                    .createdAt(LocalDateTime.now().minusDays(random.nextInt(365)))
+                    .query(random.nextBoolean() ? "search " + cosmetic.getName() : null)
+                    .build();
+
+            analyticsService.save(analytic);
+        }
     }
 }

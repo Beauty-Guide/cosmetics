@@ -2,12 +2,14 @@ package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.cosmetic.server.dtos.UserDto;
 import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.repo.UserRepository;
@@ -104,5 +106,31 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+
+    private final RowMapper<UserDto> userRowMapper = (rs, rowNum) ->
+            UserDto.builder()
+                    .id(rs.getLong("id"))
+                    .username(rs.getString("username"))
+                    .email(rs.getString("email"))
+                    .build();
+
+    /**
+     * Возвращает всех пользователей, у которых есть указанная роль.
+     *
+     * @param roleName имя роли, например "ROLE_ADMIN"
+     * @return список DTO пользователей
+     */
+    public List<UserDto> findAllByRole(String roleName) {
+        String sql = """
+            SELECT u.id, u.username, u.email
+            FROM users u
+            JOIN users_roles ur ON u.id = ur.user_id
+            JOIN roles r        ON r.id = ur.role_id
+            WHERE r.name = ?
+            ORDER BY u.id
+        """;
+        return jdbcTemplate.query(sql, userRowMapper, roleName);
     }
 }

@@ -54,6 +54,11 @@ const DropDownMenu = ({
         <DropdownMenuLabel className="font-bold select-none">
           {t("my_account")} {`(${user?.name})`}
         </DropdownMenuLabel>
+        <DropdownMenuItem
+            className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+            onClick={() => handleNagivate("/analytics")}>
+          {t("nav.analytics")}
+        </DropdownMenuItem>
         {isAdmin && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>{t("ADMIN")}</DropdownMenuSubTrigger>
@@ -61,7 +66,7 @@ const DropDownMenu = ({
               <DropdownMenuSubContent className="flex flex-col p-2 gap-2">
                 <DropdownMenuItem
                   className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-                  onClick={() => handleNagivate("/admin")}
+                  onClick={() => handleNagivate("/admin/cosmetic")}
                 >
                   {t("nav.cosmetic")}
                 </DropdownMenuItem>
@@ -105,6 +110,13 @@ const DropDownMenu = ({
             <DropdownMenuItem onClick={() => handleNagivate("/favorites")}>
               {t("favorites")}
               <DropdownMenuShortcut>{favorites?.length}</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        )}
+        {isAuthenticated && (
+          <DropdownMenuGroup className="max-sm:hidden">
+            <DropdownMenuItem onClick={() => handleNagivate("/cosmetic-bag")}>
+              {t("cosmetic-bag")}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         )}

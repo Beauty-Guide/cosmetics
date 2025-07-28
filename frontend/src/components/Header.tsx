@@ -1,9 +1,15 @@
 import { Link, useNavigate, useSearchParams } from "react-router"
 import { Button } from "@/components/ui/button"
-import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
+import { useGetAllFavProducts } from "@/hooks/fav-products/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
-import { Heart, HomeIcon, List, SearchIcon } from "lucide-react"
+import {
+  Heart,
+  HomeIcon,
+  List,
+  SearchIcon,
+  ShoppingBasketIcon,
+} from "lucide-react"
 import { memo, useMemo, useState } from "react"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useGetCategories } from "@/hooks/getCategories"
@@ -83,17 +89,15 @@ const Header: React.FC = () => {
           </p>
           <SearchIcon />
         </Button>
-        <div className="max-md:hidden">
-          <DropDownMenu
-            handleNagivate={handleNagivate}
-            handleLogin={handleLogin}
-            handleLogout={handleLogout}
-            user={user}
-            isAdmin={isAdmin || false}
-            isAuthenticated={isAuthenticated || false}
-            favorites={favorites || []}
-          />
-        </div>
+        <DropDownMenu
+          handleNagivate={handleNagivate}
+          handleLogin={handleLogin}
+          handleLogout={handleLogout}
+          user={user}
+          isAdmin={isAdmin || false}
+          isAuthenticated={isAuthenticated || false}
+          favorites={favorites || []}
+        />
       </nav>
 
       <SearchDialogModal
@@ -150,15 +154,17 @@ const Header: React.FC = () => {
           >
             <Heart />
           </Button>
-          <DropDownMenu
-            handleNagivate={handleNagivate}
-            handleLogin={handleLogin}
-            handleLogout={handleLogout}
-            user={user}
-            isAdmin={isAdmin || false}
-            isAuthenticated={isAuthenticated || false}
-            favorites={favorites || []}
-          />
+          <Button
+            variant="outline"
+            className={cn(
+              "text-black rounded-full w-12 h-12",
+              !isAuthenticated && "hidden"
+            )}
+            size="icon"
+            onClick={() => handleNagivate("/cosmetic-bag")}
+          >
+            <ShoppingBasketIcon />
+          </Button>
         </span>
       </div>
       <MobileCatalogModal

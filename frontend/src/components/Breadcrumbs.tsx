@@ -36,6 +36,23 @@ export default function Breadcrumbs() {
               name: t("breadcrumb.favorites"),
               to: "/favorites",
             }
+          case "analytics":
+            return {
+              name: t("breadcrumb.analytics"),
+              to: "/analytics",
+            }
+          case "cosmetic-bag":
+            return {
+              name: t("cosmetic-bag"),
+              to: "/cosmetic-bag",
+            }
+        }
+
+        if (segment.startsWith("cosmeticBag_")) {
+          return {
+            name: "Cosmetic-Bag",
+            to,
+          }
         }
 
         return {

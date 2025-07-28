@@ -1,3 +1,5 @@
+import { postAnalyticsOnMarketPlaceURLClick } from "@/api/analytics"
+import AddProductToCosmeticBagModal from "@/components/cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
 import FavoriteButton from "@/components/HomeComponents/FavoriteButton"
 import { ImageCarousel } from "@/components/ImageCarousel"
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +27,16 @@ const ProductPage = () => {
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
     toast.success(t("product.linkCopied"))
+  }
+
+  const handleAnalytics = async (marketPlaceId: string) => {
+    await postAnalyticsOnMarketPlaceURLClick({
+      action: "CLICK",
+      location: null,
+      device: null,
+      cosmeticId: String(product?.id),
+      marketPlaceId: String(marketPlaceId),
+    })
   }
 
   if (isLoadingProduct) {
@@ -73,6 +85,7 @@ const ProductPage = () => {
               >
                 <Share2Icon className="w-5 h-5" />
               </Button>
+              <AddProductToCosmeticBagModal cosmeticId={String(product.id)} />
             </span>
           )}
         </div>
@@ -167,11 +180,12 @@ const ProductPage = () => {
                     href={marketplaceLink.url}
                     target="_blank"
                     rel="noreferrer"
+                    onClick={() => handleAnalytics(marketplaceLink.id)}
+                    key={marketplaceLink.id}
                   >
                     <Badge
                       className="w-25 h-8 max-md:w-45 max-md:h-8"
                       variant="outline"
-                      key={marketplaceLink.id}
                     >
                       {marketplaceLink.name}
                     </Badge>

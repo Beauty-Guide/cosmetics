@@ -69,4 +69,11 @@ public class Cosmetic {
     @JoinTable(name = "cosmetic_ingredient", joinColumns = @JoinColumn(name = "cosmetic_id"), inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
     private List<Ingredient> ingredients;
 
+    public Cosmetic(Long id) {
+        this.id = id;
+    }
+
+    public Cosmetic() {
+
+    }
 }
