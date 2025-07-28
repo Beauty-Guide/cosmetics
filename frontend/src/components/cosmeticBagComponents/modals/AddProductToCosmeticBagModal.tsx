@@ -71,7 +71,7 @@ const AddProductToCosmeticBagModal = ({
         </DialogHeader>
         <div className="w-full flex flex-col gap-2 my-3">
           <Select onValueChange={setSelectedCosmeticBag}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full">
               <SelectValue
                 placeholder={t("cosmeticBag-select-my-cosmetic-bags")}
               />
