@@ -54,7 +54,7 @@ public class CosmeticBagService {
         jdbcTemplate.update("INSERT INTO cosmetic_bag_item(bag_id, cosmetic_id) VALUES (?, ?) ON CONFLICT (bag_id, cosmetic_id) DO NOTHING", bagId, cosmeticId);
     }
 
-    public void removeCosmeticFromBag(Long bagId, Long cosmeticId) {
+    public void removeCosmeticFromBag(UUID bagId, Long cosmeticId) {
         jdbcTemplate.update("DELETE FROM cosmetic_bag_item WHERE bag_id = ? AND cosmetic_id = ?", bagId, cosmeticId);
     }
 

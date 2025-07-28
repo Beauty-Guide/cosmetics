@@ -74,9 +74,10 @@ public class CosmeticBagController {
 
     @DeleteMapping("/{id}/cosmetics/{cosmeticId}")
     @Operation(summary = "Удаление косметики из косметички")
-    public ResponseEntity<?> removeCosmetic(@PathVariable Long id, @PathVariable Long cosmeticId) {
+    public ResponseEntity<?> removeCosmetic(@PathVariable String id, @PathVariable Long cosmeticId) {
         try {
-            cosmeticBagService.removeCosmeticFromBag(id, cosmeticId);
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            cosmeticBagService.removeCosmeticFromBag(uuid, cosmeticId);
             return new ResponseEntity<>("Косметика удалена из косметички", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка удаления косметики из косметички", HttpStatus.BAD_REQUEST);
@@ -96,9 +97,10 @@ public class CosmeticBagController {
 
     @GetMapping("/getCosmeticBag/{id}")
     @Operation(summary = "Получение косметички по id")
-    public ResponseEntity<?> getCosmeticBag(@PathVariable UUID id) {
+    public ResponseEntity<?> getCosmeticBag(@PathVariable String id) {
         try {
-            return ResponseEntity.ok(cosmeticBagService.findById(id));
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            return ResponseEntity.ok(cosmeticBagService.findById(uuid));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения своих косметичек", HttpStatus.BAD_REQUEST);
         }
