@@ -5,6 +5,7 @@ import type { TCosmeticBag } from "@/types"
 import { useMutation } from "@tanstack/react-query"
 import type { AxiosError } from "axios"
 import { useTranslation } from "react-i18next"
+import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
 type TToggleCosmeticBagAction = "add" | "remove"
@@ -34,6 +35,7 @@ const fetchToggleCosmeticBag = async (
 }
 export const useToggleCosmeticBag = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   return useMutation({
     mutationFn: (data: TToggleCosmeticBagData) => fetchToggleCosmeticBag(data),
@@ -41,6 +43,7 @@ export const useToggleCosmeticBag = () => {
       queryClient.invalidateQueries({ queryKey: ["cosmeticBags"] })
       if (variables.action === "remove") {
         toast.success(t("cosmeticBag-delete-success"))
+        navigate("/cosmetic-bag")
       } else if (variables.action === "add") {
         toast.success(t("cosmeticBag-create-success"))
       }
