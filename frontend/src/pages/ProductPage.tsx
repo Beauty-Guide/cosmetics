@@ -1,4 +1,5 @@
 import { postAnalyticsOnMarketPlaceURLClick } from "@/api/analytics"
+import AddProductToCosmeticBagModal from "@/components/cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
 import FavoriteButton from "@/components/HomeComponents/FavoriteButton"
 import { ImageCarousel } from "@/components/ImageCarousel"
 import { Badge } from "@/components/ui/badge"
@@ -7,8 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import { useItemById } from "@/hooks/getItemById"
-import { cn } from "@/lib/utils"
-import { Share2Icon, ShoppingBasketIcon } from "lucide-react"
+import { Share2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useParams } from "react-router"
 import { toast } from "sonner"
@@ -37,10 +37,6 @@ const ProductPage = () => {
       cosmeticId: String(product?.id),
       marketPlaceId: String(marketPlaceId),
     })
-  }
-
-  const handleAddToCosmeticBag = (id: string) => {
-    console.log(id)
   }
 
   if (isLoadingProduct) {
@@ -89,17 +85,7 @@ const ProductPage = () => {
               >
                 <Share2Icon className="w-5 h-5" />
               </Button>
-              <Button
-                variant="ghost"
-                className={cn(
-                  "text-black rounded-full",
-                  !isAuthenticated && "hidden"
-                )}
-                size="icon"
-                onClick={() => handleAddToCosmeticBag(String(product.id))}
-              >
-                <ShoppingBasketIcon />
-              </Button>
+              <AddProductToCosmeticBagModal cosmeticId={String(product.id)} />
             </span>
           )}
         </div>
