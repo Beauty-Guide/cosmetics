@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 type TCosmeticBags = {
   liked: boolean
   cosmeticId?: string
+  enabled?: boolean
 }
 
 const fetchCosmeticBags = async ({
@@ -26,5 +27,6 @@ export const useCosmeticBags = (data: TCosmeticBags) => {
   return useQuery({
     queryKey: ["cosmeticBags"],
     queryFn: () => fetchCosmeticBags(data),
+    enabled: data.enabled ?? true,
   })
 }

@@ -5,6 +5,7 @@ import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import FavoriteButton from "./FavoriteButton"
 import AddProductToCosmeticBagModal from "../cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
+import { memo } from "react"
 
 type ProductProps = {
   product: TProduct
@@ -47,4 +48,4 @@ const Product = ({ product }: ProductProps) => {
   )
 }
 
-export default Product
+export default memo(Product)
