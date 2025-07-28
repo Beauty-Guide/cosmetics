@@ -2,7 +2,7 @@ import { getImgUrl } from "@/lib/utils"
 import type { TProduct } from "@/types"
 import { useNavigate } from "react-router"
 import { Button } from "../ui/button"
-import { useToggleFavProduct } from "@/hooks/useToggleFavProduct"
+import { useToggleFavProduct } from "@/hooks/fav-products/useToggleFavProduct"
 import { Heart } from "lucide-react"
 
 type TFavoriteItemProps = {
