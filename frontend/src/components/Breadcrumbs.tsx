@@ -48,6 +48,13 @@ export default function Breadcrumbs() {
             }
         }
 
+        if (segment.startsWith("cosmeticBag_")) {
+          return {
+            name: "Cosmetic-Bag",
+            to,
+          }
+        }
+
         return {
           name: decodeURIComponent(segment),
           to,

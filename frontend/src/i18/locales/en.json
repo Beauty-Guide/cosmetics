@@ -26,6 +26,17 @@
   "my-cosmetic-bags": "MY COSMETIC BAGS",
   "my-cosmetic-bag": "MY COSMETIC BAG",
 
+  "cosmeticBag-name": "Cosmetic Bag Name",
+  "cosmeticBag-delete": "Delete Cosmetic Bag",
+  "cosmeticBag-add-product": "Add Product to Cosmetic Bag",
+  "cosmeticBag-add-success": "Product added to Cosmetic Bag",
+  "cosmeticBag-add-error-name": "Cosmetic Bag name should be more than 2 or more characters",
+  "cosmeticBag-create-success": "Cosmetic Bag created",
+  "cosmeticBag-create": "Create Cosmetic Bag",
+  "cosmeticBag-create-button": "Create",
+  "cosmeticBag-my-cosmetic-bags": "My Cosmetic Bags",
+  "cosmeticBag-select-my-cosmetic-bags": "Select Cosmetic Bag",
+
   "nav.cosmetic": "Cosmetics",
   "nav.analytics": "Analytics",
   "nav.catalogs": "Catalogs",

@@ -1,5 +1,5 @@
-import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
-import { useToggleFavProduct } from "@/hooks/useToggleFavProduct"
+import { useGetAllFavProducts } from "@/hooks/fav-products/getAllFavProducts"
+import { useToggleFavProduct } from "@/hooks/fav-products/useToggleFavProduct"
 import { memo, useMemo } from "react"
 import { Skeleton } from "../ui/skeleton"
 import { Button } from "../ui/button"

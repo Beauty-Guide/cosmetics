@@ -26,6 +26,17 @@
   "my-cosmetic-bags": "내 쉽티박",
   "my-cosmetic-bag": "내 쉽티박",
 
+  "cosmeticBag-name": "쉽티박 이름",
+  "cosmeticBag-delete": "쉽티박 삭제",
+  "cosmeticBag-add-product": "쉽티박에 상품 추가",
+  "cosmeticBag-add-success": "상품을 쉽티박에 추가하었습니다",
+  "cosmeticBag-add-error-name": "쉽티박 이름은 2자 이상의 문자로 만들어야 합니다",
+  "cosmeticBag-create-success": "쉽티박을 생성하었습니다",
+  "cosmeticBag-create": "쉽티박 생성",
+  "cosmeticBag-create-button": "생성",
+  "cosmeticBag-my-cosmetic-bags": "내 쉽티박",
+  "cosmeticBag-select-my-cosmetic-bags": "내 쉽티박 선택",
+
   "nav.cosmetic": "화장품",
   "nav.analytics": "분석",
   "nav.catalogs": "카탈로그",

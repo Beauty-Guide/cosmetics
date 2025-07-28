@@ -66,3 +66,12 @@ export type TMarkerLink = {
   name: string
   url: string
 }
+
+export type TCosmeticBag = {
+  id: string
+  name: string
+  ownerId: number
+  likes: number
+  createdAt: string
+  cosmetics: TProduct[]
+}
