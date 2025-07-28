@@ -1,6 +1,7 @@
 package ru.cosmetic.server.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import ru.cosmetic.server.requestDto.CosmeticBagRequest;
 import ru.cosmetic.server.responseDto.CosmeticBagResponse;
 import ru.cosmetic.server.responseDto.CosmeticResponse;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -63,34 +65,38 @@ public class CosmeticBagService {
         return result.isEmpty() ? null : result.get(0);
     }
 
-    public List<CosmeticBagResponse> listByOwner(Long ownerId, Long cosmeticId) {
+    public List<CosmeticBagResponse> listByOwner(Long ownerId, Long excludeCosmeticId) {
         StringBuilder whereClause = new StringBuilder("b.owner_id = ? AND b.is_deleted = false");
-        Object[] params = new Object[]{ownerId};
+        List<Object> params = new ArrayList<>();
+        params.add(ownerId);
 
-        if (cosmeticId != null) {
-            whereClause.append(" AND c.id != ?");
-            params = new Object[]{ownerId, cosmeticId};
+        if (excludeCosmeticId != null) {
+            whereClause.append(" AND NOT EXISTS (");
+            whereClause.append("   SELECT 1 FROM cosmetic_bag_item cbi_exclude");
+            whereClause.append("   WHERE cbi_exclude.bag_id = b.id AND cbi_exclude.cosmetic_id = ?");
+            whereClause.append(")");
+            params.add(excludeCosmeticId);
         }
 
-        return buildBagResponse(whereClause.toString(), params);
+        return buildBagResponse(whereClause.toString(), params.toArray());
     }
 
     private List<CosmeticBagResponse> buildBagResponse(String whereClause, Object... params) {
         String sql = """
-                SELECT
-                    b.id,
-                    b.name,
-                    b.owner_id,
-                    b.created_at,
-                    b.likes,
-                    c.id AS cosmetic_id,
-                    c.name AS cosmetic_name
-                FROM cosmetic_bag b
-                LEFT JOIN cosmetic_bag_item cbi ON b.id = cbi.bag_id
-                LEFT JOIN cosmetic c ON c.id = cbi.cosmetic_id
-                WHERE %s
-                ORDER BY b.id, c.id
-                """.formatted(whereClause);
+            SELECT
+                b.id,
+                b.name,
+                b.owner_id,
+                b.created_at,
+                b.likes,
+                c.id AS cosmetic_id,
+                c.name AS cosmetic_name
+            FROM cosmetic_bag b
+            LEFT JOIN cosmetic_bag_item cbi ON b.id = cbi.bag_id
+            LEFT JOIN cosmetic c ON c.id = cbi.cosmetic_id
+            WHERE %s
+            ORDER BY b.id, c.id
+            """.formatted(whereClause);
 
         Map<UUID, CosmeticBagResponse> map = new LinkedHashMap<>();
 

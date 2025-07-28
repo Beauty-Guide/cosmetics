@@ -40,9 +40,10 @@ public class CosmeticBagController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Обновление косметички")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody CosmeticBagRequest request, Principal principal) {
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody CosmeticBagRequest request, Principal principal) {
         try {
-            cosmeticBagService.update(id, request);
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            cosmeticBagService.update(uuid, request);
             return new ResponseEntity<>("Косметичка обновлена", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка обновления косметички", HttpStatus.BAD_REQUEST);
@@ -52,9 +53,10 @@ public class CosmeticBagController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Пометка удаленной косметички")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable UUID id) {
+    public ResponseEntity<?> delete(@PathVariable String id) {
         try {
-            cosmeticBagService.delete(id);
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            cosmeticBagService.delete(uuid);
             return new ResponseEntity<>("Косметичка помечена удаленной", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка пометки удаления косметички", HttpStatus.BAD_REQUEST);
@@ -63,9 +65,10 @@ public class CosmeticBagController {
 
     @PostMapping("/{id}/cosmetics/{cosmeticId}")
     @Operation(summary = "Добавление косметики в косметичку")
-    public ResponseEntity<?> addCosmetic(@PathVariable UUID id, @PathVariable Long cosmeticId) {
+    public ResponseEntity<?> addCosmetic(@PathVariable String id, @PathVariable Long cosmeticId) {
         try {
-            cosmeticBagService.addCosmeticToBag(id, cosmeticId);
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            cosmeticBagService.addCosmeticToBag(uuid, cosmeticId);
             return new ResponseEntity<>("Косметика добавлена в косметичку", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка добавления косметики в косметичку", HttpStatus.BAD_REQUEST);
@@ -89,7 +92,7 @@ public class CosmeticBagController {
     public ResponseEntity<?> list(Principal principal, @RequestParam(required = false) Long cosmeticId) {
         try {
             User user = userService.findByEmail(principal.getName());
-            return ResponseEntity.ok(cosmeticBagService.listByOwner(user.getId(),cosmeticId));
+            return ResponseEntity.ok(cosmeticBagService.listByOwner(user.getId(), cosmeticId));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения своих косметичек", HttpStatus.BAD_REQUEST);
         }
@@ -108,9 +111,10 @@ public class CosmeticBagController {
 
     @PostMapping("/{id}/like")
     @Operation(summary = "Поставить лайк косметичке")
-    public ResponseEntity<?> likeBag(@PathVariable UUID id, Principal principal) {
+    public ResponseEntity<?> likeBag(@PathVariable String id, Principal principal) {
         try {
-            favoriteBagService.likeBag(id, principal);
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            favoriteBagService.likeBag(uuid, principal);
             return new ResponseEntity<>("Косметичка добавлена в избранные", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка добавления косметички в избранные", HttpStatus.BAD_REQUEST);
@@ -119,9 +123,10 @@ public class CosmeticBagController {
 
     @DeleteMapping("/{id}/like")
     @Operation(summary = "Снять лайк с косметички")
-    public ResponseEntity<?> unlikeBag(@PathVariable UUID id, Principal principal) {
+    public ResponseEntity<?> unlikeBag(@PathVariable String id, Principal principal) {
         try {
-            favoriteBagService.unlikeBag(id, principal);
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            favoriteBagService.unlikeBag(uuid, principal);
             return new ResponseEntity<>("Косметичка удалена из избранных", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка удаления косметички из избранных", HttpStatus.BAD_REQUEST);
