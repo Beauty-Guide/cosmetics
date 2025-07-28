@@ -16,9 +16,9 @@ import ProductPage from "./pages/ProductPage"
 import Layout from "./components/Layout"
 import Favorites from "./pages/Favorites"
 import LoginSuccess from "@/pages/LoginSuccess.tsx"
-import CosmeticBag from "./pages/сosmetic-bag"
+import UserCosmeticBags from "./pages/сosmetic-bag"
 import CosmeticBugItems from "./pages/сosmetic-bag/CosmeticBugItems"
-import AnalyticsPage from "@/pages/analytics/AnalyticsPage.tsx";
+import AnalyticsPage from "@/pages/analytics/AnalyticsPage.tsx"
 
 const AppRoutes = () => {
   return (
@@ -53,11 +53,11 @@ const AppRoutes = () => {
           path="/cosmetic-bag"
           element={
             <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
-              <CosmeticBag />
+              <UserCosmeticBags />
             </PrivateRoute>
           }
         />
-          <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
         {/* Админка */}
         <Route path="/admin">
           <Route

@@ -4,8 +4,7 @@ import { getImgUrl } from "@/lib/utils"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import FavoriteButton from "./FavoriteButton"
-import { ShoppingBasketIcon } from "lucide-react"
-import { Button } from "../ui/button"
+import AddProductToCosmeticBagModal from "../cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
 
 type ProductProps = {
   product: TProduct
@@ -14,8 +13,8 @@ type ProductProps = {
 const Product = ({ product }: ProductProps) => {
   const navigate = useNavigate()
   const user = useAuth()
-  const isAdmin = user?.role.includes(ROLES.ADMIN)
-  const isUser = user?.role.includes(ROLES.USER)
+  const isAdmin = user?.role?.includes(ROLES.ADMIN)
+  const isUser = user?.role?.includes(ROLES.USER)
   const isAuthenticated = isAdmin || isUser
 
   const navigateToItem = () => {
@@ -41,13 +40,7 @@ const Product = ({ product }: ProductProps) => {
       {isAuthenticated && (
         <span className="flex flex-col absolute top-8 right-5 max-md:top-2 max-md:right-2">
           <FavoriteButton productId={String(product.id)} />
-          <Button
-            variant="ghost"
-            className="text-black rounded-full"
-            size="icon"
-          >
-            <ShoppingBasketIcon />
-          </Button>
+          <AddProductToCosmeticBagModal cosmeticId={String(product.id)} />
         </span>
       )}
     </div>

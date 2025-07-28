@@ -1,5 +1,5 @@
 import FavoriteItem from "@/components/FavoritesPageComponents/FavoriteItem"
-import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
+import { useGetAllFavProducts } from "@/hooks/fav-products/getAllFavProducts"
 import { useTranslation } from "react-i18next"
 
 const Favorites = () => {

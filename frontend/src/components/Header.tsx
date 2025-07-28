@@ -1,6 +1,6 @@
 import { Link, useNavigate, useSearchParams } from "react-router"
 import { Button } from "@/components/ui/button"
-import { useGetAllFavProducts } from "@/hooks/getAllFavProducts"
+import { useGetAllFavProducts } from "@/hooks/fav-products/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
 import { ROLES } from "@/config/consts"
 import {
