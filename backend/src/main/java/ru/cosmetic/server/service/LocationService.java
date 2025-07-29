@@ -27,29 +27,22 @@ public class LocationService {
     private UserService userService;
 
 
-    public LocationData getLocation(HttpServletRequest request, String email) {
+    public LocationData getLocation(HttpServletRequest request, String lang) {
         // 1. Проверка кеша
         LocationData cached = getFromCache();
         if (cached != null) {
             return cached;
         }
 
-        // 2. Проверка базы данных
-        User user = userService.findByEmail(email);
-
         // 3. Попытка получить координаты из заголовков (если есть)
         try {
             String forwardedFor = request.getHeader("X-Forwarded-For");
             String ip = forwardedFor != null ? forwardedFor.split(",")[0] : request.getRemoteAddr();
-            System.out.println("LOCATION: " + ip);
-            ip ="109.252.45.21";
             // 4. Получение по IP
-            LocationData location = getLocationByIp(ip);
-            System.out.println("LOCATION: " + location.toString());
+            LocationData location = getLocationByIp(ip, lang);
             saveToCache(location);
             return location;
         } catch (Exception e) {
-            System.out.println("LOCATION: ERROR: " + e.getMessage() );
             throw new RuntimeException("Failed to determine location", e);
         }
     }
@@ -79,10 +72,9 @@ public class LocationService {
             cache.put(CACHE_KEY, data);
         }
     }
-    public LocationData getLocationByIp(String ipAddress) {
+    public LocationData getLocationByIp(String ipAddress, String lang) {
         RestTemplate restTemplate = new RestTemplate();
-        // Добавьте параметр lang=ru для получения данных на русском языке
-        String url = "http://ip-api.com/json/" + ipAddress + "?fields=status,message,country,regionName,city,lat,lon&lang=ru";
+        String url = "http://ip-api.com/json/" + ipAddress + "?fields=status,message,country,regionName,city,lat,lon&lang=" + lang;
 
         Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 

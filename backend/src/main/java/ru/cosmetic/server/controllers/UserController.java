@@ -122,7 +122,7 @@ public class UserController {
                     .body(Collections.singletonMap("error", "User not found"));
         }
         if (user.getLocation() == null) {
-            LocationData locationData = locationService.getLocation(request, user.getEmail());
+            LocationData locationData = locationService.getLocation(request, lang);
             user.setLocation(locationData.getCountry() + ", " + locationData.getCity());
             userService.update(user);
         }
