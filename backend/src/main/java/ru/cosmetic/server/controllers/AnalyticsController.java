@@ -8,11 +8,14 @@ import ru.cosmetic.server.dtos.AnalyticFavoriteCosmeticCount;
 import ru.cosmetic.server.dtos.AnalyticProductViewCount;
 import ru.cosmetic.server.dtos.AnalyticSearchFilter;
 import ru.cosmetic.server.dtos.AnalyticViewedCosmetic;
+import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.AnalyticsRequest;
 import ru.cosmetic.server.requestDto.CosmeticIdsRequest;
 import ru.cosmetic.server.service.AnalyticsService;
 import ru.cosmetic.server.service.FavoriteService;
+import ru.cosmetic.server.service.UserService;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +27,18 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
     private final FavoriteService favoriteService;
+    private final UserService userService;
 
     @PostMapping("/event")
     @Operation(summary = "Сохранить аналитическое событие (авторизованный или гость)")
-    public void track(@RequestBody AnalyticsRequest request,
-                      @RequestHeader(name = "Authorization", required = false) String authHeader) {
-        analyticsService.save(request, authHeader);
+    public void track(@RequestBody AnalyticsRequest request, Principal principal) {
+        User user = null;
+        if (principal != null) {
+            user  = userService.findByEmail(principal.getName());
+        }
+        String location = user != null ? user.getLocation() : null;
+        request.setLocation(location);
+        analyticsService.save(request, user);
     }
 
     @GetMapping("/statsSearchFilter")

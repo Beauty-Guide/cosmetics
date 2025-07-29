@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
 
     public User findByEmail(String email) {
         String sql = """
-        SELECT u.id AS user_id, u.username, u.password, u.email, u.oauth2_id, u.provider,
+        SELECT u.id AS user_id, u.username, u.password, u.email, u.oauth2_id, u.provider, u.location,
                r.id AS role_id, r.name AS role_name
         FROM users u
         LEFT JOIN users_roles ur ON u.id = ur.user_id
@@ -51,6 +51,7 @@ public class UserService implements UserDetailsService {
                     user.setId(rs.getObject("user_id", Long.class)); // <-- здесь
                     user.setUsername(rs.getObject("username", String.class));
                     user.setPassword(rs.getObject("password", String.class));
+                    user.setLocation(rs.getObject("location", String.class));
                     user.setEmail(rs.getString("email"));
                     user.setOauth2Id(rs.getObject("oauth2_id", String.class));
                     user.setProvider(rs.getObject("provider", String.class));
@@ -102,6 +103,10 @@ public class UserService implements UserDetailsService {
             return true;
         }
         return false;
+    }
+
+    public void update(User user) {
+        userRepository.save(user);
     }
 
     public List<User> getAllUsers() {

@@ -52,6 +52,7 @@ public class UserController {
             if (principal != null) {
                 user  = getUser(principal);
             }
+            String location = user != null ? user.getLocation() : null;
             boolean hasData = (request.getBrandIds() != null && !request.getBrandIds().isEmpty()) ||
                     (request.getSkinTypeIds() != null && !request.getSkinTypeIds().isEmpty()) ||
                     (request.getActionIds() != null && !request.getActionIds().isEmpty()) ||
@@ -63,6 +64,7 @@ public class UserController {
                         .skinTypeIds(request.getSkinTypeIds())
                         .actionIds(request.getActionIds())
                         .query(request.getName())
+                        .location(location)
                         .build();
                 analyticsService.save(analyticsRequest, user);
             }
@@ -77,11 +79,15 @@ public class UserController {
     @Operation(summary = "Получение косметики по id")
     public ResponseEntity<?> getCosmeticsById(@PathVariable Long id,
                                               @RequestParam(required = false) String lang,
-                                              @RequestHeader(name = "Authorization", required = false) String authHeader,
+                                              Principal principal,
                                               @RequestParam(required = false) boolean isAllData) {
         try {
-            String location = "test";
-            analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).location(location).build(), authHeader);
+            User user = null;
+            if (principal != null) {
+                user  = getUser(principal);
+            }
+            String location = user != null ? user.getLocation() : null;
+            analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).location(location).build(), user);
             return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang, isAllData));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики с id = " + id, HttpStatus.BAD_REQUEST);
@@ -110,11 +116,15 @@ public class UserController {
                     .body(Collections.singletonMap("error", "Could not extract user from token"));
         }
         User user = userService.findByEmail(email);
-        LocationData locationData = locationService.getLocation(request, user.getEmail());
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Collections.singletonMap("error", "User not found"));
+        }
+        if (user.getLocation() == null) {
+            LocationData locationData = locationService.getLocation(request, lang);
+            user.setLocation(locationData.getCountry() + ", " + locationData.getCity());
+            userService.update(user);
         }
         return ResponseEntity.ok(UserResponse.builder()
                 .name(user.getUsername())
