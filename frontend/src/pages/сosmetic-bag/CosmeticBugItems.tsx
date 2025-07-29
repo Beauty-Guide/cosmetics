@@ -1,5 +1,8 @@
+import CosmeticBagLikeBtn from "@/components/cosmeticBagComponents/CosmeticBagLikeBtn"
 import EditName from "@/components/cosmeticBagComponents/EditName"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/config/auth-context"
+import { ROLES } from "@/config/consts"
 import { useCosmeticBag } from "@/hooks/cosmetic-bag/useCosmeticBag"
 import { useToggleCosmeticBagProduct } from "@/hooks/cosmetic-bag/useToggleCosmeticBagProduct"
 import { useToggleCosmeticBag } from "@/hooks/cosmetic-bag/useToggleCosmeticBags"
@@ -10,6 +13,10 @@ import { Link, useParams } from "react-router"
 const CosmeticBugItems = () => {
   const { id } = useParams()
   const { t } = useTranslation()
+  const user = useAuth()
+  const isAdmin = user?.role?.includes(ROLES.ADMIN)
+  const isUser = user?.role?.includes(ROLES.USER)
+  const isAuthenticated = isAdmin || isUser
   const { data: cosmeticBag, isLoading } = useCosmeticBag(id || "")
   const { mutate: toggleCosmeticBag } = useToggleCosmeticBag()
   const { mutate: toggleCosmeticBagProduct } = useToggleCosmeticBagProduct()
@@ -42,6 +49,7 @@ const CosmeticBugItems = () => {
         <Button onClick={handleDeleteCosmeticBag} className="my-2">
           {t("cosmeticBag-delete")}
         </Button>
+        <CosmeticBagLikeBtn isLiked={isAuthenticated || false} />
       </div>
       <div className="flex flex-col items-start justify-center border shadow-md rounded-md w-full">
         <div className="flex flex-col w-full">
