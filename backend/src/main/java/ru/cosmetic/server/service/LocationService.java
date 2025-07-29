@@ -10,7 +10,6 @@ import ru.cosmetic.server.dtos.Coordinates;
 import ru.cosmetic.server.dtos.LocationData;
 import ru.cosmetic.server.models.User;
 
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -25,7 +24,6 @@ public class LocationService {
 
     @Autowired
     private UserService userService;
-
 
     public LocationData getLocation(HttpServletRequest request, String email) {
         // 1. Проверка кеша
@@ -42,13 +40,18 @@ public class LocationService {
             String forwardedFor = request.getHeader("X-Forwarded-For");
             String ip = forwardedFor != null ? forwardedFor.split(",")[0] : request.getRemoteAddr();
             System.out.println("LOCATION: " + ip);
-            // 4. Получение по IP
-            LocationData location = getLocationByIp(ip);
+
+            // 4. Получение координат по IP
+            Coordinates coords = getCoordinatesByIp(ip);
+            System.out.println("COORDINATES: " + coords.toString());
+
+            // 5. Получение информации о локации по координатам
+            LocationData location = getLocationByCoords(coords);
             System.out.println("LOCATION: " + location.toString());
             saveToCache(location);
             return location;
         } catch (Exception e) {
-            System.out.println("LOCATION: ERROR: " + e.getMessage() );
+            System.out.println("LOCATION: ERROR: " + e.getMessage());
             throw new RuntimeException("Failed to determine location", e);
         }
     }
@@ -79,7 +82,7 @@ public class LocationService {
         }
     }
 
-    public LocationData getLocationByIp(String ipAddress) {
+    public Coordinates getCoordinatesByIp(String ipAddress) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://ip-api.com/json/" + ipAddress + "?fields=status,message,country,regionName,city,lat,lon";
 
@@ -89,17 +92,27 @@ public class LocationService {
             throw new RuntimeException((String) response.get("message"));
         }
 
+        return new Coordinates((Double) response.get("lat"), (Double) response.get("lon"));
+    }
+
+    public LocationData getLocationByCoords(Coordinates coords) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + coords.getLat() + "&lon=" + coords.getLng() + "&zoom=18&addressdetails=1";
+
+        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+
+        if (response == null || !"ok".equals(response.get("status"))) {
+            throw new RuntimeException("Failed to get location data from Nominatim");
+        }
+
         LocationData data = new LocationData();
-        data.setCity((String) response.get("city"));
-        data.setCountry((String) response.get("country"));
-        data.setRegion((String) response.get("regionName"));
-        data.setCoordinates(new Coordinates(
-                (Double) response.get("lat"),
-                (Double) response.get("lon")
-        ));
-        data.setSource("ip");
+        Map<String, Object> address = (Map<String, Object>) response.get("address");
+        data.setCity((String) address.get("city"));
+        data.setCountry((String) address.get("country"));
+        data.setRegion((String) address.get("state"));
+        data.setCoordinates(coords);
+        data.setSource("nominatim");
 
         return data;
     }
-
 }
