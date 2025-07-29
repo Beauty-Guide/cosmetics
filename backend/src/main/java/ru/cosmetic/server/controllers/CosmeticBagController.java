@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.CosmeticBagRequest;
+import ru.cosmetic.server.responseDto.CosmeticBagResponse;
+import ru.cosmetic.server.responseDto.CosmeticBagWithOwnerStatusResponse;
 import ru.cosmetic.server.service.CosmeticBagService;
 import ru.cosmetic.server.service.FavoriteBagService;
 import ru.cosmetic.server.service.UserService;
@@ -41,47 +43,75 @@ public class CosmeticBagController {
     @PutMapping("/{id}")
     @Operation(summary = "Обновление косметички")
     public ResponseEntity<?> update(@PathVariable String id, @RequestBody CosmeticBagRequest request, Principal principal) {
-        try {
-            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
-            cosmeticBagService.update(uuid, request);
-            return new ResponseEntity<>("Косметичка обновлена", HttpStatus.OK);
-        } catch (Exception e) {
+        if (principal == null) {
             return new ResponseEntity<>("Ошибка обновления косметички", HttpStatus.BAD_REQUEST);
+        } else {
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            User user = userService.findByEmail(principal.getName());
+            CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
+            if (user.getId().equals(cosmeticBag.getOwnerId())){
+                cosmeticBagService.update(uuid, request);
+                return new ResponseEntity<>("Косметичка обновлена", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Ошибка обновления косметички", HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Пометка удаленной косметички")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable String id) {
-        try {
-            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
-            cosmeticBagService.delete(uuid);
-            return new ResponseEntity<>("Косметичка помечена удаленной", HttpStatus.OK);
-        } catch (Exception e) {
+    public ResponseEntity<?> delete(@PathVariable String id, Principal principal) {
+        if (principal == null) {
             return new ResponseEntity<>("Ошибка пометки удаления косметички", HttpStatus.BAD_REQUEST);
+        } else {
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            User user = userService.findByEmail(principal.getName());
+            CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
+            if (user.getId().equals(cosmeticBag.getOwnerId())){
+                cosmeticBagService.delete(uuid);
+                return new ResponseEntity<>("Косметичка помечена удаленной", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Ошибка пометки удаления косметички", HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
     @PostMapping("/{id}/cosmetics/{cosmeticId}")
     @Operation(summary = "Добавление косметики в косметичку")
-    public ResponseEntity<?> addCosmetic(@PathVariable String id, @PathVariable Long cosmeticId) {
-        try {
-            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
-            cosmeticBagService.addCosmeticToBag(uuid, cosmeticId);
-            return new ResponseEntity<>("Косметика добавлена в косметичку", HttpStatus.OK);
-        } catch (Exception e) {
+    public ResponseEntity<?> addCosmetic(@PathVariable String id, @PathVariable Long cosmeticId, Principal principal) {
+        if (principal == null) {
             return new ResponseEntity<>("Ошибка добавления косметики в косметичку", HttpStatus.BAD_REQUEST);
+        } else {
+            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            User user = userService.findByEmail(principal.getName());
+            CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
+            if (user.getId().equals(cosmeticBag.getOwnerId())){
+                cosmeticBagService.addCosmeticToBag(uuid, cosmeticId);
+                return new ResponseEntity<>("Косметика добавлена в косметичку", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Ошибка добавления косметики в косметичку", HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
     @DeleteMapping("/{id}/cosmetics/{cosmeticId}")
     @Operation(summary = "Удаление косметики из косметички")
-    public ResponseEntity<?> removeCosmetic(@PathVariable String id, @PathVariable Long cosmeticId) {
+    public ResponseEntity<?> removeCosmetic(@PathVariable String id, @PathVariable Long cosmeticId, Principal principal) {
         try {
-            UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
-            cosmeticBagService.removeCosmeticFromBag(uuid, cosmeticId);
-            return new ResponseEntity<>("Косметика удалена из косметички", HttpStatus.OK);
+            if (principal == null) {
+                return new ResponseEntity<>("Ошибка удаления косметики из косметички", HttpStatus.BAD_REQUEST);
+            } else {
+                UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+                User user = userService.findByEmail(principal.getName());
+                CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
+                if (user.getId().equals(cosmeticBag.getOwnerId())){
+                    cosmeticBagService.removeCosmeticFromBag(uuid, cosmeticId);
+                    return new ResponseEntity<>("Косметика удалена из косметички", HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("Ошибка удаления косметики из косметички", HttpStatus.BAD_REQUEST);
+                }
+            }
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка удаления косметики из косметички", HttpStatus.BAD_REQUEST);
         }
@@ -100,10 +130,18 @@ public class CosmeticBagController {
 
     @GetMapping("/getCosmeticBag/{id}")
     @Operation(summary = "Получение косметички по id")
-    public ResponseEntity<?> getCosmeticBag(@PathVariable String id) {
+    public ResponseEntity<?> getCosmeticBag(@PathVariable String id, Principal principal) {
         try {
+            boolean isOwner = false;
             UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
-            return ResponseEntity.ok(cosmeticBagService.findById(uuid));
+            if (principal != null) {
+                User user = userService.findByEmail(principal.getName());
+                CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
+                if (user.getId().equals(cosmeticBag.getOwnerId())){
+                    isOwner = true;
+                }
+            }
+            return ResponseEntity.ok(CosmeticBagWithOwnerStatusResponse.builder().isOwner(isOwner).cosmeticBag(cosmeticBagService.findById(uuid)).build());
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения своих косметичек", HttpStatus.BAD_REQUEST);
         }

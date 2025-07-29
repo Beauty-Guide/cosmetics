@@ -2,6 +2,7 @@ package ru.cosmetic.server.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.CacheControl;
+import ru.cosmetic.server.dtos.LocationData;
 import ru.cosmetic.server.enums.ActionType;
 import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
@@ -39,6 +41,7 @@ public class UserController {
     private final UserSearchHistoryService userSearchHistoryService;
     private final JwtTokenUtils jwtTokenUtils;
     private final AnalyticsService analyticsService;
+    private final LocationService locationService;
 
 
     @PostMapping("/getCosmeticsByFilters")
@@ -77,7 +80,8 @@ public class UserController {
                                               @RequestHeader(name = "Authorization", required = false) String authHeader,
                                               @RequestParam(required = false) boolean isAllData) {
         try {
-            analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).build(), authHeader);
+            String location = "test";
+            analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).location(location).build(), authHeader);
             return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang, isAllData));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики с id = " + id, HttpStatus.BAD_REQUEST);
@@ -88,7 +92,8 @@ public class UserController {
     @Operation(summary = "Получение информации о пользователе")
     public ResponseEntity<?> getUserInfo(
             @RequestHeader(name = "Authorization", required = false) String authHeader,
-            @RequestParam(required = false) String lang) {
+            @RequestParam(required = false) String lang,
+            HttpServletRequest request) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.ok(buildGuestResponse(lang));
         }
@@ -105,6 +110,8 @@ public class UserController {
                     .body(Collections.singletonMap("error", "Could not extract user from token"));
         }
         User user = userService.findByEmail(email);
+        LocationData locationData = locationService.getLocation(request, user.getEmail());
+
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Collections.singletonMap("error", "User not found"));

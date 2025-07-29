@@ -36,6 +36,9 @@ databaseChangeLog:
                   constraints:
                     nullable: true  # Только для OAuth2-пользователей
               - column:
+                  name: location
+                  type: TEXT
+              - column:
                   name: provider
                   type: VARCHAR(50)
                   defaultValue: "local"

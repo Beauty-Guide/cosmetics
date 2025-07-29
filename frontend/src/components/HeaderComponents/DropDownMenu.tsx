@@ -1,4 +1,4 @@
-import { memo } from "react"
+import React, { memo } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +17,7 @@ import { User2Icon } from "lucide-react"
 import { Button } from "../ui/button"
 import type { TProduct, TUser } from "@/types"
 import { useTranslation } from "react-i18next"
+import {LocationDisplay} from "@/components/LocationDisplay.tsx";
 
 type TDropDownMenuProps = {
   handleNagivate: (path: string) => void
@@ -52,7 +53,7 @@ const DropDownMenu = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
         <DropdownMenuLabel className="font-bold select-none">
-          {t("my_account")} {`(${user?.name})`}
+          {t("my_account")} {`(${user?.name})`} <LocationDisplay />
         </DropdownMenuLabel>
         <DropdownMenuItem
             className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
