@@ -1,5 +1,5 @@
 import type { TCosmeticBag } from "@/types"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { Button } from "../ui/button"
 import { Heart, Share2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -21,12 +21,14 @@ const CosmeticBag = ({
   handleShare,
   handleUnlike,
 }: TCosmeticBagProps) => {
+  const navigate = useNavigate()
   const { t } = useTranslation()
 
   return (
     <div
+      onClick={() => navigate("/cosmetic-bag/" + cosmeticBag.id)}
       key={cosmeticBag.id}
-      className="flex flex-col items-center justify-center gap-2 w-full shadow-md rounded-md p-4 bg-gray-100"
+      className="flex flex-col items-center justify-center gap-2 w-full shadow-md rounded-md p-4 bg-gray-100 cursor-pointer"
     >
       <span className="w-full flex items-center justify-between">
         <Link
@@ -36,21 +38,29 @@ const CosmeticBag = ({
           {cosmeticBag.name || t("my-cosmetic-bags")}
         </Link>
         <div className="flex items-center gap-2">
-          {isLiked && !isFetchingCosmeticBags && (
-            <Button
-              onClick={() => handleUnlike(String(cosmeticBag.id))}
-              variant="ghost"
-              size="icon"
-              className={cn("rounded-full hover:bg-accent")}
-            >
-              <Heart fill="red" stroke="red" />
-            </Button>
+          {cosmeticBag.likes > 0 && (
+            <span className="flex items-center justify-center">
+              <p className="z-20 text-center">{cosmeticBag.likes}</p>
+              {isLiked && !isFetchingCosmeticBags && (
+                <Button
+                  onClick={() => handleUnlike(String(cosmeticBag.id))}
+                  variant="ghost"
+                  size="icon"
+                  className={cn("rounded-full hover:bg-accent")}
+                >
+                  <Heart fill="red" stroke="red" />
+                </Button>
+              )}
+            </span>
           )}
           <Button
             variant="ghost"
             size="icon"
-            className=""
-            onClick={handleShare}
+            className="z-40"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleShare()
+            }}
           >
             <Share2Icon />
           </Button>

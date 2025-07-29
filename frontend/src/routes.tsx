@@ -56,14 +56,7 @@ const AppRoutes = () => {
               </PrivateRoute>
             }
           />
-          <Route
-            path="/cosmetic-bag/:id"
-            element={
-              <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
-                <CosmeticBugItems />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/cosmetic-bag/:id" element={<CosmeticBugItems />} />
         </Route>
 
         <Route path="/analytics" element={<AnalyticsPage />} />

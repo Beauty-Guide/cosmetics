@@ -47,6 +47,14 @@ const CosmeticBugItems = () => {
           isOwner={cosmeticBagRes.owner}
           onSaveEditName={onSaveEdit}
         />
+        {cosmeticBagRes.cosmeticBag.likes > 0 && (
+          <div className="flex items-center gap-1">
+            <span>{t("cosmeticBag-likes")}:</span>
+            <span className="font-bold">
+              {cosmeticBagRes.cosmeticBag.likes}
+            </span>
+          </div>
+        )}
         {cosmeticBagRes.owner && (
           <Button onClick={handleDeleteCosmeticBag} className="my-2">
             {t("cosmeticBag-delete")}

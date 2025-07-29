@@ -53,6 +53,9 @@ export type TUser = {
   role: TRole
   history: TUserHistory[]
   refetch: () => void
+  isAdmin: boolean
+  isUser: boolean
+  isAuthenticated: boolean
 }
 
 export type TUserHistory = {
