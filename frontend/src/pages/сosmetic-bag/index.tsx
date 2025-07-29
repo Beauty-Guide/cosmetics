@@ -3,6 +3,7 @@ import { useToggleCosmeticBag } from "@/hooks/cosmetic-bag/useToggleCosmeticBags
 import { useTranslation } from "react-i18next"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useEffect, useState } from "react"
+import { useToggleLikeCosmeticBag } from "@/hooks/cosmetic-bag/useToggleLikeCosmeticBag"
 import { toast } from "sonner"
 import CosmeticBag from "@/components/cosmeticBagComponents/CosmeticBag"
 import CreateCosmeticBagModal from "@/components/cosmeticBagComponents/modals/CreateCosmeticBagModal"
@@ -14,9 +15,11 @@ const UserCosmeticBags = () => {
   const {
     data: cosmeticBags,
     isLoading: isLoadingCosmeticBags,
+    isRefetching: isRefetchingCosmeticBags,
     refetch,
   } = useCosmeticBags({ liked: isLiked })
   const { mutate: toggleCosmeticBag } = useToggleCosmeticBag()
+  const { mutate: toggleLikeCosmeticBag } = useToggleLikeCosmeticBag()
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
@@ -25,6 +28,10 @@ const UserCosmeticBags = () => {
 
   const handleCreateCosmeticBag = ({ name }: { name: string }) => {
     toggleCosmeticBag({ name, action: "add" })
+  }
+
+  const handleUnlike = (id: string) => {
+    toggleLikeCosmeticBag({ id: String(id), action: "unlike" })
   }
 
   useEffect(() => {
@@ -68,7 +75,10 @@ const UserCosmeticBags = () => {
           <CosmeticBag
             key={bag.id}
             cosmeticBag={bag}
+            isLiked={isLiked}
             handleShare={handleShare}
+            handleUnlike={handleUnlike}
+            isFetchingCosmeticBags={isRefetchingCosmeticBags}
           />
         ))}
       </div>

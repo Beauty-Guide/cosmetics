@@ -25,6 +25,7 @@
   "cosmetic-bag": "Косметичка",
   "my-cosmetic-bags": "МОИ КОСМЕТИЧКИ",
   "my-cosmetic-bag": "МОЯ КОСМЕТИЧКА",
+  "empty-cosmetic-bag": "Косметичка пуста",
 
   "cosmeticBag-name": "Название косметички",
   "cosmeticBag-delete": "Удалить косметичку",
@@ -42,6 +43,8 @@
   "cosmeticBag-liked-cosmetic-bags": "Избранные",
   "cosmeticBag-update-name-success": "Название косметички обновлено",
   "cosmeticBag-select-my-cosmetic-bags": "Выбрать косметичку",
+  "cosmeticBag-like-success": "Товар добавлен в избранное",
+  "cosmeticBag-unlike-success": "Товар удален из избранного",
 
   "nav.cosmetic": "Косметика",
   "nav.analytics": "Статистика",

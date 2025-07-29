@@ -2,13 +2,15 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { CheckCheckIcon, Edit2Icon } from "lucide-react"
 import { Input } from "../ui/input"
+import CosmeticBagLikeBtn from "./CosmeticBagLikeBtn"
 
 type TEditNameProps = {
   name: string
+  isOwner: boolean
   onSaveEditName: (newName: string) => void
 }
 
-const EditName = ({ name, onSaveEditName }: TEditNameProps) => {
+const EditName = ({ name, isOwner, onSaveEditName }: TEditNameProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [newName, setNewName] = useState<string>("")
 
@@ -22,6 +24,14 @@ const EditName = ({ name, onSaveEditName }: TEditNameProps) => {
     if (newName.length < 2 || newName === name) return
     onSaveEditName(newName)
   }
+
+  if (!isOwner)
+    return (
+      <div className="flex items-center justify-between gap-1 w-full my-2">
+        <h1 className="text-2xl font-semibold mr-auto">{name}</h1>
+        <CosmeticBagLikeBtn />
+      </div>
+    )
 
   return (
     <div className="flex items-center justify-between gap-1 w-full my-2">

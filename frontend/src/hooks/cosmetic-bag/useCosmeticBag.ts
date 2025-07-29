@@ -3,7 +3,12 @@ import { API_BASE_URL } from "@/config/consts"
 import type { TCosmeticBag } from "@/types"
 import { useQuery } from "@tanstack/react-query"
 
-const fetchCosmeticBag = async (id: string): Promise<TCosmeticBag> => {
+type TResponse = {
+  cosmeticBag: TCosmeticBag
+  owner: boolean
+}
+
+const fetchCosmeticBag = async (id: string): Promise<TResponse> => {
   const response = await apiClient.get(
     `${API_BASE_URL}/api/bags/getCosmeticBag/${id}`
   )

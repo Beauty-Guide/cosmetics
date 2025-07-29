@@ -25,6 +25,7 @@
   "cosmetic-bag": "쉽티박",
   "my-cosmetic-bags": "내 쉽티박",
   "my-cosmetic-bag": "내 쉽티박",
+  "empty-cosmetic-bag": "쉽티박이 핑은 상품이 없습니다",
 
   "cosmeticBag-name": "쉽티박 이름",
   "cosmeticBag-delete": "쉽티박 삭제",
@@ -40,6 +41,8 @@
   "cosmeticBag-liked-cosmetic-bags": "잡이한 쉽티박",
   "cosmeticBag-update-name-success": "쉽티박 이름을 업데이트 하었습니다",
   "cosmeticBag-select-my-cosmetic-bags": "내 쉽티박 선택",
+  "cosmeticBag-like-success": "상품을잡이한 쉽티박에 추가하었습니다",
+  "cosmeticBag-unlike-success": "상품을잡이한 쉽티박에서 삭제 하었습니다",
 
   "nav.cosmetic": "화장품",
   "nav.analytics": "분석",

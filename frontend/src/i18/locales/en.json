@@ -25,6 +25,7 @@
   "cosmetic-bag": "Cosmetic Bag",
   "my-cosmetic-bags": "MY COSMETIC BAGS",
   "my-cosmetic-bag": "MY COSMETIC BAG",
+  "empty-cosmetic-bag": "Your cosmetic bag is empty",
 
   "cosmeticBag-name": "Cosmetic Bag Name",
   "cosmeticBag-delete": "Delete Cosmetic Bag",
@@ -40,6 +41,8 @@
   "cosmeticBag-liked-cosmetic-bags": "Liked",
   "cosmeticBag-update-name-success": "Cosmetic Bag name updated",
   "cosmeticBag-select-my-cosmetic-bags": "Select Cosmetic Bag",
+  "cosmeticBag-like-success": "Product added to Liked",
+  "cosmeticBag-unlike-success": "Product removed from Liked",
 
   "nav.cosmetic": "Cosmetics",
   "nav.analytics": "Analytics",
