@@ -78,10 +78,10 @@ public class LocationService {
             cache.put(CACHE_KEY, data);
         }
     }
-
     public LocationData getLocationByIp(String ipAddress) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://ip-api.com/json/" + ipAddress + "?fields=status,message,country,regionName,city,lat,lon";
+        // Добавьте параметр lang=ru для получения данных на русском языке
+        String url = "http://ip-api.com/json/" + ipAddress + "?fields=status,message,country,regionName,city,lat,lon&lang=ru";
 
         Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
@@ -101,5 +101,4 @@ public class LocationService {
 
         return data;
     }
-
 }
