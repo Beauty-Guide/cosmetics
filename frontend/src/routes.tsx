@@ -35,8 +35,6 @@ const AppRoutes = () => {
 
         <Route path="/product/:productId" element={<ProductPage />} />
 
-        <Route path="/cosmetic-bag/:id" element={<CosmeticBugItems />} />
-
         <Route path="*" element={<h1>404</h1>} />
 
         {/* Защищённые маршруты */}
@@ -49,14 +47,25 @@ const AppRoutes = () => {
           }
         />
 
-        <Route
-          path="/cosmetic-bag"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
-              <UserCosmeticBags />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/cosmetic-bag">
+          <Route
+            index
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
+                <UserCosmeticBags />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/cosmetic-bag/:id"
+            element={
+              <PrivateRoute allowedRoles={["ROLE_ADMIN", "ROLE_USER"]}>
+                <CosmeticBugItems />
+              </PrivateRoute>
+            }
+          />
+        </Route>
+
         <Route path="/analytics" element={<AnalyticsPage />} />
         {/* Админка */}
         <Route path="/admin">
