@@ -77,7 +77,8 @@ public class UserController {
                                               @RequestHeader(name = "Authorization", required = false) String authHeader,
                                               @RequestParam(required = false) boolean isAllData) {
         try {
-            analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).build(), authHeader);
+            String location = "test";
+            analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).location(location).build(), authHeader);
             return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang, isAllData));
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения косметики с id = " + id, HttpStatus.BAD_REQUEST);

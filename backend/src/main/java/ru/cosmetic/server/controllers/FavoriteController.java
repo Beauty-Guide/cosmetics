@@ -11,8 +11,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.cosmetic.server.enums.ActionType;
 import ru.cosmetic.server.exceptions.AppError;
+import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.requestDto.AnalyticsRequest;
+import ru.cosmetic.server.service.AnalyticsService;
 import ru.cosmetic.server.service.FavoriteService;
+import ru.cosmetic.server.service.UserService;
 
 import java.security.Principal;
 
@@ -23,6 +28,8 @@ import java.security.Principal;
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
+    private final AnalyticsService analyticsService;
+    private final UserService userService;
 
     // --- Добавление в избранное ---
     @PostMapping("/{cosmeticId}/add")
@@ -40,6 +47,7 @@ public class FavoriteController {
     public ResponseEntity<?> addToFavorites(
             @Parameter(description = "ID косметического средства", example = "1", required = true)
             @PathVariable Long cosmeticId,
+            @RequestParam(required = false) String location,
             Principal principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -48,6 +56,8 @@ public class FavoriteController {
 
         try {
             String email = principal.getName();
+            User user = userService.findByEmail(principal.getName());
+            analyticsService.save(AnalyticsRequest.builder().cosmeticId(cosmeticId).action(ActionType.FAV).location(location).build(), user);
             favoriteService.addToFavorites(email, cosmeticId);
             return ResponseEntity.ok("Косметика успешно добавлена в избранное");
         } catch (IllegalArgumentException e) {
