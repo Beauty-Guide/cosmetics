@@ -47,7 +47,6 @@ public class FavoriteController {
     public ResponseEntity<?> addToFavorites(
             @Parameter(description = "ID косметического средства", example = "1", required = true)
             @PathVariable Long cosmeticId,
-            @RequestParam(required = false) String location,
             Principal principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -57,7 +56,7 @@ public class FavoriteController {
         try {
             String email = principal.getName();
             User user = userService.findByEmail(principal.getName());
-            analyticsService.save(AnalyticsRequest.builder().cosmeticId(cosmeticId).action(ActionType.FAV).location(location).build(), user);
+            analyticsService.save(AnalyticsRequest.builder().cosmeticId(cosmeticId).action(ActionType.FAV).location(user.getLocation()).build(), user);
             favoriteService.addToFavorites(email, cosmeticId);
             return ResponseEntity.ok("Косметика успешно добавлена в избранное");
         } catch (IllegalArgumentException e) {

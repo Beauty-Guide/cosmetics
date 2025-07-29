@@ -10,10 +10,8 @@ import { PAGE_SIZE } from "@/config/consts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTranslation } from "react-i18next"
 import getCategoryId from "@/lib/getCategoryId"
-import {useUserLocation} from "@/hooks/useUserLocation.ts";
 
 const HomePage = () => {
-  const {location, error, isLoading, refetch} = useUserLocation();
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)

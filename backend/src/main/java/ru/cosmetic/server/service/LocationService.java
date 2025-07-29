@@ -42,6 +42,7 @@ public class LocationService {
             String forwardedFor = request.getHeader("X-Forwarded-For");
             String ip = forwardedFor != null ? forwardedFor.split(",")[0] : request.getRemoteAddr();
             System.out.println("LOCATION: " + ip);
+            ip ="109.252.45.21";
             // 4. Получение по IP
             LocationData location = getLocationByIp(ip);
             System.out.println("LOCATION: " + location.toString());
