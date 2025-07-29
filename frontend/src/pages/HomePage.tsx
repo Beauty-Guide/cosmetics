@@ -4,14 +4,16 @@ import Pagination from "@/components/Pagination"
 import { useGetAllItems } from "@/hooks/getAllItems"
 import { useGetCategories } from "@/hooks/getCategories"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useLocation, useSearchParams } from "react-router"
 import { PAGE_SIZE } from "@/config/consts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTranslation } from "react-i18next"
 import getCategoryId from "@/lib/getCategoryId"
+import {useUserLocation} from "@/hooks/useUserLocation.ts";
 
 const HomePage = () => {
+  const {location, error, isLoading, refetch} = useUserLocation();
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
