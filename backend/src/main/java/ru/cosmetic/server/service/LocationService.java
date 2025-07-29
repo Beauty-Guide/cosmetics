@@ -95,13 +95,22 @@ public class LocationService {
         return new Coordinates((Double) response.get("lat"), (Double) response.get("lon"));
     }
 
+    private boolean isValidCoordinates(Coordinates coords) {
+        return coords.getLat() >= -90 && coords.getLat() <= 90 &&
+                coords.getLng() >= -180 && coords.getLng() <= 180;
+    }
+
     public LocationData getLocationByCoords(Coordinates coords) {
+        if (!isValidCoordinates(coords)) {
+            throw new IllegalArgumentException("Invalid coordinates");
+        }
+
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + coords.getLat() + "&lon=" + coords.getLng() + "&zoom=18&addressdetails=1";
 
         Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
-        if (response == null || !"ok".equals(response.get("status"))) {
+        if (response == null || !"ok".equals(response.get("status")) || response.get("address") == null) {
             throw new RuntimeException("Failed to get location data from Nominatim");
         }
 
