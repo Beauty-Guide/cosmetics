@@ -1,8 +1,9 @@
+import EditName from "@/components/cosmeticBagComponents/EditName"
 import { Button } from "@/components/ui/button"
 import { useCosmeticBag } from "@/hooks/cosmetic-bag/useCosmeticBag"
 import { useToggleCosmeticBagProduct } from "@/hooks/cosmetic-bag/useToggleCosmeticBagProduct"
 import { useToggleCosmeticBag } from "@/hooks/cosmetic-bag/useToggleCosmeticBags"
-import { Edit2Icon, Trash2Icon } from "lucide-react"
+import { Trash2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Link, useParams } from "react-router"
 
@@ -20,7 +21,9 @@ const CosmeticBugItems = () => {
       toggleCosmeticBag({ action: "remove", name: cosmeticBag?.name, id: id })
   }
 
-  const handleEdit = () => {}
+  const onSaveEdit = (newName: string) => {
+    toggleCosmeticBag({ action: "update", name: newName, id: id })
+  }
 
   const handleDeleteItem = (cosmeticId: string) => {
     if (!cosmeticBag || !id) return
@@ -34,19 +37,9 @@ const CosmeticBugItems = () => {
 
   return (
     <main className="flex flex-col items-center justify-center gap-2 w-full h-full max-md:px-sides max-md:mb-15">
-      <div className="flex items-center justify-between w-full my-2">
-        <h1 className="text-2xl font-semibold mr-auto p-2">
-          {cosmeticBag?.name || t("cosmetic-bag")}
-        </h1>
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full"
-          onClick={handleEdit}
-        >
-          <Edit2Icon />
-        </Button>
-        <Button onClick={handleDeleteCosmeticBag} className="m-2">
+      <div className="flex items-center justify-between w-full flex-wrap my-2">
+        <EditName name={cosmeticBag?.name} onSaveEditName={onSaveEdit} />
+        <Button onClick={handleDeleteCosmeticBag} className="my-2">
           {t("cosmeticBag-delete")}
         </Button>
       </div>

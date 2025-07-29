@@ -31,6 +31,7 @@
   "cosmeticBag-add-product": "Add Product to Cosmetic Bag",
   "cosmeticBag-add-success": "Product added to Cosmetic Bag",
   "cosmeticBag-add-error-name": "Cosmetic Bag name should be more than 2 or more characters",
+  "cosmeticBag-remove-product-success": "Product removed from Cosmetic Bag",
   "cosmeticBag-create-success": "Cosmetic Bag created",
   "cosmeticBag-create": "Create Cosmetic Bag",
   "cosmeticBag-create-button": "Create",
