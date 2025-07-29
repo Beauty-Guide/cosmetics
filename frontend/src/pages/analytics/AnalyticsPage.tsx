@@ -112,7 +112,7 @@ export default function AnalyticsPage() {
     if (!stats || !brandSearchData) return <div>No data available</div>;
 
     return (
-        <div className={"p-6 mb-6"}>
+        <div className={"p-6 mb-6"} style={{backgroundColor: '#EDEDED'}}>
             <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
                 <h3 className="text-lg font-medium mb-2">Аналитика по времени</h3>
                 <div className="mb-4 flex flex-col md:flex-row items-center md:space-x-4">

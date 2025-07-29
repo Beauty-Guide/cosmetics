@@ -16,6 +16,10 @@ interface SimpleBarChartProps {
 }
 
 const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
+    const truncateLabel = (label: string, maxLength: number = 15) => {
+        return label.length > maxLength ? `${label.substring(0, maxLength)}...` : label;
+    };
+
     const enrichedData = data.map(item => ({
         ...item,
         info: description
@@ -54,7 +58,7 @@ const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
                                         transform="rotate(-45)"
                                         fontSize={12}
                                     >
-                                        {payload.value}
+                                        {truncateLabel(payload.value)}
                                     </text>
                                 </g>
                             );
@@ -81,6 +85,7 @@ const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                     </Bar>
+
                 </BarChart>
             </ResponsiveContainer>
         </div>
