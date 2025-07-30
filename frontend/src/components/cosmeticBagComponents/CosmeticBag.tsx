@@ -10,7 +10,7 @@ type TCosmeticBagProps = {
   cosmeticBag: TCosmeticBag
   isLiked: boolean
   isFetchingCosmeticBags: boolean
-  handleShare: () => void
+  handleShare: (id: string) => void
   handleUnlike: (id: string) => void
 }
 
@@ -59,7 +59,7 @@ const CosmeticBag = ({
             className="z-40"
             onClick={(e) => {
               e.stopPropagation()
-              handleShare()
+              handleShare(String(cosmeticBag.id))
             }}
           >
             <Share2Icon />
