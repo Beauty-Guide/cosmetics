@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/config/auth-context"
-import { ROLES } from "@/config/consts"
 import { useItemById } from "@/hooks/getItemById"
 import { Share2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -20,9 +19,6 @@ const ProductPage = () => {
     productId || ""
   )
   const user = useAuth()
-  const isAdmin = user?.role?.includes(ROLES.ADMIN)
-  const isUser = user?.role?.includes(ROLES.USER)
-  const isAuthenticated = isAdmin || isUser
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
@@ -74,7 +70,7 @@ const ProductPage = () => {
                 : product.images
             }
           />
-          {isAuthenticated && (
+          {user?.isAuthenticated && (
             <span className="flex flex-col items-center justify-center absolute top-2 right-1">
               <FavoriteButton productId={String(product.id)} />
               <Button

@@ -2,7 +2,6 @@ import { Link, useNavigate, useSearchParams } from "react-router"
 import { Button } from "@/components/ui/button"
 import { useGetAllFavProducts } from "@/hooks/fav-products/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
-import { ROLES } from "@/config/consts"
 import {
   Heart,
   HomeIcon,
@@ -25,12 +24,8 @@ const Header: React.FC = () => {
   const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false)
   const [searchParams] = useSearchParams()
 
-  const isAdmin = user?.role?.includes(ROLES.ADMIN)
-  const isUser = user?.role?.includes(ROLES.USER)
-  const isAuthenticated = isAdmin || isUser
-
   const { data: favorites } = useGetAllFavProducts({
-    enabled: !!isAuthenticated,
+    enabled: !!user?.isAuthenticated,
   })
 
   const { data: categories, isLoading: isLoadingCategories } =
@@ -94,8 +89,8 @@ const Header: React.FC = () => {
           handleLogin={handleLogin}
           handleLogout={handleLogout}
           user={user}
-          isAdmin={isAdmin || false}
-          isAuthenticated={isAuthenticated || false}
+          isAdmin={user?.isAdmin || false}
+          isAuthenticated={user?.isAuthenticated || false}
           favorites={favorites || []}
         />
       </nav>
@@ -147,7 +142,7 @@ const Header: React.FC = () => {
             variant="outline"
             className={cn(
               "text-black rounded-full w-12 h-12",
-              !isAuthenticated && "hidden"
+              !user?.isAuthenticated && "hidden"
             )}
             size="icon"
             onClick={() => handleNagivate("/favorites")}
@@ -158,7 +153,7 @@ const Header: React.FC = () => {
             variant="outline"
             className={cn(
               "text-black rounded-full w-12 h-12",
-              !isAuthenticated && "hidden"
+              !user?.isAuthenticated && "hidden"
             )}
             size="icon"
             onClick={() => handleNagivate("/cosmetic-bag")}

@@ -21,8 +21,8 @@ const UserCosmeticBags = () => {
   const { mutate: toggleCosmeticBag } = useToggleCosmeticBag()
   const { mutate: toggleLikeCosmeticBag } = useToggleLikeCosmeticBag()
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href)
+  const handleShare = (id: string) => {
+    navigator.clipboard.writeText(window.location.href + `/${id}`)
     toast.success(t("product.linkCopied"))
   }
 

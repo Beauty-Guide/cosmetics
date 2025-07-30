@@ -3,6 +3,7 @@ import { Button } from "../ui/button"
 import { CheckCheckIcon, Edit2Icon } from "lucide-react"
 import { Input } from "../ui/input"
 import CosmeticBagLikeBtn from "./CosmeticBagLikeBtn"
+import { useAuth } from "@/config/auth-context"
 
 type TEditNameProps = {
   name: string
@@ -11,6 +12,7 @@ type TEditNameProps = {
 }
 
 const EditName = ({ name, isOwner, onSaveEditName }: TEditNameProps) => {
+  const user = useAuth()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [newName, setNewName] = useState<string>("")
 
@@ -29,7 +31,7 @@ const EditName = ({ name, isOwner, onSaveEditName }: TEditNameProps) => {
     return (
       <div className="flex items-center justify-between gap-1 w-full my-2">
         <h1 className="text-2xl font-semibold mr-auto">{name}</h1>
-        <CosmeticBagLikeBtn />
+        {user?.isAuthenticated && <CosmeticBagLikeBtn />}
       </div>
     )
 
