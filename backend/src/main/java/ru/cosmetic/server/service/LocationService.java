@@ -38,7 +38,7 @@ public class LocationService {
         try {
             String forwardedFor = request.getHeader("X-Forwarded-For");
             String ip = forwardedFor != null ? forwardedFor.split(",")[0] : request.getRemoteAddr();
-            ip ="109.252.45.21";
+            // ip ="109.252.45.21";
             // 4. Получение по IP
             LocationData location = getLocationByIp(ip, lang);
             saveToCache(location);
