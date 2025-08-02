@@ -102,5 +102,30 @@
   "register.password": "Password",
   "register.password_confirmation": "Confirm Password",
   "register.sign_up": "Sign Up",
-  "register.sign_in_with_google": "Sign in with Google"
+  "register.sign_in_with_google": "Sign in with Google",
+
+  "analytics.brand.search": "Brand and Filter Analytics",
+  "analytics.brand.search.no.data": "No data to display",
+  "analytics.brand.search.byBrand": "Search by brand...",
+  "analytics.skinType.frequency": "Skin Types (Frequency of Selection)",
+  "analytics.actions.frequency": "Actions (Frequency of Selection)",
+  "analytics.query.frequency": "Search Queries (Frequency)",
+  "analytics.top.actions": "Top Actions by Search",
+  "analytics.top.skinTypes": "Top Skin Types by Search",
+  "analytics.top.brands": "Top Brands by Search",
+  "analytics.top.favorite": "Top Favorite Products",
+  "analytics.views": "Views",
+  "analytics.count": "Count",
+  "analytics.favorite": "Favorites",
+  "analytics.all.views": "Total Number of Views per Day",
+  "analytics.selected.product.views": "Views of Selected Products",
+  "analytics": "Analytics",
+  "analytics.startDate": "Start Date",
+  "analytics.endDate": "End Date",
+  "analytics.show": "Show",
+
+  "table.view": "Showing",
+  "table.from": "of",
+  "table.prev": "Previous",
+  "table.next": "Next"
 }

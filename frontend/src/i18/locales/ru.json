@@ -104,5 +104,31 @@
   "register.password": "Пароль",
   "register.password_confirmation": "Подтвердите пароль",
   "register.sign_up": "Зарегистрироваться",
-  "register.sign_in_with_google": "Войти через Google"
+  "register.sign_in_with_google": "Войти через Google",
+
+  "analytics.brand.search": "Аналитика по брендам и фильтрам",
+  "analytics.brand.search.no.data": "Нет данных для отображения",
+  "analytics.brand.search.byBrand": "Поиск по бренду...",
+  "analytics.skinType.frequency": "Типы кожи (частота выбора)",
+  "analytics.actions.frequency": "Действия (частота выбора)",
+  "analytics.query.frequency": "Поисковые запросы (частота)",
+  "analytics.top.actions": "Топ действия по поиску",
+  "analytics.top.skinTypes": "Топ типы кожи по поиску",
+  "analytics.top.brands": "Топ бренды по поиску",
+  "analytics.top.favorite": "Топ избранных товаров",
+  "analytics.views": "Просмотров",
+  "analytics.count": "Количество",
+  "analytics.favorite": "В избранном",
+  "analytics.all.views": "Общее количество просмотров в день",
+  "analytics.selected.product.views": "Просмотры выбранных товаров",
+  "analytics": "Аналитика",
+  "analytics.startDate": "Дата начала",
+  "analytics.endDate": "Дата конца",
+  "analytics.show": "Показать",
+
+  "table.view": "Показано",
+  "table.from": "из",
+  "table.prev": "Предыдущая",
+  "table.next": "Следующая"
+
 }

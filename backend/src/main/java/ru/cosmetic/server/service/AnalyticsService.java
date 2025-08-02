@@ -60,18 +60,7 @@ public class AnalyticsService {
     }
 
     private CosmeticAnalytic buildAnalytic(AnalyticsRequest request, User user) {
-        return CosmeticAnalytic.builder()
-                .cosmetic(request.getCosmeticId() != null ? new Cosmetic(request.getCosmeticId()) : null)
-                .user(user)
-                .action(request.getAction())
-                .location(request.getLocation())
-                .device(request.getDevice())
-                .brandIds(request.getBrandIds())
-                .actionIds(request.getActionIds())
-                .skinTypeIds(request.getSkinTypeIds())
-                .marketplaceLink(request.getMarketPlaceId() != null ? new CosmeticMarketplaceLink(request.getMarketPlaceId()) : null)
-                .query(request.getQuery())
-                .build();
+        return CosmeticAnalytic.builder().cosmetic(request.getCosmeticId() != null ? new Cosmetic(request.getCosmeticId()) : null).user(user).action(request.getAction()).location(request.getLocation()).device(request.getDevice()).brandIds(request.getBrandIds()).actionIds(request.getActionIds()).skinTypeIds(request.getSkinTypeIds()).marketplaceLink(request.getMarketPlaceId() != null ? new CosmeticMarketplaceLink(request.getMarketPlaceId()) : null).query(request.getQuery()).build();
     }
 
 
@@ -93,72 +82,70 @@ public class AnalyticsService {
         params.addValue("startDate", startDate);
         params.addValue("endDate", endDate);
 
-        return namedParameterJdbcTemplate.query(
-                sql,
-                params,
-                (rs, rowNum) -> new AnalyticSearchFilterCountItem(rs.getString("label"), rs.getLong("total_count"))
-        );
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticSearchFilterCountItem(rs.getString("label"), rs.getLong("total_count")));
     }
 
-    public List<AnalyticSearchFilterCountItem> countBySkinType(LocalDate startDate, LocalDate endDate) {
+    public List<AnalyticSearchFilterCountItem> countBySkinType(LocalDate startDate, LocalDate endDate, String lang) {
         String sql = """
-                SELECT st.name AS label, COUNT(*) AS total_count
+                SELECT 
+                    CASE 
+                        WHEN :lang = 'en' THEN st.name_en
+                        WHEN :lang = 'ko' THEN st.name_kr
+                        ELSE st.name
+                    END AS label, 
+                    COUNT(*) AS total_count
                 FROM cosmetic_analytics ca
                 JOIN analytics_skin_type_ids asti ON ca.id = asti.analytics_id
                 JOIN skin_type st ON asti.skin_type_id = st.id
                 WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= :endDate
-                GROUP BY st.name
+                GROUP BY label
                 ORDER BY total_count DESC
                 """;
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDate", startDate);
         params.addValue("endDate", endDate);
-
-        return namedParameterJdbcTemplate.query(
-                sql,
-                params,
-                (rs, rowNum) -> new AnalyticSearchFilterCountItem(rs.getString("label"), rs.getLong("total_count"))
-        );
+        params.addValue("lang", lang);
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticSearchFilterCountItem(rs.getString("label"), rs.getLong("total_count")));
     }
 
-    public List<AnalyticSearchFilterCountItem> countByAction(LocalDate startDate, LocalDate endDate) {
+    public List<AnalyticSearchFilterCountItem> countByAction(LocalDate startDate, LocalDate endDate, String lang) {
         String sql = """
-                SELECT cact.name AS label, COUNT(*) AS total_count
+                SELECT 
+                    CASE 
+                        WHEN :lang = 'en' THEN cact.name_en
+                        WHEN :lang = 'ko' THEN cact.name_kr
+                        ELSE cact.name
+                    END AS label, 
+                    COUNT(*) AS total_count
                 FROM cosmetic_analytics ca
                 JOIN analytics_action_ids aai ON ca.id = aai.analytics_id
                 JOIN cosmetic_action cact ON aai.action_id = cact.id
                 WHERE DATE(ca.created_at) >= :startDate AND DATE(ca.created_at) <= :endDate
-                GROUP BY cact.name
+                GROUP BY label
                 ORDER BY total_count DESC
                 """;
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDate", startDate);
         params.addValue("endDate", endDate);
-
-        return namedParameterJdbcTemplate.query(
-                sql,
-                params,
-                (rs, rowNum) -> new AnalyticSearchFilterCountItem(rs.getString("label"), rs.getLong("total_count"))
-        );
+        params.addValue("lang", lang);
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticSearchFilterCountItem(rs.getString("label"), rs.getLong("total_count")));
     }
 
-    public AnalyticSearchFilter getStatsSearchFilter(LocalDate startDate, LocalDate endDate) {
-        return new AnalyticSearchFilter(
-                countByBrand(startDate, endDate),
-                countBySkinType(startDate, endDate),
-                countByAction(startDate, endDate)
-        );
+    public AnalyticSearchFilter getStatsSearchFilter(LocalDate startDate, LocalDate endDate, String lang) {
+        return new AnalyticSearchFilter(countByBrand(startDate, endDate), countBySkinType(startDate, endDate, lang), countByAction(startDate, endDate, lang));
     }
 
-    public List<AnalyticSearchFilterBrand> getBrandSearchAnalytics(LocalDate startDate, LocalDate endDate) {
+    public List<AnalyticSearchFilterBrand> getBrandSearchAnalytics(LocalDate startDate, LocalDate endDate, String lang) {
         endDate = endDate.plusDays(1);
         String sqlSkinType = """
                 SELECT
                     b.id AS brand_id,
                     b.name AS brand_name,
                     st.name AS skin_type_name,
+                    st.name_en AS skin_type_name_en,
+                    st.name_kr AS skin_type_name_kr,
                     COUNT(*) AS count
                 FROM cosmetic_analytics ca
                     JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
@@ -168,7 +155,7 @@ public class AnalyticsService {
                 WHERE ca.action = 'SEARCH_FILTER'
                     AND DATE(ca.created_at) >= :startDate
                     AND DATE(ca.created_at) <= :endDate
-                GROUP BY b.id, b.name, st.id, st.name
+                GROUP BY b.id, b.name, st.id, st.name, st.name_en, st.name_kr
                 ORDER BY count DESC;
                 """;
 
@@ -177,6 +164,8 @@ public class AnalyticsService {
                     b.id AS brand_id,
                     b.name AS brand_name,
                     ca2.name AS action_name,
+                    ca2.name_en AS action_name_en,
+                    ca2.name_kr AS action_name_kr,
                     COUNT(*) AS count
                 FROM cosmetic_analytics ca
                     JOIN analytics_brand_ids abi ON ca.id = abi.analytics_id
@@ -186,7 +175,7 @@ public class AnalyticsService {
                 WHERE ca.action = 'SEARCH_FILTER'
                     AND DATE(ca.created_at) >= :startDate
                     AND DATE(ca.created_at) <= :endDate
-                GROUP BY b.id, b.name, ca2.id, ca2.name
+                GROUP BY b.id, b.name, ca2.id, ca2.name, ca2.name_en, ca2.name_kr
                 ORDER BY count DESC;
                 """;
 
@@ -215,8 +204,15 @@ public class AnalyticsService {
         params.addValue("endDate", endDate);
         // 1. Обработка типов кожи
         namedParameterJdbcTemplate.query(sqlSkinType, params, (rs) -> {
+            String skinTypeName;
+            if ("en".equals(lang)) {
+                skinTypeName = rs.getString("skin_type_name_en");
+            } else if ("ko".equals(lang)) {
+                skinTypeName = rs.getString("skin_type_name_kr");
+            } else {
+                skinTypeName = rs.getString("skin_type_name");
+            }
             String brandName = rs.getString("brand_name");
-            String skinTypeName = rs.getString("skin_type_name");
             Long count = rs.getLong("count");
 
             AnalyticSearchFilterBrand stats = statsMap.computeIfAbsent(brandName, k -> {
@@ -231,7 +227,14 @@ public class AnalyticsService {
         // 2. Обработка действий
         namedParameterJdbcTemplate.query(sqlAction, params, (rs) -> {
             String brandName = rs.getString("brand_name");
-            String actionName = rs.getString("action_name");
+            String actionName;
+            if ("en".equals(lang)) {
+                actionName = rs.getString("action_name_en");
+            } else if ("ko".equals(lang)) {
+                actionName = rs.getString("action_name_kr");
+            } else {
+                actionName = rs.getString("action_name");
+            }
             Long count = rs.getLong("count");
 
             AnalyticSearchFilterBrand stats = statsMap.computeIfAbsent(brandName, k -> {
@@ -285,14 +288,7 @@ public class AnalyticsService {
         params.addValue("startDate", startDate);
         params.addValue("endDate", endDate);
 
-        return namedParameterJdbcTemplate.query(
-                sql,
-                params,
-                (rs, rowNum) -> new AnalyticProductViewCount(
-                        rs.getDate("date").toLocalDate(),
-                        rs.getInt("view_count")
-                )
-        );
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticProductViewCount(rs.getDate("date").toLocalDate(), rs.getInt("view_count")));
     }
 
     public List<AnalyticViewedCosmetic> getTopViewedCosmetics(LocalDate startDate, LocalDate endDate) {
@@ -313,32 +309,21 @@ public class AnalyticsService {
         params.addValue("startDate", startDate);
         params.addValue("endDate", endDate);
 
-        return namedParameterJdbcTemplate.query(
-                sql,
-                params,
-                (rs, rowNum) -> new AnalyticViewedCosmetic(
-                        rs.getLong("cosmetic_id"),
-                        rs.getString("name"),
-                        rs.getInt("view_count")
-                )
-        );
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticViewedCosmetic(rs.getLong("cosmetic_id"), rs.getString("name"), rs.getInt("view_count")));
     }
 
-    public Map<Long, List<AnalyticViewedCosmetic>> getViewedProducts(
-            List<Long> cosmeticIds,
-            LocalDate startDate,
-            LocalDate endDate) {
+    public Map<Long, List<AnalyticViewedCosmetic>> getViewedProducts(List<Long> cosmeticIds, LocalDate startDate, LocalDate endDate) {
 
         String baseSql = """
-    
-                SELECT DATE(ca.created_at) AS date,
-                                   ca.cosmetic_id,
-                                   c.name,
-                                   COUNT(ca.cosmetic_id) AS view_count
-                            FROM cosmetic_analytics ca
-                                     JOIN cosmetic c ON c.id = ca.cosmetic_id
-                            WHERE ca.action = 'VIEW'
-    """;
+                
+                            SELECT DATE(ca.created_at) AS date,
+                                               ca.cosmetic_id,
+                                               c.name,
+                                               COUNT(ca.cosmetic_id) AS view_count
+                                        FROM cosmetic_analytics ca
+                                                 JOIN cosmetic c ON c.id = ca.cosmetic_id
+                                        WHERE ca.action = 'VIEW'
+                """;
 
         StringBuilder whereClause = new StringBuilder();
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -359,26 +344,16 @@ public class AnalyticsService {
         }
 
         String sql = baseSql + whereClause + """
-        GROUP BY DATE(ca.created_at), ca.cosmetic_id, c.name
-        ORDER BY ca.cosmetic_id, date ASC
-    """;
+                    GROUP BY DATE(ca.created_at), ca.cosmetic_id, c.name
+                    ORDER BY ca.cosmetic_id, date ASC
+                """;
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(this.jdbcTemplate);
 
         try {
-            List<AnalyticViewedCosmetic> results = jdbcTemplate.query(
-                    sql,
-                    params,
-                    (rs, rowNum) -> new AnalyticViewedCosmetic(
-                            rs.getLong("cosmetic_id"),
-                            rs.getString("name"),
-                            rs.getInt("view_count"),
-                            rs.getDate("date").toLocalDate()
-                    )
-            );
+            List<AnalyticViewedCosmetic> results = jdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticViewedCosmetic(rs.getLong("cosmetic_id"), rs.getString("name"), rs.getInt("view_count"), rs.getDate("date").toLocalDate()));
 
-            return results.stream()
-                    .collect(Collectors.groupingBy(AnalyticViewedCosmetic::getCosmeticId));
+            return results.stream().collect(Collectors.groupingBy(AnalyticViewedCosmetic::getCosmeticId));
         } catch (DataAccessException e) {
             throw new RuntimeException("Failed to fetch viewed products", e);
         }

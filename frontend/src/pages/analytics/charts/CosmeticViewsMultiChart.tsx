@@ -1,8 +1,8 @@
-// @/pages/analytics/charts/CosmeticViewsMultiChart.tsx
 import React, {useEffect, useMemo, useState} from 'react';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import FilterCombobox from "@/components/HomeComponents/FilterCombobox.tsx";
 import type {CosmeticResponse} from "@/model/types.ts";
+import {useTranslation} from "react-i18next";
 
 interface AnalyticViewedCosmetic {
     cosmeticId: number;
@@ -46,10 +46,12 @@ const CosmeticViewsMultiChart: React.FC<CosmeticViewsMultiChartProps> = ({
                                                                              endDate
                                                                          }) => {
     const [selectedCosmetics, setSelectedCosmetics] = useState<string[]>([]);
-
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const { t } = useTranslation()
     const colorPalette = useMemo(() => [
         '#8884d8', '#82ca9d', '#ffc658',
-        '#ff8042', '#0088FE', '#00C49F'
+        '#ff8042', '#0088FE', '#00C49F',
+        '#FFBB28', '#FF8042', '#A4DE6C'
     ], []);
 
     useEffect(() => {
@@ -59,21 +61,23 @@ const CosmeticViewsMultiChart: React.FC<CosmeticViewsMultiChartProps> = ({
         }
     }, [topViewedCosmetics]);
 
-    const chartData = useMemo(() => {
-        if (data.size === 0) return [];
+    const { chartData, maxViewCount } = useMemo(() => {
+        if (data.size === 0) return { chartData: [], maxViewCount: 0 };
 
         const allDates = new Set<string>();
+        const allViewCounts: number[] = [];
+
         data.forEach((views) => {
             views.forEach((view) => {
                 allDates.add(view.date);
+                allViewCounts.push(view.viewCount);
             });
         });
 
         const sortedDates = Array.from(allDates).sort();
-        return sortedDates.map((date) => {
+        const chartData = sortedDates.map((date) => {
             const dateEntry: any = {date};
             data.forEach((views, cosmeticId) => {
-                // Преобразование cosmeticId в строку для сравнения
                 if (selectedCosmetics.length === 0 || selectedCosmetics.includes(String(cosmeticId))) {
                     const viewForDate = views.find((v) => v.date === date);
                     dateEntry[`${views[0].name}`] = viewForDate ? viewForDate.viewCount : 0;
@@ -81,39 +85,68 @@ const CosmeticViewsMultiChart: React.FC<CosmeticViewsMultiChartProps> = ({
             });
             return dateEntry;
         });
+
+        // Находим максимальное значение просмотров среди всех данных
+        const maxViewCount = Math.max(...allViewCounts, 1);
+        return { chartData, maxViewCount };
     }, [data, selectedCosmetics]);
 
     if (data.size === 0) {
-        return (<div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
-            <h3 className="text-lg font-medium mb-4">Просмотры выбранных товаров</h3>
-            <p>Нет данных для отображения</p>
-        </div>);
+        return (
+            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-4 sm:p-6 mb-6">
+                <h3 className="text-lg font-medium mb-4">{t("analytics.selected.product.views")}</h3>
+                <p>{t("analytics.brand.search.no.data")}</p>
+            </div>
+        );
     }
 
+    // Добавляем 10% к максимальному значению для лучшего отображения
+    const domainMax = Math.ceil(maxViewCount * 1.1);
+
     return (
-        <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
-            <h3 className="text-lg font-medium mb-4">Просмотры выбранных товаров</h3>
+        <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-4 sm:p-6 mb-6">
+            <h3 className="text-lg font-medium mb-4">{t("analytics.selected.product.views")}</h3>
+
             <div className="mb-4">
                 <FilterCombobox
-                    label="Выберите косметику"
+                    label=""
                     onChange={(selectedIds) => {
-                        console.log('Selected IDs:', selectedIds); // Логирование выбранных ID
                         setSelectedCosmetics(selectedIds);
                     }}
                     options={cosmetics}
                     values={selectedCosmetics}
+                    hasMaxWidth={false}
                 />
             </div>
-            <div style={{width: '100%', height: 400}}>
+
+            <div className="w-full h-[300px] sm:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                         data={chartData}
-                        margin={{top: 20, right: 30, left: 20, bottom: 30}}
+                        margin={{
+                            top: 20,
+                            right: 10,
+                            left: 20,
+                            bottom: 40
+                        }}
                     >
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <XAxis dataKey="date" angle={-45} textAnchor="end" height={60}/>
-                        <YAxis/>
-                        <Tooltip content={<CustomTooltip/>}/>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/>
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fontSize: 12 }}
+                            tickMargin={10}
+                            padding={{ bottom: 10 }}
+                        />
+                        <YAxis
+                            domain={[0, domainMax]}
+                            tickFormatter={(value) => Math.floor(value).toString()}
+                            tick={{ fontSize: 12 }}
+                            width={40}
+                        />
+                        <Tooltip
+                            content={<CustomTooltip/>}
+                            wrapperStyle={{ zIndex: 1000 }}
+                        />
                         {selectedCosmetics.map((cosmeticId, index) => {
                             const productName = data.get(Number(cosmeticId))?.[0]?.name || '';
                             return (
