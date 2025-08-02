@@ -86,7 +86,7 @@ const BrandSearchAnalyticsTable: React.FC<BrandSearchAnalyticsTableProps> = ({ d
                 </div>
 
                 {isMobile ? (
-                    <div className="overflow-x-auto">
+                    <div className="rounded-md border overflow-hidden">
                         <Table>
                             <TableHeader>
                                 <TableRow>
