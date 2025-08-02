@@ -1,4 +1,3 @@
-// @/pages/analytics/AnalyticsPage.tsx
 import React, {useCallback, useEffect, useState} from 'react';
 import {
     getAnalyticsStats,
@@ -16,6 +15,8 @@ import TopViewedProducts from "@/pages/analytics/charts/TopViewedProducts.tsx";
 import type {CosmeticResponse} from "@/model/types.ts";
 import CosmeticViewsMultiChart from "@/pages/analytics/charts/CosmeticViewsMultiChart.tsx";
 import {getAllCosmetics} from "@/services/adminCosmeticApi.ts";
+import {Button} from "@/components/ui/button.tsx";
+import {useTranslation} from "react-i18next";
 
 interface CountItem {
     label: string;
@@ -44,9 +45,10 @@ export default function AnalyticsPage() {
     const [cosmetics, setCosmetics] = useState<CosmeticResponse[]>([]);
     const [topViewedCosmetics, setTopViewedCosmetics] = useState<any[]>([]);
     const [viewsData, setViewsData] = useState<Map<number, AnalyticViewedCosmetic[]>>(new Map());
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false); // Изменено начальное значение на false
+    const { t } = useTranslation();
+    const { i18n } = useTranslation();
 
-    // Инициализация дат при первом рендере
     useEffect(() => {
         const today = new Date();
         const oneMonthAgo = new Date();
@@ -54,6 +56,9 @@ export default function AnalyticsPage() {
 
         setStartDate(oneMonthAgo.toISOString().split('T')[0]);
         setEndDate(today.toISOString().split('T')[0]);
+
+        // Вызываем fetchAnalytics автоматически при первом рендере
+        fetchAnalytics(oneMonthAgo.toISOString().split('T')[0], today.toISOString().split('T')[0]);
     }, []);
 
     const fetchAnalytics = useCallback(async (start: string, end: string) => {
@@ -67,8 +72,8 @@ export default function AnalyticsPage() {
                 topViewedCosmeticsData,
                 allCosmetics
             ] = await Promise.all([
-                getAnalyticsStats(start, end),
-                getBrandSearchAnalytics(start, end),
+                getAnalyticsStats(start, end, i18n.language),
+                getBrandSearchAnalytics(start, end, i18n.language),
                 getAnalyticViewsDayAllProducts(start, end),
                 getTopViewedCosmetics(start, end),
                 getAllCosmetics()
@@ -95,64 +100,78 @@ export default function AnalyticsPage() {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [i18n.language]);
 
-    // Загрузка данных при изменении дат с debounce
-    useEffect(() => {
-        if (!startDate || !endDate) return;
-
-        const timer = setTimeout(() => {
+    const handleShowClick = () => {
+        if (startDate && endDate) {
             fetchAnalytics(startDate, endDate);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [startDate, endDate, fetchAnalytics]);
-
-    if (isLoading) return <div>Loading...</div>;
-    if (!stats || !brandSearchData) return <div>No data available</div>;
+        }
+    };
 
     return (
-        <div className={"p-6 mb-6"} style={{backgroundColor: '#EDEDED'}}>
-            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-6 mb-6">
-                <h3 className="text-lg font-medium mb-2">Аналитика по времени</h3>
-                <div className="mb-4 flex flex-col md:flex-row items-center md:space-x-4">
-                    <div className="flex items-center space-x-2">
-                        <label className="mr-2">Дата начала</label>
+        <div className="p-2 sm:p-4 md:p-6 mb-6 bg-gray-100">
+            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-3 sm:p-6 mb-6">
+                <h3 className="text-lg font-medium mb-4">{t("analytics")}</h3>
+
+                <div className="mb-6 flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4">
+                    <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                        <label className="text-sm sm:text-base">{t("analytics.startDate")}</label>
                         <Input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="border p-1 md:w-48"
+                            className="w-full sm:w-48 p-2 text-sm"
                         />
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <label className="ml-2 mr-2">Дата конца</label>
+                    <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                        <label className="text-sm sm:text-base">{t("analytics.endDate")}</label>
                         <Input
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="border p-1 md:w-48"
+                            className="w-full sm:w-48 p-2 text-sm"
                         />
                     </div>
-                </div>
-                <div className="border-t border-gray-300 pt-6"/>
-                <TopViewedProducts data={analyticViewsDayAllProducts}/>
-                <CosmeticViewsMultiChart
-                    data={viewsData}
-                    cosmetics={cosmetics}
-                    topViewedCosmetics={topViewedCosmetics}
-                    startDate={startDate}
-                    endDate={endDate}
-                />
-                <FavoriteCosmeticCount/>
-                <SimpleBarChart description={"Просмотров"} data={stats.brands} title={"Топ: Бренды"}/>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><SimplePieChart data={stats.skinTypes} title={"Топ: Типы кожи"}/></div>
-                    <div><SimplePieChart data={stats.actions} title={"Топ: Действия"}/></div>
+                    <Button
+                        onClick={handleShowClick}
+                        className="w-full sm:w-auto mt-2 sm:mt-0"
+                        disabled={isLoading || !startDate || !endDate}
+                    >
+                         {t("analytics.show")}
+                    </Button>
                 </div>
 
-                <BrandSearchAnalyticsTable data={brandSearchData}/>
+                {stats && (
+                    <>
+                        <div className="border-t border-gray-300 my-4"/>
+
+                        <div className="space-y-6">
+                            <TopViewedProducts data={analyticViewsDayAllProducts}/>
+                            <CosmeticViewsMultiChart
+                                data={viewsData}
+                                cosmetics={cosmetics}
+                                topViewedCosmetics={topViewedCosmetics}
+                                startDate={startDate}
+                                endDate={endDate}
+                            />
+                            <FavoriteCosmeticCount/>
+                            <SimpleBarChart description={t("analytics.views")} data={stats.brands} title={t("analytics.top.brands")}/>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="min-w-0">
+                                    <SimplePieChart data={stats.skinTypes} title={t("analytics.top.skinTypes")}/>
+                                </div>
+                                <div className="min-w-0">
+                                    <SimplePieChart data={stats.actions} title={t("analytics.top.actions")}/>
+                                </div>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <BrandSearchAnalyticsTable data={brandSearchData}/>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

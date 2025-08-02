@@ -102,5 +102,30 @@
   "register.password": "비밀번호",
   "register.password_confirmation": "비밀번호 확인",
   "register.sign_up": "회원가입",
-  "register.sign_in_with_google": "Google로 로그인"
+  "register.sign_in_with_google": "Google로 로그인",
+
+  "analytics.brand.search": "브랜드 및 필터 분석",
+  "analytics.brand.search.no.data": "표시할 데이터가 없습니다",
+  "analytics.brand.search.byBrand": "브랜드로 검색...",
+  "analytics.skinType.frequency": "피부 유형 (선택 빈도)",
+  "analytics.actions.frequency": "기능 (선택 빈도)",
+  "analytics.query.frequency": "검색어 (빈도)",
+  "analytics.top.actions": "검색별 상위 기능",
+  "analytics.top.skinTypes": "검색별 상위 피부 유형",
+  "analytics.top.brands": "검색별 상위 브랜드",
+  "analytics.top.favorite": "상위 즐겨찾기 상품",
+  "analytics.views": "조회수",
+  "analytics.count": "수량",
+  "analytics.favorite": "즐겨찾기",
+  "analytics.all.views": "하루 총 조회수",
+  "analytics.selected.product.views": "선택된 상품의 조회수",
+  "analytics": "분석",
+  "analytics.startDate": "시작 날짜",
+  "analytics.endDate": "종료 날짜",
+  "analytics.show": "보기",
+
+  "table.view": "표시",
+  "table.from": "중",
+  "table.prev": "이전",
+  "table.next": "다음"
 }

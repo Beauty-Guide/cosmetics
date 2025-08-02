@@ -44,15 +44,17 @@ public class AnalyticsController {
     @GetMapping("/statsSearchFilter")
     public AnalyticSearchFilter stats(
             @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate) {
-        return analyticsService.getStatsSearchFilter(startDate, endDate);
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) String lang) {
+        return analyticsService.getStatsSearchFilter(startDate, endDate, lang);
     }
 
     @GetMapping("/brand-search-stats")
     public ResponseEntity<?> getSearchCombinations(
             @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate) {
-        return ResponseEntity.ok(analyticsService.getBrandSearchAnalytics(startDate, endDate));
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) String lang) {
+        return ResponseEntity.ok(analyticsService.getBrandSearchAnalytics(startDate, endDate, lang));
     }
 
     @GetMapping("/topFavorite")

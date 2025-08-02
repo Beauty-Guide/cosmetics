@@ -101,18 +101,20 @@ export const getTopFavoriteCosmetics = async (startDate?: string | null, endDate
     }
 };
 
-export const getAnalyticsStats = async (startDate?: string | null, endDate?: string | null) => {
+export const getAnalyticsStats = async (startDate?: string | null, endDate?: string | null, lang?: string | null) => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (lang) params.lang = lang;
     const response = await apiClient.get('/api/analytics/statsSearchFilter', { params });
     return response.data;
 };
 
-export const getBrandSearchAnalytics = async (startDate?: string | null, endDate?: string | null) => {
+export const getBrandSearchAnalytics = async (startDate?: string | null, endDate?: string | null, lang?: string | null) => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (lang) params.lang = lang;
     const response = await apiClient.get('/api/analytics/brand-search-stats', { params });
     return response.data;
 };

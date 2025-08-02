@@ -34,6 +34,7 @@ interface MultiSelectComboboxProps {
   variant?: "default" | "ghost" | "outline"
   searchInput?: boolean
   className?: string
+  hasMaxWidth?: boolean
 }
 
 export default function MultiSelectCombobox({
@@ -48,6 +49,7 @@ export default function MultiSelectCombobox({
   showOnlyLabel = false,
   searchInput = true,
   className,
+  hasMaxWidth = true,
 }: MultiSelectComboboxProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState<boolean>(false)
@@ -74,7 +76,11 @@ export default function MultiSelectCombobox({
   }, [options, values])
 
   return (
-    <div className={cn("w-full max-w-[200px]", className)}>
+    <div className={cn(
+        "w-full",
+        hasMaxWidth ? "max-w-[200px]" : "", // 根据 hasMaxWidth 动态应用 max-w-[200px]
+        className
+    )}>
       {labels && (
         <label className="block mb-1 text-sm font-medium text-gray-700">
           {label}
