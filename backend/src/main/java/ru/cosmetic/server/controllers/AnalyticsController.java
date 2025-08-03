@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.cosmetic.server.dtos.AnalyticFavoriteCosmeticCount;
-import ru.cosmetic.server.dtos.AnalyticProductViewCount;
-import ru.cosmetic.server.dtos.AnalyticSearchFilter;
-import ru.cosmetic.server.dtos.AnalyticViewedCosmetic;
+import ru.cosmetic.server.dtos.*;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.AnalyticsRequest;
 import ru.cosmetic.server.requestDto.CosmeticIdsRequest;
@@ -83,6 +80,15 @@ public class AnalyticsController {
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate) {
         return analyticsService.getTopViewedCosmetics( startDate, endDate);
+    }
+
+    @GetMapping("/clicks")
+    public Map<Long, List<AnalyticClickCosmetic>> getClickCounts(@RequestBody(required = false) CosmeticIdsRequest cosmeticIdsRequest,
+                                                                 @RequestParam(required = false) LocalDate startDate,
+                                                                 @RequestParam(required = false) LocalDate endDate) {
+        List<Long> cosmeticIds = cosmeticIdsRequest != null ? cosmeticIdsRequest.getCosmeticIds() : null;
+
+        return analyticsService.getClickCounts(cosmeticIds,startDate, endDate);
     }
 
 }

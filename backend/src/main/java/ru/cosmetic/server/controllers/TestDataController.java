@@ -377,4 +377,47 @@ public class TestDataController {
             analyticsService.save(analytic);
         }
     }
+
+
+    @GetMapping("/generate-clicks")
+    public ResponseEntity<String> generateClickAnalytics() {
+        try {
+            // Получаем 100 случайных товаров (или все, если меньше)
+            List<Cosmetic> cosmetics = cosmeticService.findAll();
+
+            if (cosmetics.isEmpty()) {
+                return ResponseEntity.badRequest().body("No cosmetics found in the database.");
+            }
+
+            // Находим пользователя (например, admin)
+            User user = userService.findByEmail("admin@gmail.com");
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User admin@gmail.com not found.");
+            }
+
+            // Генерируем 1000 случайных событий CLICK
+            int numberOfEvents = 1000;
+
+            for (int i = 0; i < numberOfEvents; i++) {
+                Cosmetic randomCosmetic = cosmetics.get(random.nextInt(cosmetics.size()));
+
+                List<CosmeticMarketplaceLink> marketplaceLinks  = cosmeticMarketplaceLinkService.findAllByCosmeticId(randomCosmetic.getId());
+                CosmeticAnalytic analytic = CosmeticAnalytic.builder()
+                        .cosmetic(randomCosmetic)
+                        .user(user)
+                        .action(ActionType.CLICK) // Только клики
+                        .location(LOCATIONS.get(random.nextInt(LOCATIONS.size())))
+                        .device(DEVICES.get(random.nextInt(DEVICES.size())))
+                        .createdAt(LocalDateTime.now().minusDays(random.nextInt(365))) // За последние 365 дней
+                        .marketplaceLink(marketplaceLinks.get(random.nextInt(marketplaceLinks.size())))
+                        .build();
+
+                analyticsService.save(analytic);
+            }
+
+            return ResponseEntity.ok("Successfully generated " + numberOfEvents + " CLICK events.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error generating analytics: " + e.getMessage());
+        }
+    }
 }

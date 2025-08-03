@@ -118,3 +118,15 @@ export const getBrandSearchAnalytics = async (startDate?: string | null, endDate
     const response = await apiClient.get('/api/analytics/brand-search-stats', { params });
     return response.data;
 };
+
+export const getClickCounts= async (
+    cosmeticIds: number[] | null,
+    startDate: string | null,
+    endDate: string | null
+): Promise<ProductViewCount[]> => {    const params = {};
+    if (cosmeticIds) params.cosmeticIds = cosmeticIds;
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    const response = await apiClient.get('/api/analytics/clicks', { params });
+    return response.data;
+};

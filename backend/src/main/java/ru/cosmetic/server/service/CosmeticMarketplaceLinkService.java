@@ -7,6 +7,8 @@ import ru.cosmetic.server.models.Cosmetic;
 import ru.cosmetic.server.models.CosmeticMarketplaceLink;
 import ru.cosmetic.server.repo.CosmeticMarketplaceLinkRepo;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CosmeticMarketplaceLinkService {
@@ -20,5 +22,9 @@ public class CosmeticMarketplaceLinkService {
     @Transactional
     public void deleteAllByCosmeticId(Cosmetic cosmetic) {
         cosmeticMarketplaceLinkRepo.deleteAllByCosmetic(cosmetic);
+    }
+
+    public List<CosmeticMarketplaceLink> findAllByCosmeticId(Long id) {
+        return cosmeticMarketplaceLinkRepo.findAllByCosmeticId(id);
     }
 }

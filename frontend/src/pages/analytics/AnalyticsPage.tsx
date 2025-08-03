@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
     getAnalyticsStats,
     getAnalyticViewsDayAllProducts,
-    getBrandSearchAnalytics,
+    getBrandSearchAnalytics, getClickCounts,
     getTopViewedCosmetics,
     getViewedProducts
 } from '@/services/analyticsApi';
@@ -17,6 +17,7 @@ import CosmeticViewsMultiChart from "@/pages/analytics/charts/CosmeticViewsMulti
 import {getAllCosmetics} from "@/services/adminCosmeticApi.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {useTranslation} from "react-i18next";
+import CosmeticClicksChart from "@/pages/analytics/charts/CosmeticClicksChart.tsx";
 
 interface CountItem {
     label: string;
@@ -45,6 +46,7 @@ export default function AnalyticsPage() {
     const [cosmetics, setCosmetics] = useState<CosmeticResponse[]>([]);
     const [topViewedCosmetics, setTopViewedCosmetics] = useState<any[]>([]);
     const [viewsData, setViewsData] = useState<Map<number, AnalyticViewedCosmetic[]>>(new Map());
+    const [viewsData1, setViewsData1] = useState<Map<number, AnalyticViewedCosmetic[]>>(new Map());
     const [isLoading, setIsLoading] = useState(false); // Изменено начальное значение на false
     const { t } = useTranslation();
     const { i18n } = useTranslation();
@@ -94,6 +96,16 @@ export default function AnalyticsPage() {
                 }))
             ]));
             setViewsData(dataMap);
+
+            const viewedSelectedData1 = await getClickCounts([], start, end);
+            const dataMap1 = new Map(Object.entries(viewedSelectedData1).map(([key, value]) => [
+                parseInt(key),
+                (value as unknown as AnalyticViewedCosmetic[]).map(item => ({
+                    ...item,
+                    date: new Date(item.date).toISOString().split('T')[0]
+                }))
+            ]));
+            setViewsData1(dataMap1);
 
         } catch (error) {
             console.error('Ошибка загрузки данных:', error);
@@ -153,6 +165,12 @@ export default function AnalyticsPage() {
                                 topViewedCosmetics={topViewedCosmetics}
                                 startDate={startDate}
                                 endDate={endDate}
+                            />
+                            <CosmeticClicksChart
+                                data={viewsData1}
+                                                 startDate={startDate}
+                                                 endDate={endDate}
+                                                 cosmetics={cosmetics}
                             />
                             <FavoriteCosmeticCount/>
                             <SimpleBarChart description={t("analytics.views")} data={stats.brands} title={t("analytics.top.brands")}/>

@@ -170,7 +170,7 @@ const CustomTooltip = ({ active, payload, label, description }: {
             <div className="bg-white border border-gray-200 rounded shadow-lg p-3 text-sm max-w-[200px]">
                 <p className="font-semibold mb-1">{label}</p>
                 <p className="text-gray-600">
-                    {description}: <span className="font-medium">{count}</span>
+                    {description}: <strong>{count}</strong>
                 </p>
             </div>
         );
