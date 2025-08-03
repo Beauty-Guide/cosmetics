@@ -142,7 +142,7 @@ const CustomTooltip: React.FC<{
             <div className="bg-white border border-gray-200 rounded shadow-lg p-3 text-sm max-w-[180px]">
                 <p className="font-semibold mb-1 break-words">{data.label}</p>
                 <p className="text-gray-600">
-                    {t("analytics.views")}: <span className="font-medium">{data.count}</span>
+                    {t("analytics.views")}: <strong>{data.count}</strong>
                 </p>
                 {data.info && (
                     <p className="text-gray-500 text-xs mt-1 break-words">{data.info}</p>

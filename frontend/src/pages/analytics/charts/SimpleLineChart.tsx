@@ -102,7 +102,7 @@ const CustomTooltip = ({
             <div className="custom-tooltip bg-white border border-gray-300 rounded-lg shadow-md p-4">
                 <p className="label text-gray-700 font-semibold">{label}</p>
                 <p className="desc text-gray-500 text-sm">
-                    {description} : {count}
+                    {description}: <strong>{count}</strong>
                 </p>
             </div>
         );

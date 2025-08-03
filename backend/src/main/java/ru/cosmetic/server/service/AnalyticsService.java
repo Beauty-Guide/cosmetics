@@ -17,10 +17,7 @@ import ru.cosmetic.server.requestDto.AnalyticsRequest;
 import ru.cosmetic.server.utils.JwtTokenUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -354,6 +351,57 @@ public class AnalyticsService {
             List<AnalyticViewedCosmetic> results = jdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticViewedCosmetic(rs.getLong("cosmetic_id"), rs.getString("name"), rs.getInt("view_count"), rs.getDate("date").toLocalDate()));
 
             return results.stream().collect(Collectors.groupingBy(AnalyticViewedCosmetic::getCosmeticId));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Failed to fetch viewed products", e);
+        }
+    }
+
+    public Map<Long, List<AnalyticClickCosmetic>> getClickCounts(List<Long> cosmeticIds, LocalDate startDate, LocalDate endDate) {
+        String baseSql = """
+        SELECT DATE(ca.created_at) AS date,
+            cml.marketplace_name AS name,
+            ca.cosmetic_id,
+            ca.marketplace_link_id,
+            COUNT(*) AS click_count
+        FROM cosmetic_analytics ca
+           JOIN cosmetic_marketplace_link cml ON ca.marketplace_link_id = cml.id
+        
+        WHERE ca.action = 'CLICK'
+    """;
+
+        StringBuilder whereClause = new StringBuilder();
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        if (cosmeticIds != null && !cosmeticIds.isEmpty()) {
+            whereClause.append(" AND ca.cosmetic_id IN (:cosmeticIds)");
+            params.addValue("cosmeticIds", cosmeticIds);
+        }
+
+        if (startDate != null) {
+            whereClause.append(" AND ca.created_at >= :startDate");
+            params.addValue("startDate", startDate.atStartOfDay());
+        }
+
+        if (endDate != null) {
+            whereClause.append(" AND ca.created_at < :endDate");
+            params.addValue("endDate", endDate.plusDays(1).atStartOfDay());
+        }
+
+        String sql = baseSql + whereClause + """
+        GROUP BY DATE(ca.created_at),cml.marketplace_name, ca.cosmetic_id, ca.marketplace_link_id
+        ORDER BY click_count DESC
+    """;
+
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(this.jdbcTemplate);
+
+        try {
+            List<AnalyticClickCosmetic> results = jdbcTemplate.query(sql, params, (rs, rowNum) -> new AnalyticClickCosmetic(
+                    rs.getLong("cosmetic_id"),
+                    rs.getString("name"),
+                    rs.getInt("click_count"),
+                    rs.getDate("date").toLocalDate()));
+
+            return results.stream().collect(Collectors.groupingBy(AnalyticClickCosmetic::getCosmeticId));
         } catch (DataAccessException e) {
             throw new RuntimeException("Failed to fetch viewed products", e);
         }
