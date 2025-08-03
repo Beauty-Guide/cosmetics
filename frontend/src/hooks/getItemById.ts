@@ -5,7 +5,7 @@ import axios from "axios"
 import { useTranslation } from "react-i18next"
 
 const fetchItemById = async (id: string, lang: string): Promise<TProduct> => {
-  const response = await axios.get(
+  const response =  await apiClient.get(
     `${API_BASE_URL}/api/getCosmeticsById/${id}`,
     {
       params: {
