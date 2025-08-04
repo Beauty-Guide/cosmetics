@@ -1,8 +1,8 @@
 import { API_BASE_URL } from "@/config/consts"
 import type { TProduct } from "@/types"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
 import { useTranslation } from "react-i18next"
+import apiClient from "@/api/apiClient"
 
 const fetchItemById = async (id: string, lang: string): Promise<TProduct> => {
   const response =  await apiClient.get(
