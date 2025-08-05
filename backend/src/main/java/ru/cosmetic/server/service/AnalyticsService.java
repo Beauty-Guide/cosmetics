@@ -366,7 +366,7 @@ public class AnalyticsService {
         FROM cosmetic_analytics ca
            JOIN cosmetic_marketplace_link cml ON ca.marketplace_link_id = cml.id
         
-        WHERE ca.action = 'CLICK'
+        WHERE ca.action = 'CLICK' AND cml.is_deleted = false
     """;
 
         StringBuilder whereClause = new StringBuilder();

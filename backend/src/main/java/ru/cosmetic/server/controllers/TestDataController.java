@@ -174,6 +174,7 @@ public class TestDataController {
                 link.setProductLink("http://localhost:3000");
                 link.setLocation("RU");
                 link.setMarketplaceName("OZON");
+                link.setIsDeleted(false);
                 cosmeticMarketplaceLinkService.save(link);
 
                 // Теперь добавляем изображение

@@ -24,4 +24,5 @@ public class CosmeticAddRequest {
     private List<String> imagesForDeletion;
     private Integer rating;
     private List<MarketplaceLinkRequest> marketplaceLinks;
+    private List<MarketplaceLinkRequest> marketplaceLinksDeleted;
 }

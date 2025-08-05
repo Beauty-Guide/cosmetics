@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { COLORS } from './constants';
+import {useTranslation} from "react-i18next";
 
 interface CountItem {
     label: string;
@@ -18,6 +19,7 @@ interface SimpleBarChartProps {
 const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const { t } = useTranslation()
 
     const truncateLabel = (label: string, maxLength: number = isMobile ? 8 : 15) => {
         return label.length > maxLength ? `${label.substring(0, maxLength)}...` : label;

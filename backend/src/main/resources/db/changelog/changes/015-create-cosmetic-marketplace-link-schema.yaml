@@ -37,6 +37,12 @@ databaseChangeLog:
                   type: VARCHAR(512)
                   constraints:
                     nullable: false
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
 
         - addForeignKeyConstraint:
             baseTableName: cosmetic_marketplace_link

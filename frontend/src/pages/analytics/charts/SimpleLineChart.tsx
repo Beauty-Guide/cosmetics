@@ -1,5 +1,6 @@
 import React from 'react';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {useTranslation} from "react-i18next";
 
 interface ProductViewCount {
     date: string;
@@ -15,6 +16,8 @@ interface SimpleLineChartProps {
 }
 
 const SimpleLineChart: React.FC<SimpleLineChartProps> = ({data, description, title}) => {
+    const { t } = useTranslation()
+
     if (data.length === 0) {
         return (
             <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-4 mb-6">

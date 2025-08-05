@@ -18,6 +18,7 @@ const SimplePieChart: React.FC<SimplePieChartProps> = ({ data, title }) => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     const chartRef = React.useRef<HTMLDivElement>(null);
     const [chartSize, setChartSize] = React.useState({ width: 300, height: 300 });
+    const { t } = useTranslation()
 
 
     // Адаптация размера под контейнер

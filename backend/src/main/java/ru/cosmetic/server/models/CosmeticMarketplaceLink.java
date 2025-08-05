@@ -25,6 +25,9 @@ public class CosmeticMarketplaceLink {
     @Column(name = "product_link")
     private String productLink;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
+
     @ManyToOne
     @JoinColumn(name = "cosmetic_id")
     private Cosmetic cosmetic;

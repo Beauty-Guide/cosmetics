@@ -97,11 +97,11 @@ public class CosmeticService {
             array_agg(DISTINCT img.is_main)     FILTER (WHERE img.id IS NOT NULL) AS image_is_main,
 
             /* marketplace links — подзапрос, чтобы не было дублей */
-            (SELECT array_agg(id ORDER BY id)           FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_ids,
-            (SELECT array_agg(user_id ORDER BY id)      FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS seller_ids,
-            (SELECT array_agg(marketplace_name ORDER BY id) FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_names,
-            (SELECT array_agg(location ORDER BY id)     FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_locations,
-            (SELECT array_agg(product_link ORDER BY id) FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id) AS marketplace_product_links
+            (SELECT array_agg(id ORDER BY id)           FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id AND is_deleted = false) AS marketplace_ids,
+            (SELECT array_agg(user_id ORDER BY id)      FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id AND is_deleted = false) AS seller_ids,
+            (SELECT array_agg(marketplace_name ORDER BY id) FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id AND is_deleted = false) AS marketplace_names,
+            (SELECT array_agg(location ORDER BY id)     FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id AND is_deleted = false) AS marketplace_locations,
+            (SELECT array_agg(product_link ORDER BY id) FROM cosmetic_marketplace_link WHERE cosmetic_id = c.id AND is_deleted = false) AS marketplace_product_links
         FROM cosmetic c
         JOIN brand      b   ON b.id   = c.brand_id
         JOIN catalog    cat ON cat.id = c.catalog_id
