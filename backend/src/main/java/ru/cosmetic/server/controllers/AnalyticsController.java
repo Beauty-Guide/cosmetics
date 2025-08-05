@@ -87,7 +87,6 @@ public class AnalyticsController {
                                                                  @RequestParam(required = false) LocalDate startDate,
                                                                  @RequestParam(required = false) LocalDate endDate) {
         List<Long> cosmeticIds = cosmeticIdsRequest != null ? cosmeticIdsRequest.getCosmeticIds() : null;
-
         return analyticsService.getClickCounts(cosmeticIds,startDate, endDate);
     }
 

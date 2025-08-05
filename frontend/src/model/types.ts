@@ -80,6 +80,8 @@ export interface Cosmetic {
 }
 
 export interface MarketplaceLink {
+    id: string;
+    type: string;
     name: string;
     url: string;
     locale: string; // например "RU", "EN", "KR"

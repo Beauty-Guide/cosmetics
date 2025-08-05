@@ -78,6 +78,7 @@ public class CosmeticController {
                         .location(marketplaceLink.getLocale())
                         .cosmetic(savedCosmetic)
                         .user(new User(marketplaceLink.getSellerId()))
+                        .isDeleted(false)
                         .build();
                 marketplaceLinkService.save(cosmeticMarketplaceLink);
             }
@@ -133,19 +134,25 @@ public class CosmeticController {
                 minioService.deleteFile(findCosmetic.getId() + "/" + findCosmetic.getId() + "_" + imageId);
             }
 
-            marketplaceLinkService.deleteAllByCosmeticId(findCosmetic);
-            List<MarketplaceLinkRequest> marketplaceLinks = request.getMarketplaceLinks();
-            for (MarketplaceLinkRequest marketplaceLink : marketplaceLinks) {
-                CosmeticMarketplaceLink cosmeticMarketplaceLink = CosmeticMarketplaceLink.builder()
-                        .marketplaceName(marketplaceLink.getName())
-                        .productLink(marketplaceLink.getUrl())
-                        .location(marketplaceLink.getLocale())
-                        .cosmetic(findCosmetic)
-                        .user(new User(marketplaceLink.getSellerId()))
-                        .build();
-                marketplaceLinkService.save(cosmeticMarketplaceLink);
+            for (MarketplaceLinkRequest marketplaceLink : request.getMarketplaceLinksDeleted()) {
+                CosmeticMarketplaceLink findMarketplaceLink = marketplaceLinkService.findById(marketplaceLink.getId());
+                marketplaceLinkService.delete(findMarketplaceLink);
             }
-
+            for (MarketplaceLinkRequest marketplaceLink : request.getMarketplaceLinks()) {
+                if (marketplaceLink.getId() == null) {
+                    marketplaceLinkService.create(marketplaceLink, findCosmetic);
+                } else {
+                    CosmeticMarketplaceLink findMarketplaceLink = marketplaceLinkService.findById(marketplaceLink.getId());
+                    if (findMarketplaceLink != null) {
+                        if (findMarketplaceLink.getProductLink().equals(marketplaceLink.getUrl())) {
+                            marketplaceLinkService.create(marketplaceLink, findCosmetic);
+                        } else {
+                            marketplaceLinkService.delete(findMarketplaceLink);
+                            marketplaceLinkService.create(marketplaceLink, findCosmetic);
+                        }
+                    }
+                }
+            }
             cosmeticService.save(findCosmetic);
             return new ResponseEntity<>("Косметика обновлена", HttpStatus.OK);
         } catch (Exception e) {

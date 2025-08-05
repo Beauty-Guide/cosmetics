@@ -18,27 +18,30 @@ import type { User } from "@/model/types";
 import {getAllSeller} from "@/services/sellerApi.ts";
 
 interface MarketplaceLink {
-    id: number;
+    id: string | number; // Updated to allow both string and number
+    type?: string; // Made optional
     name: string;
     url: string;
-    locale: string; // Например: 'RU', 'EN', 'KR'
+    locale: string;
     sellerId?: number;
 }
 
 interface MarketplaceLinksTableProps {
     links?: MarketplaceLink[];
     onChange: (links: MarketplaceLink[]) => void;
+    onDeleted: (links: MarketplaceLink[]) => void;
 }
 
 const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
                                                                          links = [],
                                                                          onChange,
+                                                                         onDeleted,
                                                                      }) => {
     const [newLink, setNewLink] = useState<Omit<MarketplaceLink, "id">>({
         name: "",
         url: "",
         locale: "RU",
-        sellerId: ""
+        sellerId: undefined
     });
 
     const locales = [
@@ -62,18 +65,20 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
 
     // При изменении внешнего props.links обновляем локальное состояние
     useEffect(() => {
-        if (links.length > 0) {
-            setMarketplaceLinks([...links]);
+        const filteredLinks = links.filter(link => link.type !== "delete");
+        if (filteredLinks.length > 0) {
+            setMarketplaceLinks([...filteredLinks]);
+            setRows([...filteredLinks]);
         } else {
             setMarketplaceLinks([]);
+            setRows([]);
         }
     }, [links]);
-    useEffect(() => setRows(links), [links]);
 
     const sellerOptions = sellers.map((s) => ({ id: String(s.id), name: s.username || "" }));
 
     const handleAdd = () => {
-        const { name, url, locale, sellerId  } = newLink;
+        const { name, url, locale, sellerId } = newLink;
 
         if (!name.trim() || !url.trim()) {
             alert("Заполните все поля");
@@ -93,31 +98,53 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
             alert("Выберите продавца");
             return;
         }
-        const updatedLinks = [
-            ...marketplaceLinks,
-            { ...newLink, id: Date.now() } as MarketplaceLink,
-        ];
+
+        const newLinkWithId = {
+            ...newLink,
+            id: "id_" + Date.now(),
+            type: "new"
+        } as MarketplaceLink;
+
+        const updatedLinks = [...marketplaceLinks, newLinkWithId];
 
         setMarketplaceLinks(updatedLinks);
+        setRows(updatedLinks);
         onChange(updatedLinks);
-        setNewLink({ name: "", url: "", locale: "RU" , sellerId: undefined });
+        setNewLink({ name: "", url: "", locale: "RU", sellerId: undefined });
         setSelectedLocale(["RU"]);
         setSelectedSeller([]);
     };
 
-    const handleDelete = (id: number) => {
-        const updated = rows.filter((r) => r.id !== id);
-        setRows(updated);
-        onChange(updated);
+    const handleDelete = (id: string | number) => {
+        const updated = rows.map(row =>
+            row.id === id ? { ...row, type: "delete" } : row
+        );
+        const activeLinks = updated.filter(link => link.type !== "delete");
+        const deletedLinks = updated.filter(link => link.type === "delete");
+        for (let i = deletedLinks.length - 1; i >= 0; i--) {
+            const id = deletedLinks[i].id;
+            if (typeof id === 'string') {
+                if (deletedLinks[i].id.startsWith("id_")) {
+                    deletedLinks.splice(i, 1);
+                }
+            }
+        }
+
+        setRows(activeLinks);
+        onChange(activeLinks);
+        onDeleted(deletedLinks);
     };
 
-    const handleChange = (id: number, field: keyof MarketplaceLink, value: any) => {
+    const handleChange = (id: string | number, field: keyof MarketplaceLink, value: any) => {
         const updated = rows.map((row) =>
             row.id === id ? { ...row, [field]: value } : row
         );
         setRows(updated);
         onChange(updated);
     };
+
+    // Filter out deleted items before rendering
+    const visibleLinks = marketplaceLinks.filter(link => link.type !== "delete");
 
     return (
         <div className="space-y-4">
@@ -163,7 +190,7 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
                 <div>
                     <FilterCombobox
                         label=""
-                        options={sellers.map((s) => ({ id: String(s.id), name: s.username || "" }))}
+                        options={sellerOptions}
                         values={selectedSeller}
                         onChange={(v) => {
                             setSelectedSeller(v);
@@ -179,7 +206,7 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
             </div>
 
             {/* Таблица */}
-            {marketplaceLinks.length > 0 && (
+            {visibleLinks.length > 0 && (
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
@@ -192,7 +219,7 @@ const MarketplaceLinksTable: React.FC<MarketplaceLinksTableProps> = ({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {marketplaceLinks.map((l) => (
+                            {visibleLinks.map((l) => (
                                 <TableRow key={l.id}>
                                     {/* Название */}
                                     <TableCell>

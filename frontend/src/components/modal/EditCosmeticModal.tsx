@@ -115,6 +115,7 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
       initialData?.rating || 50
   )
   const [marketplaceLinks, setMarketplaceLinks] = useState<MarketplaceLink[]>([]);
+  const [marketplaceLinksDelete, setMarketplaceLinksDelete] = useState<MarketplaceLink[]>([]);
   // Изображения
   const [mainImageFile, setMainImageFile] = useState<File | null>(null)
   const [imageFiles, setImageFiles] = useState<File[]>([])
@@ -207,6 +208,19 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
       return
     }
     try {
+
+      const activeLinks = marketplaceLinks.filter(link => link.type !== "delete");
+
+      for (let i = activeLinks.length - 1; i >= 0; i--) {
+        const id = activeLinks[i].id;
+        if (typeof id === 'string') {
+          if (activeLinks[i].id.startsWith("id_")) {
+            activeLinks[i].id = null;
+          }
+        }
+      }
+      const deletedLinks = marketplaceLinksDelete.filter(link => link.type === "delete");
+
       const updatedCosmetic = {
         id: initialData.id,
         name,
@@ -226,7 +240,8 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
         skinTypeIds: skinTypeIdList,
         keyIngredientIds: ingredientIds,
         imagesForDeletion: imagesMarkedForDeletion.map((img) => img.id),
-        marketplaceLinks
+        marketplaceLinks: activeLinks,
+        marketplaceLinksDeleted: deletedLinks
       }
       console.log("updatedCosmetic", updatedCosmetic)
 
@@ -463,7 +478,13 @@ const EditCosmeticModal: React.FC<EditCosmeticModalProps> = ({
 
             {/* Ссылки маркетплейсов */}
             <div className="border-t border-gray-300 pt-6">
-              <MarketplaceLinksTable links={marketplaceLinks} onChange={setMarketplaceLinks} />
+              <MarketplaceLinksTable
+                  links={marketplaceLinks}
+                  onChange={setMarketplaceLinks }
+                  onDeleted={(deletedLinks) => {
+                    // Сохраняем удалённые элементы в отдельном состоянии
+                    setMarketplaceLinksDelete(prev => [...prev, ...deletedLinks]);
+                  }} />
             </div>
 
             {/* Загрузка изображений */}
