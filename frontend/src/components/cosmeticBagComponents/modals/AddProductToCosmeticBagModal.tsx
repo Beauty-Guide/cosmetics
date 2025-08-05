@@ -4,7 +4,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -26,10 +25,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 type TAddProductToCosmeticBagModalProps = {
   cosmeticId: string
+  label?: string
 }
 
 const AddProductToCosmeticBagModal = ({
   cosmeticId,
+  label,
 }: TAddProductToCosmeticBagModalProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -53,13 +54,18 @@ const AddProductToCosmeticBagModal = ({
     setSelectedCosmeticBag("")
   }
 
-  if (isLoadingCosmeticBags) return <Skeleton className="w-6 h-6" />
+  if (isLoadingCosmeticBags) return <Skeleton className="w-fit" />
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="text-black rounded-full" size="icon">
+        <Button
+          variant="ghost"
+          className="text-black rounded-full"
+          size={label ? "default" : "icon"}
+        >
           <ShoppingBasketIcon />
+          {label && <span className="">{label}</span>}
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -78,7 +84,6 @@ const AddProductToCosmeticBagModal = ({
             </SelectTrigger>
             <SelectContent className="w-full">
               <SelectGroup>
-                <SelectLabel>{t("cosmeticBag-my-cosmetic-bags")}</SelectLabel>
                 {cosmeticBags &&
                   cosmeticBags.map((cosmeticBag) => (
                     <SelectItem key={cosmeticBag.id} value={cosmeticBag.id}>

@@ -2,18 +2,13 @@ import { Link, useNavigate, useSearchParams } from "react-router"
 import { Button } from "@/components/ui/button"
 import { useGetAllFavProducts } from "@/hooks/fav-products/getAllFavProducts"
 import { useAuth } from "@/config/auth-context"
-import {
-  Heart,
-  HomeIcon,
-  List,
-  SearchIcon,
-  ShoppingBasketIcon,
-} from "lucide-react"
+import { Heart, HomeIcon, List, SearchIcon } from "lucide-react"
 import { memo, useMemo, useState } from "react"
 import { buildCategoryTree } from "@/lib/buildCategoryTree"
 import { useGetCategories } from "@/hooks/getCategories"
 import SearchDialogModal from "./SearchDialogModal"
 import MobileCatalogModal from "./HeaderComponents/MobileCatalogModal"
+import cosmeticBagIcon from "../assets/ui/косметичка-32.png"
 import DropDownMenu from "./HeaderComponents/DropDownMenu"
 import { cn } from "@/lib/utils"
 
@@ -158,7 +153,7 @@ const Header: React.FC = () => {
             size="icon"
             onClick={() => handleNagivate("/cosmetic-bag")}
           >
-            <ShoppingBasketIcon />
+            <img src={cosmeticBagIcon} alt="shopping-bag" className="w-6 h-6" />
           </Button>
         </span>
       </div>

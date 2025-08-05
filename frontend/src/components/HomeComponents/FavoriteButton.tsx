@@ -6,7 +6,12 @@ import { Button } from "../ui/button"
 import { Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const FavoriteButton = ({ productId }: { productId: string }) => {
+type Props = {
+  productId: string
+  label?: string
+}
+
+const FavoriteButton = ({ productId, label }: Props) => {
   const { data: favourites, isLoading } = useGetAllFavProducts()
   const { mutate: toggleFav, isPending: isToggleLoading } =
     useToggleFavProduct()
@@ -32,13 +37,14 @@ const FavoriteButton = ({ productId }: { productId: string }) => {
         onClick={handleRemoveFromFavorite}
         disabled={isToggleLoading}
         variant="ghost"
-        size="icon"
+        size={label ? "default" : "icon"}
         className={cn(
-          "rounded-full hover:bg-accent",
+          "relative rounded-full hover:bg-accent",
           isFavorite ? "text-red-500" : "text-muted-foreground"
         )}
       >
         <Heart fill="red" stroke="red" />
+        {label && <p className="text-gray-800">{label}</p>}
       </Button>
     )
   } else {
@@ -47,13 +53,14 @@ const FavoriteButton = ({ productId }: { productId: string }) => {
         onClick={handleAddToFavorite}
         disabled={isToggleLoading}
         variant="ghost"
-        size="icon"
+        size={label ? "default" : "icon"}
         className={cn(
           "rounded-full hover:bg-accent",
           isFavorite ? "text-red-500" : "text-muted-foreground"
         )}
       >
         <Heart fill="#fff" />
+        {label && <p className="text-gray-800">{label}</p>}
       </Button>
     )
   }
