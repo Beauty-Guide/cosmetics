@@ -71,7 +71,7 @@ export default function Breadcrumbs() {
   }, [breadcrumbs])
 
   return (
-    <Breadcrumb className="sticky top-0 z-10 shadow-md py-3 px-sides rounded-b-md bg-white">
+    <Breadcrumb className="sticky top-0 z-10 shadow-md py-3 px-sides rounded-b-md bg-white max-md:hidden">
       <BreadcrumbList>
         {filteredBreadcrumbs.map((crumb, index) => {
           const isLast = index === filteredBreadcrumbs.length - 1
