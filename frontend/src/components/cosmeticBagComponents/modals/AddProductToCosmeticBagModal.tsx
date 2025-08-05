@@ -16,12 +16,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useCosmeticBags } from "@/hooks/cosmetic-bag/useCosmeticBags"
-import { ShoppingBasketIcon } from "lucide-react"
 import { memo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { useToggleCosmeticBagProduct } from "@/hooks/cosmetic-bag/useToggleCosmeticBagProduct"
 import { Skeleton } from "@/components/ui/skeleton"
+import cosmeticBagIcon from "../../../assets/ui/косметичка-32.png"
 
 type TAddProductToCosmeticBagModalProps = {
   cosmeticId: string
@@ -61,11 +61,11 @@ const AddProductToCosmeticBagModal = ({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="text-black rounded-full"
           size={label ? "default" : "icon"}
+          className="flex items-start justify-start rounded-full px-2.5"
         >
-          <ShoppingBasketIcon />
-          {label && <span className="">{label}</span>}
+          <img src={cosmeticBagIcon} alt="shopping-bag" className="w-5 h-5" />
+          {label && <span className="text-gray-800">{label}</span>}
         </Button>
       </DialogTrigger>
       <DialogContent
