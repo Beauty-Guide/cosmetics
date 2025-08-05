@@ -70,14 +70,6 @@ public class CosmeticBagService {
         List<Object> params = new ArrayList<>();
         params.add(ownerId);
 
-        if (excludeCosmeticId != null) {
-            whereClause.append(" AND NOT EXISTS (");
-            whereClause.append("   SELECT 1 FROM cosmetic_bag_item cbi_exclude");
-            whereClause.append("   WHERE cbi_exclude.bag_id = b.id AND cbi_exclude.cosmetic_id = ?");
-            whereClause.append(")");
-            params.add(excludeCosmeticId);
-        }
-
         return buildBagResponse(whereClause.toString(), params.toArray());
     }
 
@@ -90,7 +82,8 @@ public class CosmeticBagService {
                 b.created_at,
                 b.likes,
                 c.id AS cosmetic_id,
-                c.name AS cosmetic_name
+                c.name AS cosmetic_name,
+                CASE WHEN c.id IS NOT NULL THEN true ELSE false END AS has_cosmetic
             FROM cosmetic_bag b
             LEFT JOIN cosmetic_bag_item cbi ON b.id = cbi.bag_id
             LEFT JOIN cosmetic c ON c.id = cbi.cosmetic_id
@@ -115,6 +108,7 @@ public class CosmeticBagService {
                                             .ownerId(rs.getLong("owner_id"))
                                             .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
                                             .likes(rs.getInt("likes"))
+                                            .hasCosmetic(rs.getBoolean("has_cosmetic"))
                                             .cosmetics(new ArrayList<>())
                                             .build();
                                 } catch (SQLException e) {

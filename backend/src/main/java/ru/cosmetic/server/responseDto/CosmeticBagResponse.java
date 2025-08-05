@@ -17,4 +17,5 @@ public class CosmeticBagResponse {
     private LocalDateTime createdAt;
     private Integer likes;
     private List<CosmeticResponse> cosmetics;
+    private Boolean hasCosmetic;
 }

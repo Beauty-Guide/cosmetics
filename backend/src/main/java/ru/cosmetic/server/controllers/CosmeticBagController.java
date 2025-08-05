@@ -15,6 +15,7 @@ import ru.cosmetic.server.service.FavoriteBagService;
 import ru.cosmetic.server.service.UserService;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -49,7 +50,7 @@ public class CosmeticBagController {
             UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
             User user = userService.findByEmail(principal.getName());
             CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
-            if (user.getId().equals(cosmeticBag.getOwnerId())){
+            if (user.getId().equals(cosmeticBag.getOwnerId())) {
                 cosmeticBagService.update(uuid, request);
                 return new ResponseEntity<>("Косметичка обновлена", HttpStatus.OK);
             } else {
@@ -68,13 +69,40 @@ public class CosmeticBagController {
             UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
             User user = userService.findByEmail(principal.getName());
             CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
-            if (user.getId().equals(cosmeticBag.getOwnerId())){
+            if (user.getId().equals(cosmeticBag.getOwnerId())) {
                 cosmeticBagService.delete(uuid);
                 return new ResponseEntity<>("Косметичка помечена удаленной", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Ошибка пометки удаления косметички", HttpStatus.BAD_REQUEST);
             }
         }
+    }
+
+    @PostMapping("/updateCosmeticInBags/{cosmeticId}")
+    @Operation(summary = "Обновление косметики в косметичках")
+    public ResponseEntity<?> addOrRemoveCosmetic(@RequestBody List<CosmeticBagRequest> request, @PathVariable Long cosmeticId, Principal principal) {
+        if (principal == null) {
+            return new ResponseEntity<>("Ошибка обновления косметики в косметичках", HttpStatus.BAD_REQUEST);
+        } else {
+            User user = userService.findByEmail(principal.getName());
+            for (CosmeticBagRequest cosmeticBagRequest : request) {
+                UUID uuid = UUID.fromString(cosmeticBagRequest.getId().replace("cosmeticBag_", ""));
+                CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
+
+                if (!user.getId().equals(cosmeticBag.getOwnerId())) {
+                    return new ResponseEntity<>("Ошибка обновления косметики в косметичках", HttpStatus.BAD_REQUEST);
+                }
+                boolean cosmeticExists = cosmeticBag.getCosmetics().stream().anyMatch(x -> x.getId().equals(cosmeticId));
+                if (cosmeticBagRequest.getHasCosmetic()) {
+                    if (!cosmeticExists) {
+                        cosmeticBagService.addCosmeticToBag(uuid, cosmeticId);
+                    }
+                } else if (cosmeticExists) {
+                    cosmeticBagService.removeCosmeticFromBag(uuid, cosmeticId);
+                }
+            }
+        }
+        return new ResponseEntity<>("Косметика обновлена в косметичках", HttpStatus.OK);
     }
 
     @PostMapping("/{id}/cosmetics/{cosmeticId}")
@@ -86,7 +114,7 @@ public class CosmeticBagController {
             UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
             User user = userService.findByEmail(principal.getName());
             CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
-            if (user.getId().equals(cosmeticBag.getOwnerId())){
+            if (user.getId().equals(cosmeticBag.getOwnerId())) {
                 cosmeticBagService.addCosmeticToBag(uuid, cosmeticId);
                 return new ResponseEntity<>("Косметика добавлена в косметичку", HttpStatus.OK);
             } else {
@@ -105,7 +133,7 @@ public class CosmeticBagController {
                 UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
                 User user = userService.findByEmail(principal.getName());
                 CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
-                if (user.getId().equals(cosmeticBag.getOwnerId())){
+                if (user.getId().equals(cosmeticBag.getOwnerId())) {
                     cosmeticBagService.removeCosmeticFromBag(uuid, cosmeticId);
                     return new ResponseEntity<>("Косметика удалена из косметички", HttpStatus.OK);
                 } else {
@@ -137,7 +165,7 @@ public class CosmeticBagController {
             if (principal != null) {
                 User user = userService.findByEmail(principal.getName());
                 CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
-                if (user.getId().equals(cosmeticBag.getOwnerId())){
+                if (user.getId().equals(cosmeticBag.getOwnerId())) {
                     isOwner = true;
                 }
             }
