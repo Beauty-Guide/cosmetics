@@ -1,9 +1,9 @@
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
+  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import {
@@ -36,7 +36,7 @@ const ProductOptions = ({ productId, prodactName }: Props) => {
             <EllipsisIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-fit">
+        <PopoverContent className="w-fit" aria-describedby={undefined}>
           <div className="flex flex-col gap-2 justify-center items-start">
             <FavoriteButton
               productId={productId}
@@ -56,9 +56,9 @@ const ProductOptions = ({ productId, prodactName }: Props) => {
         <DrawerTrigger className="rounded-full max-md:block hidden">
           <EllipsisIcon />
         </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent aria-describedby={undefined}>
           <DrawerHeader>
-            <h2 className="text-lg font-semibold">{prodactName}</h2>
+            <DrawerTitle>{prodactName}</DrawerTitle>
           </DrawerHeader>
           <div className="flex flex-col gap-2 justify-center items-start p-sides mr-auto">
             <FavoriteButton
@@ -71,11 +71,9 @@ const ProductOptions = ({ productId, prodactName }: Props) => {
             />
           </div>
           <DrawerFooter>
-            <DrawerClose>
-              <Button variant="outline" className="w-full">
-                {t("close")}
-              </Button>
-            </DrawerClose>
+            <Button variant="outline" className="w-full">
+              {t("close")}
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

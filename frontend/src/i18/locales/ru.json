@@ -46,6 +46,7 @@
   "cosmeticBag-like-success": "Товар добавлен в избранное",
   "cosmeticBag-unlike-success": "Товар удален из избранного",
   "cosmeticBag-likes": "Лайков",
+  "cosmeticBag-update-success": "Косметичка обновлена",
 
   "nav.cosmetic": "Косметика",
   "nav.analytics": "Статистика",
@@ -134,5 +135,4 @@
   "table.from": "из",
   "table.prev": "Предыдущая",
   "table.next": "Следующая"
-
 }
