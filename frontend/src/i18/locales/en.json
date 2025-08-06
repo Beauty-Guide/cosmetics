@@ -44,6 +44,7 @@
   "cosmeticBag-like-success": "Product added to Liked",
   "cosmeticBag-unlike-success": "Product removed from Liked",
   "cosmeticBag-likes": "Likes",
+  "cosmeticBag-update-success": "Cosmetic Bag updated",
 
   "nav.cosmetic": "Cosmetics",
   "nav.analytics": "Analytics",

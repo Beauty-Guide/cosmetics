@@ -2,9 +2,8 @@ import { useNavigate } from "react-router"
 import type { TProduct } from "@/types"
 import { getImgUrl } from "@/lib/utils"
 import { useAuth } from "@/config/auth-context"
-import FavoriteButton from "./FavoriteButton"
-import AddProductToCosmeticBagModal from "../cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
 import { memo } from "react"
+import ProductOptions from "./ProductOptions"
 
 type ProductProps = {
   product: TProduct
@@ -35,10 +34,12 @@ const Product = ({ product }: ProductProps) => {
         <p className="">{product.brand.name}</p>
       </span>
       {user?.isAuthenticated && (
-        <span className="flex flex-col absolute top-8 right-5 max-md:top-2 max-md:right-2">
-          <FavoriteButton productId={String(product.id)} />
-          <AddProductToCosmeticBagModal cosmeticId={String(product.id)} />
-        </span>
+        <div className="flex flex-col absolute top-5 right-5 max-md:top-3 max-md:right-3">
+          <ProductOptions
+            productId={String(product.id)}
+            prodactName={product.name}
+          />
+        </div>
       )}
     </div>
   )
