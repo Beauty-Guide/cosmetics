@@ -61,35 +61,36 @@ public class CosmeticBagService {
     }
 
     public CosmeticBagResponse findById(UUID bagId) {
-        List<CosmeticBagResponse> result = buildBagResponse("b.id = ?", bagId);
+        List<CosmeticBagResponse> result = buildBagResponse("b.id = ?", null, bagId);
         return result.isEmpty() ? null : result.get(0);
     }
 
-    public List<CosmeticBagResponse> listByOwner(Long ownerId, Long excludeCosmeticId) {
-        StringBuilder whereClause = new StringBuilder("b.owner_id = ? AND b.is_deleted = false");
-        List<Object> params = new ArrayList<>();
-        params.add(ownerId);
-
-        return buildBagResponse(whereClause.toString(), params.toArray());
+    public List<CosmeticBagResponse> listByOwner(Long ownerId, Long checkCosmeticId) {
+        String whereClause = "b.owner_id = ? AND b.is_deleted = false";
+        return buildBagResponse(whereClause, checkCosmeticId, ownerId);
     }
 
-    private List<CosmeticBagResponse> buildBagResponse(String whereClause, Object... params) {
+    private List<CosmeticBagResponse> buildBagResponse(String whereClause, Long checkCosmeticId, Object... params) {
+        String hasCosmeticExpression = checkCosmeticId != null
+                ? "EXISTS (SELECT 1 FROM cosmetic_bag_item cbi_check WHERE cbi_check.bag_id = b.id AND cbi_check.cosmetic_id = " + checkCosmeticId + ")"
+                : "CASE WHEN c.id IS NOT NULL THEN true ELSE false END";
+
         String sql = """
-            SELECT
-                b.id,
-                b.name,
-                b.owner_id,
-                b.created_at,
-                b.likes,
-                c.id AS cosmetic_id,
-                c.name AS cosmetic_name,
-                CASE WHEN c.id IS NOT NULL THEN true ELSE false END AS has_cosmetic
-            FROM cosmetic_bag b
-            LEFT JOIN cosmetic_bag_item cbi ON b.id = cbi.bag_id
-            LEFT JOIN cosmetic c ON c.id = cbi.cosmetic_id
-            WHERE %s
-            ORDER BY b.id, c.id
-            """.formatted(whereClause);
+        SELECT
+            b.id,
+            b.name,
+            b.owner_id,
+            b.created_at,
+            b.likes,
+            c.id AS cosmetic_id,
+            c.name AS cosmetic_name,
+            %s AS has_cosmetic
+        FROM cosmetic_bag b
+        LEFT JOIN cosmetic_bag_item cbi ON b.id = cbi.bag_id
+        LEFT JOIN cosmetic c ON c.id = cbi.cosmetic_id
+        WHERE %s
+        ORDER BY b.id, c.id
+        """.formatted(hasCosmeticExpression, whereClause);
 
         Map<UUID, CosmeticBagResponse> map = new LinkedHashMap<>();
 
