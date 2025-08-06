@@ -40,11 +40,11 @@ const ProductOptions = ({ productId, prodactName }: Props) => {
           <div className="flex flex-col gap-2 justify-center items-start">
             <FavoriteButton
               productId={productId}
-              label="Добавить в избранное"
+              label={t("product.add_to_fav")}
             />
             <AddProductToCosmeticBagModal
               cosmeticId={productId}
-              label="Добавить в косметичку"
+              label={t("cosmeticBag-add-product")}
             />
           </div>
         </PopoverContent>
@@ -63,11 +63,11 @@ const ProductOptions = ({ productId, prodactName }: Props) => {
           <div className="flex flex-col gap-2 justify-center items-start p-sides mr-auto">
             <FavoriteButton
               productId={productId}
-              label="Добавить в избранное"
+              label={t("product.add_to_fav")}
             />
             <AddProductToCosmeticBagModal
               cosmeticId={productId}
-              label="Добавить в косметичку"
+              label={t("cosmeticBag-add-product")}
             />
           </div>
           <DrawerFooter>
