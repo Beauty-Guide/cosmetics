@@ -12,18 +12,47 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Button } from "../ui/button"
-import { EllipsisIcon } from "lucide-react"
+import { EllipsisIcon, SquaresUniteIcon } from "lucide-react"
 import FavoriteButton from "./FavoriteButton"
 import AddProductToCosmeticBagModal from "../cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
 import { useTranslation } from "react-i18next"
+import { useMemo, useState } from "react"
 
 type Props = {
   productId: string
   prodactName: string
+  additionalOptions?: React.ReactNode
 }
 
-const ProductOptions = ({ productId, prodactName }: Props) => {
+const ProductOptions = ({
+  productId,
+  prodactName,
+  additionalOptions,
+}: Props) => {
   const { t } = useTranslation()
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
+
+  const btnOptions = useMemo(() => {
+    return (
+      <div className="flex flex-col gap-2 justify-center items-start max-md:p-sides mr-auto">
+        <FavoriteButton productId={productId} label={t("product.add_to_fav")} />
+        <AddProductToCosmeticBagModal
+          cosmeticId={productId}
+          label={t("cosmeticBag-add-product")}
+        />
+        <Button
+          variant="ghost"
+          size="default"
+          className="w-full flex items-center justify-start rounded-full hover:bg-accent"
+        >
+          <SquaresUniteIcon className="w-5 h-5" />
+          <span>{t("product.find_similar")}</span>
+        </Button>
+        {additionalOptions}
+      </div>
+    )
+  }, [productId, t, additionalOptions])
+
   return (
     <>
       <Popover>
@@ -36,23 +65,14 @@ const ProductOptions = ({ productId, prodactName }: Props) => {
             <EllipsisIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-fit" aria-describedby={undefined}>
-          <div className="flex flex-col gap-2 justify-center items-start">
-            <FavoriteButton
-              productId={productId}
-              label={t("product.add_to_fav")}
-            />
-            <AddProductToCosmeticBagModal
-              cosmeticId={productId}
-              label={t("cosmeticBag-add-product")}
-            />
-          </div>
+        <PopoverContent className="w-fit p-2" aria-describedby={undefined}>
+          {btnOptions}
         </PopoverContent>
       </Popover>
 
       {/* // mobile */}
 
-      <Drawer>
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerTrigger className="rounded-full max-md:block hidden">
           <EllipsisIcon />
         </DrawerTrigger>
@@ -60,18 +80,13 @@ const ProductOptions = ({ productId, prodactName }: Props) => {
           <DrawerHeader>
             <DrawerTitle>{prodactName}</DrawerTitle>
           </DrawerHeader>
-          <div className="flex flex-col gap-2 justify-center items-start p-sides mr-auto">
-            <FavoriteButton
-              productId={productId}
-              label={t("product.add_to_fav")}
-            />
-            <AddProductToCosmeticBagModal
-              cosmeticId={productId}
-              label={t("cosmeticBag-add-product")}
-            />
-          </div>
+          {btnOptions}
           <DrawerFooter>
-            <Button variant="outline" className="w-full">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setDrawerOpen(false)}
+            >
               {t("close")}
             </Button>
           </DrawerFooter>

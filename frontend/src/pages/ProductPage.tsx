@@ -1,6 +1,5 @@
 import { postAnalyticsOnMarketPlaceURLClick } from "@/api/analytics"
-import AddProductToCosmeticBagModal from "@/components/cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
-import FavoriteButton from "@/components/HomeComponents/FavoriteButton"
+import ProductOptions from "@/components/HomeComponents/ProductOptions"
 import { ImageCarousel } from "@/components/ImageCarousel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -8,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/config/auth-context"
 import { useItemById } from "@/hooks/getItemById"
 import { Share2Icon } from "lucide-react"
+import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { useParams } from "react-router"
 import { toast } from "sonner"
@@ -20,11 +20,6 @@ const ProductPage = () => {
   )
   const user = useAuth()
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href)
-    toast.success(t("product.linkCopied"))
-  }
-
   const handleAnalytics = async (marketPlaceId: string) => {
     await postAnalyticsOnMarketPlaceURLClick({
       action: "CLICK",
@@ -34,6 +29,25 @@ const ProductPage = () => {
       marketPlaceId: String(marketPlaceId),
     })
   }
+
+  const handleShare = useCallback(() => {
+    navigator.clipboard.writeText(window.location.href)
+    toast.success(t("product.linkCopied"))
+  }, [t])
+
+  const productOptions = useMemo(() => {
+    return (
+      <Button
+        variant="ghost"
+        size="default"
+        className="w-full flex items-center justify-start rounded-full hover:bg-accent"
+        onClick={handleShare}
+      >
+        <Share2Icon className="w-5 h-5" />
+        <span>{t("product.share")}</span>
+      </Button>
+    )
+  }, [t, handleShare])
 
   if (isLoadingProduct) {
     return (
@@ -72,16 +86,11 @@ const ProductPage = () => {
           />
           {user?.isAuthenticated && (
             <span className="flex flex-col items-center justify-center absolute top-2 right-1">
-              <FavoriteButton productId={String(product.id)} />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full hover:bg-accent"
-                onClick={handleShare}
-              >
-                <Share2Icon className="w-5 h-5" />
-              </Button>
-              <AddProductToCosmeticBagModal cosmeticId={String(product.id)} />
+              <ProductOptions
+                productId={String(product.id)}
+                prodactName={product.name}
+                additionalOptions={productOptions}
+              />
             </span>
           )}
         </div>
