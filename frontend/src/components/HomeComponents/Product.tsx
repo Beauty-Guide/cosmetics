@@ -2,20 +2,46 @@ import { useNavigate } from "react-router"
 import type { TProduct } from "@/types"
 import { getImgUrl } from "@/lib/utils"
 import { useAuth } from "@/config/auth-context"
-import { memo } from "react"
+import { memo, useCallback, useMemo } from "react"
 import ProductOptions from "./ProductOptions"
+import { Button } from "../ui/button"
+import { Share2Icon } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 
 type ProductProps = {
   product: TProduct
 }
 
 const Product = ({ product }: ProductProps) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const user = useAuth()
 
   const navigateToItem = () => {
     navigate(`/product/${product.id}`)
   }
+
+  const handleShare = useCallback(() => {
+    navigator.clipboard.writeText(
+      window.location.href + `/product/${product.id}`
+    )
+    toast.success(t("product.linkCopied"))
+  }, [t, product.id])
+
+  const productOptions = useMemo(() => {
+    return (
+      <Button
+        variant="ghost"
+        size="default"
+        className="w-full flex items-center justify-start rounded-full hover:bg-accent"
+        onClick={handleShare}
+      >
+        <Share2Icon className="w-5 h-5" />
+        <span>{t("product.share")}</span>
+      </Button>
+    )
+  }, [t, handleShare])
 
   return (
     <div
@@ -38,6 +64,7 @@ const Product = ({ product }: ProductProps) => {
           <ProductOptions
             productId={String(product.id)}
             prodactName={product.name}
+            additionalOptions={productOptions}
           />
         </div>
       )}
