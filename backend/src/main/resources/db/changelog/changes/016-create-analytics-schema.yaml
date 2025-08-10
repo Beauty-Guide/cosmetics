@@ -30,9 +30,6 @@ databaseChangeLog:
                   name: marketplace_link_id
                   type: BIGINT
               - column:
-                  name: location
-                  type: VARCHAR(100)
-              - column:
                   name: device
                   type: VARCHAR(50)
               - column:

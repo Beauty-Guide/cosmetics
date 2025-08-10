@@ -3,6 +3,7 @@ package ru.cosmetic.server.requestDto;
 import lombok.Builder;
 import lombok.Data;
 import ru.cosmetic.server.enums.ActionType;
+import ru.cosmetic.server.models.Location;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class AnalyticsRequest {
     private Long cosmeticId;
     private ActionType action;
-    private String location;
+    private Location location;
     private String device;
     private List<Long> brandIds;
     private List<Long> actionIds;

@@ -33,8 +33,9 @@ public class User {
     @Column(name = "provider")
     private String provider; // Значения: "local", "google", "github" и т.д.
 
-    @Column(name = "location")
-    private String location; // Значения: "local", "google", "github" и т.д.
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @ManyToMany
     @JoinTable(

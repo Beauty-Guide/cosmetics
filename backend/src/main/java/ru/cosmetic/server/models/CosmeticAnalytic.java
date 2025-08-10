@@ -32,9 +32,6 @@ public class CosmeticAnalytic {
     @Column(nullable = false)
     private ActionType action;
 
-    @Column(length = 100)
-    private String location; // страна или "RU-Moscow"
-
     @Column(length = 50)
     private String device;   // mobile / desktop / tablet
 
@@ -56,11 +53,14 @@ public class CosmeticAnalytic {
     @Column(columnDefinition = "TEXT")
     private String query; // текст из поиска/фильтра
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marketplace_link_id")
     private CosmeticMarketplaceLink marketplaceLink;
+
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 }

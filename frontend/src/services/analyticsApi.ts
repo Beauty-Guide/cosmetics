@@ -38,25 +38,28 @@ interface TopViewedCosmetic {
 
 export const getTopViewedCosmetics = async (
     startDate: string | null,
-    endDate: string | null
+    endDate: string | null,
+    countryId?: string | null
 ): Promise<TopViewedCosmetic[]> => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (countryId) params.countryId = countryId[0];
 
     try {
         const response = await apiClient.get<TopViewedCosmetic[]>('/api/analytics/getTopViewedCosmetics', { params });
         return response.data;
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
-        throw error; // 重新抛出错误，以便在调用处处理
+        throw error;
     }
 };
 
 export const getViewedProducts = async (
     cosmeticIds: number[] | null,
     startDate: string | null,
-    endDate: string | null
+    endDate: string | null,
+    countryId?: string | null
 ): Promise<ProductViewCount[]> => {
     const data = {} as any;
     const params = {} as any;
@@ -64,6 +67,7 @@ export const getViewedProducts = async (
     if (cosmeticIds) data.cosmeticIds = cosmeticIds;
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (countryId) params.countryId = countryId[0];
 
     try {
         const response = await apiClient.post<ProductViewCount[]>('/api/analytics/getViews', data, { params });
@@ -73,10 +77,11 @@ export const getViewedProducts = async (
         throw error;
     }
 };
-export const getAnalyticViewsDayAllProducts = async (startDate?: string | null, endDate?: string | null): Promise<ProductViewCount[]> => {
+export const getAnalyticViewsDayAllProducts = async (startDate?: string | null, endDate?: string | null, countryId?: string | null): Promise<ProductViewCount[]> => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (countryId) params.countryId = countryId[0];
 
     try {
         const response = await apiClient.get<ProductViewCount[]>('/api/analytics/analyticViewsDayAllProducts', { params });
@@ -87,10 +92,11 @@ export const getAnalyticViewsDayAllProducts = async (startDate?: string | null, 
     }
 };
 
-export const getTopFavoriteCosmetics = async (startDate?: string | null, endDate?: string | null): Promise<FavoriteCosmeticCount[]> => {
+export const getTopFavoriteCosmetics = async (startDate?: string | null, endDate?: string | null, countryId?: string | null): Promise<FavoriteCosmeticCount[]> => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (countryId) params.countryId = countryId[0];
 
     try {
         const response = await apiClient.get('/api/analytics/topFavorite', { params });
@@ -101,20 +107,22 @@ export const getTopFavoriteCosmetics = async (startDate?: string | null, endDate
     }
 };
 
-export const getAnalyticsStats = async (startDate?: string | null, endDate?: string | null, lang?: string | null) => {
+export const getAnalyticsStats = async (startDate?: string | null, endDate?: string | null, lang?: string | null, countryId?: string | null) => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     if (lang) params.lang = lang;
+    if (countryId) params.countryId = countryId[0];
     const response = await apiClient.get('/api/analytics/statsSearchFilter', { params });
     return response.data;
 };
 
-export const getBrandSearchAnalytics = async (startDate?: string | null, endDate?: string | null, lang?: string | null) => {
+export const getBrandSearchAnalytics = async (startDate?: string | null, endDate?: string | null, lang?: string | null, countryId?: string | null) => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     if (lang) params.lang = lang;
+    if (countryId) params.countryId = countryId[0];
     const response = await apiClient.get('/api/analytics/brand-search-stats', { params });
     return response.data;
 };
@@ -122,11 +130,42 @@ export const getBrandSearchAnalytics = async (startDate?: string | null, endDate
 export const getClickCounts= async (
     cosmeticIds: number[] | null,
     startDate: string | null,
-    endDate: string | null
+    endDate: string | null,
+    countryId?: string | null
 ): Promise<ProductViewCount[]> => {    const params = {};
     if (cosmeticIds) params.cosmeticIds = cosmeticIds;
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (countryId) params.countryId = countryId[0];
     const response = await apiClient.get('/api/analytics/clicks', { params });
     return response.data;
 };
+
+export interface CountryResponse {
+    id: number;
+    name: string;
+    cities: CityResponse[];
+}
+
+export interface CityResponse {
+    id: number;
+    name: string;
+}
+
+export const getCountries = async (lang?: string | null): Promise<{id: string, name: string}[]> => {
+    try {
+        const response = await apiClient.get<CountryResponse[]>('/api/analytics/locations', {
+            params: {
+                lang: lang || 'en' // default to English if not specified
+            }
+        });
+        return response.data.map(country => ({
+            id: String(country.id),
+            name: country.name
+        }));
+    } catch (error) {
+        console.error('Error fetching countries:', error);
+        throw error;
+    }
+};
+
