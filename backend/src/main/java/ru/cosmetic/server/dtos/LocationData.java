@@ -21,4 +21,22 @@ public class LocationData {
     public LocationData() {
         this.timestamp = System.currentTimeMillis();
     }
+
+    @Override
+    public String toString() {
+        return "LocationData{" +
+                "locationId=" + locationId +
+                ", cityId=" + cityId +
+                ", countryId=" + countryId +
+                ", cityRu='" + cityRu + '\'' +
+                ", cityEn='" + cityEn + '\'' +
+                ", countryRu='" + countryRu + '\'' +
+                ", countryEn='" + countryEn + '\'' +
+                ", regionRu='" + regionRu + '\'' +
+                ", regionEn='" + regionEn + '\'' +
+                ", coordinates=" + coordinates +
+                ", source='" + source + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }

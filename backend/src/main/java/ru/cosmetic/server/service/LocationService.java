@@ -181,6 +181,7 @@ public class LocationService {
             String forwardedFor = request.getHeader("X-Forwarded-For");
             String ip = forwardedFor != null ? forwardedFor.split(",")[0] : request.getRemoteAddr();
             // ip = "109.252.45.21";
+            System.out.println("INFO: ip: " + ip);
             LocationData location = getLocationByIp(ip);
 
             Location buildLocation = buildLocation(location);
@@ -188,6 +189,7 @@ public class LocationService {
             location.setLocationId(buildLocation.getId());
             location.setCityId(buildLocation.getCity().getId());
             location.setCountryId(buildLocation.getCountry().getId());
+            System.out.println("INFO: location: " + ip);
             saveToCache(location);
             return buildLocation;
         } catch (Exception e) {
