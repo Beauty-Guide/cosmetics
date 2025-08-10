@@ -44,6 +44,7 @@
   "cosmeticBag-like-success": "Product added to Liked",
   "cosmeticBag-unlike-success": "Product removed from Liked",
   "cosmeticBag-likes": "Likes",
+  "cosmeticBag-update-success": "Cosmetic Bag updated",
 
   "nav.cosmetic": "Cosmetics",
   "nav.analytics": "Analytics",
@@ -81,6 +82,8 @@
   "product.removed_from_fav": "Removed from favorites",
   "product.remove_from_fav": "Remove from favorites",
   "product.marketplaceLinks": "Marketplace Links",
+  "product.share": "Share",
+  "product.find_similar": "Find similar",
 
   "login.email": "Email",
   "login.password": "Password",

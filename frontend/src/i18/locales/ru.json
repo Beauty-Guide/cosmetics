@@ -46,6 +46,7 @@
   "cosmeticBag-like-success": "Товар добавлен в избранное",
   "cosmeticBag-unlike-success": "Товар удален из избранного",
   "cosmeticBag-likes": "Лайков",
+  "cosmeticBag-update-success": "Косметичка обновлена",
 
   "nav.cosmetic": "Косметика",
   "nav.analytics": "Статистика",
@@ -83,6 +84,8 @@
   "product.removed_from_fav": "Удалено из избранного",
   "product.remove_from_fav": "Удалить из избранного",
   "product.marketplaceLinks": "Ссылки на маркетплейсы",
+  "product.share": "Поделиться",
+  "product.find_similar": "Найти похожие",
 
   "login.email": "Email",
   "login.password": "Пароль",
@@ -137,5 +140,4 @@
   "table.from": "из",
   "table.prev": "Предыдущая",
   "table.next": "Следующая"
-
 }

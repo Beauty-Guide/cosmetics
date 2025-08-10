@@ -25,7 +25,7 @@ const fetchCosmeticBags = async ({
 }
 export const useCosmeticBags = (data: TCosmeticBags) => {
   return useQuery({
-    queryKey: ["cosmeticBags"],
+    queryKey: ["cosmeticBags", data.cosmeticId],
     queryFn: () => fetchCosmeticBags(data),
     enabled: data.enabled ?? true,
   })

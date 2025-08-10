@@ -1,16 +1,7 @@
 import { Button } from "@/components/ui/button"
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -18,10 +9,11 @@ import {
 import { useCosmeticBags } from "@/hooks/cosmetic-bag/useCosmeticBags"
 import { memo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
-import { useToggleCosmeticBagProduct } from "@/hooks/cosmetic-bag/useToggleCosmeticBagProduct"
 import { Skeleton } from "@/components/ui/skeleton"
 import cosmeticBagIcon from "../../../assets/ui/косметичка-32.png"
+import CosmeticBagSelect from "../CosmeticBagSelect"
+import type { TCosmeticBag } from "@/types"
+import { useCosmeticBagsBulkUpdate } from "@/hooks/cosmetic-bag/useCosmeticBagsBulkUpdate"
 
 type TAddProductToCosmeticBagModalProps = {
   cosmeticId: string
@@ -34,24 +26,34 @@ const AddProductToCosmeticBagModal = ({
 }: TAddProductToCosmeticBagModalProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectedCosmeticBag, setSelectedCosmeticBag] = useState<string>("")
 
   const { data: cosmeticBags, isLoading: isLoadingCosmeticBags } =
-    useCosmeticBags({ liked: false, cosmeticId: cosmeticId, enabled: isOpen })
-  const { mutate: toggleCosmeticBagProduct } = useToggleCosmeticBagProduct()
+    useCosmeticBags({ liked: false, cosmeticId: cosmeticId })
+  const { mutate: bulkUpate } = useCosmeticBagsBulkUpdate()
 
-  const handleAdd = () => {
-    if (!selectedCosmeticBag) {
-      toast.error("Выберите коллекцию")
+  const handleApply = (bags: TCosmeticBag[]) => {
+    const oldBags = new Map(cosmeticBags?.map((bag) => [bag.id, bag]))
+    const hasChanged = bags.some((bag) => {
+      const oldBag = oldBags.get(bag.id)
+      if (!oldBag) return true
+      return oldBag.hasCosmetic !== bag.hasCosmetic
+    })
+
+    if (!hasChanged) {
+      setIsOpen(false)
       return
     }
-    toggleCosmeticBagProduct({
-      bagId: selectedCosmeticBag,
-      action: "add",
+
+    const bagsToUpdate = bags.map((bag) => ({
+      id: bag.id,
+      hasCosmetic: bag.hasCosmetic,
+    })) as Pick<TCosmeticBag, "id" | "hasCosmetic">[]
+
+    bulkUpate({
+      data: bagsToUpdate,
       cosmeticId: cosmeticId,
     })
     setIsOpen(false)
-    setSelectedCosmeticBag("")
   }
 
   if (isLoadingCosmeticBags) return <Skeleton className="w-fit" />
@@ -76,29 +78,11 @@ const AddProductToCosmeticBagModal = ({
           <DialogTitle>{t("cosmeticBag-add-product")}</DialogTitle>
         </DialogHeader>
         <div className="w-full flex flex-col gap-2 my-3">
-          <Select onValueChange={setSelectedCosmeticBag}>
-            <SelectTrigger className="w-full">
-              <SelectValue
-                placeholder={t("cosmeticBag-select-my-cosmetic-bags")}
-              />
-            </SelectTrigger>
-            <SelectContent className="w-full">
-              <SelectGroup>
-                {cosmeticBags &&
-                  cosmeticBags.map((cosmeticBag) => (
-                    <SelectItem key={cosmeticBag.id} value={cosmeticBag.id}>
-                      {cosmeticBag.name}
-                    </SelectItem>
-                  ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <CosmeticBagSelect
+            values={cosmeticBags || []}
+            handleApply={handleApply}
+          />
         </div>
-        <DialogFooter className="w-full flex items-center">
-          <Button variant="outline" form="search-form" onClick={handleAdd}>
-            {t("cosmeticBag-add-product")}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

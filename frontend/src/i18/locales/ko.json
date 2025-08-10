@@ -44,6 +44,7 @@
   "cosmeticBag-like-success": "상품을잡이한 쉽티박에 추가하었습니다",
   "cosmeticBag-unlike-success": "상품을잡이한 쉽티박에서 삭제 하었습니다",
   "cosmeticBag-likes": "잡이한 상품",
+  "cosmeticBag-update-success": "쉽티박을 업데이트 하었습니다",
 
   "nav.cosmetic": "화장품",
   "nav.analytics": "분석",
@@ -81,6 +82,8 @@
   "product.removed_from_fav": "즐겨찾기에서 제거됨",
   "product.remove_from_fav": "즐겨찾기에서 제거",
   "product.marketplaceLinks": "마케트플레이스 연결",
+  "product.share": "공유",
+  "product.find_similar": "사이즈 찾기",
 
   "login.email": "이메일",
   "login.password": "비밀번호",

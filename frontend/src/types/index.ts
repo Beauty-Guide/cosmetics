@@ -77,4 +77,5 @@ export type TCosmeticBag = {
   likes: number
   createdAt: string
   cosmetics: TProduct[]
+  hasCosmetic: boolean
 }
