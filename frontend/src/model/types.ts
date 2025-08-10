@@ -131,3 +131,4 @@ export type IngredientView = {
     id: number;
     name: string;
 };
+

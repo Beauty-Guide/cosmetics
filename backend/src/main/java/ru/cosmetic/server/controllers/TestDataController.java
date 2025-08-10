@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.cosmetic.server.enums.ActionType;
 import ru.cosmetic.server.models.*;
+import ru.cosmetic.server.repo.CityRepo;
+import ru.cosmetic.server.repo.CountryRepo;
 import ru.cosmetic.server.service.*;
 
 import java.io.*;
@@ -298,18 +300,91 @@ public class TestDataController {
 
     @GetMapping("/generate-users")
     public ResponseEntity<String> generateTestUsers() {
-        for (int i = 0; i < 1000; i++) {
+        // Создаем тестовые страны и города
+        Country russia = createOrGetCountry("Россия", "Russia");
+        Country korea = createOrGetCountry("Корея", "Korea");
+        Country usa = createOrGetCountry("США", "USA");
+        Country japan = createOrGetCountry("Япония", "Japan");
+        Country germany = createOrGetCountry("Германия", "Germany");
+
+        // Создаем тестовые города для каждой страны
+        City moscow = createOrGetCity("Москва", "Moscow", russia);
+        City spb = createOrGetCity("Санкт-Петербург", "Saint Petersburg", russia);
+        City seoul = createOrGetCity("Сеул", "Seoul", korea);
+        City busan = createOrGetCity("Пусан", "Busan", korea);
+        City ny = createOrGetCity("Нью-Йорк", "New York", usa);
+        City la = createOrGetCity("Лос-Анджелес", "Los Angeles", usa);
+        City tokyo = createOrGetCity("Токио", "Tokyo", japan);
+        City osaka = createOrGetCity("Осака", "Osaka", japan);
+        City berlin = createOrGetCity("Берлин", "Berlin", germany);
+        City munich = createOrGetCity("Мюнхен", "Munich", germany);
+
+        // Список всех доступных локаций
+        List<Location> locations = Arrays.asList(
+                createLocation(moscow, russia),
+                createLocation(spb, russia),
+                createLocation(seoul, korea),
+                createLocation(busan, korea),
+                createLocation(ny, usa),
+                createLocation(la, usa),
+                createLocation(tokyo, japan),
+                createLocation(osaka, japan),
+                createLocation(berlin, germany),
+                createLocation(munich, germany)
+        );
+
+        Random random = new Random();
+
+        for (int i = 0; i < 100; i++) {
             User user = new User();
             user.setUsername("user" + i);
             user.setPassword(passwordEncoder.encode("user" + i));
-            user.setEmail("user" + i +"@gmail.com");
+            user.setEmail("user" + i + "@gmail.com");
             user.setRoles(Collections.singleton(roleService.getUserRole()));
             user.setProvider("local");
 
+            // Случайным образом выбираем локацию для пользователя
+            Location randomLocation = locations.get(random.nextInt(locations.size()));
+            user.setLocation(randomLocation);
+
             userService.createUser(user);
         }
-        return ResponseEntity.ok("Создано " + 1000 + " тестовых пользователей.");
+
+        return ResponseEntity.ok("Создано 100 тестовых пользователей с рандомными локациями.");
     }
+    private final CityRepo cityRepo;
+    private final CountryRepo countryRepo;
+    private final LocationService locationService;
+
+    private Country createOrGetCountry(String nameRu, String nameEn) {
+        Country country = countryRepo.findByNameRU(nameRu);
+        if (country == null) {
+            country = new Country();
+            country.setNameRU(nameRu);
+            country.setNameEN(nameEn);
+        }
+        return country;
+    }
+
+    private City createOrGetCity(String nameRu, String nameEn, Country country) {
+        City city = cityRepo.findByNameRUAndCountry(nameRu, country);
+        if (city == null) {
+            city = new City();
+            city.setNameRU(nameRu);
+            city.setNameEN(nameEn);
+            city.setCountry(country);
+        }
+        return city;
+    }
+
+    private Location createLocation(City city, Country country) {
+        Location location = new Location();
+        location.setCity(city);
+        location.setCountry(country);
+        locationService.save(location);
+        return location;
+    }
+
     @GetMapping("/generate-favorites")
     public ResponseEntity<String> generateUserFavorites(
             @RequestParam(defaultValue = "1") int minFavorites,
@@ -334,6 +409,15 @@ public class TestDataController {
                     i--; // Попробовать ещё раз, чтобы не добавлять дубли
                     continue;
                 }
+                CosmeticAnalytic analytic = CosmeticAnalytic.builder()
+                        .cosmetic(randomCosmetic)
+                        .user(user)
+                        .action(ActionType.FAV)
+                        .location(user.getLocation())
+                        .device(DEVICES.get(random.nextInt(DEVICES.size())))
+                        .createdAt(LocalDateTime.now().minusDays(random.nextInt(365))) // За последние 365 дней
+                        .build();
+                analyticsService.save(analytic);
 
                 try {
                     favoriteService.addToFavorites(user.getEmail(), randomCosmetic.getId());
@@ -360,22 +444,22 @@ public class TestDataController {
     public void generateRandomAnalytics() {
         // 100 существующих товаров
         List<Cosmetic> cosmetics = cosmeticService.findAll().stream().limit(100).toList();
+        List<User> allUsers = userService.getAllUsers();
+        for (User user : allUsers) {
+            for (int i = 0; i < cosmetics.size(); i++) {
+                Cosmetic cosmetic = cosmetics.get(random.nextInt(cosmetics.size()));
+                CosmeticAnalytic analytic = CosmeticAnalytic.builder()
+                        .cosmetic(cosmetic)
+                        .user(user)
+                        .action(ActionType.VIEW)
+                        .location(user.getLocation())
+                        .device(DEVICES.get(random.nextInt(DEVICES.size())))
+                        .createdAt(LocalDateTime.now().minusDays(random.nextInt(365)))
+                        .query(random.nextBoolean() ? "search " + cosmetic.getName() : null)
+                        .build();
 
-
-        for (int i = 0; i < cosmetics.size(); i++) {
-            Cosmetic cosmetic = cosmetics.get(random.nextInt(cosmetics.size()));
-            User user = userService.findByEmail("admin@gmail.com");
-            CosmeticAnalytic analytic = CosmeticAnalytic.builder()
-                    .cosmetic(cosmetic)
-                    .user(user)
-                    .action(ACTIONS.get(random.nextInt(ACTIONS.size())))
-                    .location(LOCATIONS.get(random.nextInt(LOCATIONS.size())))
-                    .device(DEVICES.get(random.nextInt(DEVICES.size())))
-                    .createdAt(LocalDateTime.now().minusDays(random.nextInt(365)))
-                    .query(random.nextBoolean() ? "search " + cosmetic.getName() : null)
-                    .build();
-
-            analyticsService.save(analytic);
+                analyticsService.save(analytic);
+            }
         }
     }
 
@@ -383,37 +467,29 @@ public class TestDataController {
     @GetMapping("/generate-clicks")
     public ResponseEntity<String> generateClickAnalytics() {
         try {
-            // Получаем 100 случайных товаров (или все, если меньше)
             List<Cosmetic> cosmetics = cosmeticService.findAll();
-
             if (cosmetics.isEmpty()) {
                 return ResponseEntity.badRequest().body("No cosmetics found in the database.");
             }
-
-            // Находим пользователя (например, admin)
-            User user = userService.findByEmail("admin@gmail.com");
-            if (user == null) {
-                return ResponseEntity.badRequest().body("User admin@gmail.com not found.");
-            }
-
-            // Генерируем 1000 случайных событий CLICK
+            List<User> allUsers = userService.getAllUsers();
             int numberOfEvents = 1000;
+            for (User user : allUsers) {
+                for (int i = 0; i < numberOfEvents; i++) {
+                    Cosmetic randomCosmetic = cosmetics.get(random.nextInt(cosmetics.size()));
 
-            for (int i = 0; i < numberOfEvents; i++) {
-                Cosmetic randomCosmetic = cosmetics.get(random.nextInt(cosmetics.size()));
+                    List<CosmeticMarketplaceLink> marketplaceLinks = cosmeticMarketplaceLinkService.findAllByCosmeticId(randomCosmetic.getId());
+                    CosmeticAnalytic analytic = CosmeticAnalytic.builder()
+                            .cosmetic(randomCosmetic)
+                            .user(user)
+                            .action(ActionType.CLICK) // Только клики
+                            .location(user.getLocation())
+                            .device(DEVICES.get(random.nextInt(DEVICES.size())))
+                            .createdAt(LocalDateTime.now().minusDays(random.nextInt(365))) // За последние 365 дней
+                            .marketplaceLink(marketplaceLinks.get(random.nextInt(marketplaceLinks.size())))
+                            .build();
 
-                List<CosmeticMarketplaceLink> marketplaceLinks  = cosmeticMarketplaceLinkService.findAllByCosmeticId(randomCosmetic.getId());
-                CosmeticAnalytic analytic = CosmeticAnalytic.builder()
-                        .cosmetic(randomCosmetic)
-                        .user(user)
-                        .action(ActionType.CLICK) // Только клики
-                        .location(LOCATIONS.get(random.nextInt(LOCATIONS.size())))
-                        .device(DEVICES.get(random.nextInt(DEVICES.size())))
-                        .createdAt(LocalDateTime.now().minusDays(random.nextInt(365))) // За последние 365 дней
-                        .marketplaceLink(marketplaceLinks.get(random.nextInt(marketplaceLinks.size())))
-                        .build();
-
-                analyticsService.save(analytic);
+                    analyticsService.save(analytic);
+                }
             }
 
             return ResponseEntity.ok("Successfully generated " + numberOfEvents + " CLICK events.");

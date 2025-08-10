@@ -5,14 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.CacheControl;
-import ru.cosmetic.server.dtos.LocationData;
 import ru.cosmetic.server.enums.ActionType;
+import ru.cosmetic.server.models.Location;
 import ru.cosmetic.server.models.Role;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.AnalyticsRequest;
@@ -50,9 +46,10 @@ public class UserController {
         try {
             User user = null;
             if (principal != null) {
-                user  = getUser(principal);
+                user = getUser(principal);
             }
-            String location = user != null ? user.getLocation() : null;
+            Location location = user != null ? user.getLocation() : null;
+
             boolean hasData = (request.getBrandIds() != null && !request.getBrandIds().isEmpty()) ||
                     (request.getSkinTypeIds() != null && !request.getSkinTypeIds().isEmpty()) ||
                     (request.getActionIds() != null && !request.getActionIds().isEmpty()) ||
@@ -84,9 +81,9 @@ public class UserController {
         try {
             User user = null;
             if (principal != null) {
-                user  = getUser(principal);
+                user = getUser(principal);
             }
-            String location = user != null ? user.getLocation() : null;
+            Location location = user != null ? user.getLocation() : null;
             analyticsService.save(AnalyticsRequest.builder().cosmeticId(id).action(ActionType.VIEW).location(location).build(), user);
             return ResponseEntity.ok(cosmeticService.getCosmeticById(id, lang, isAllData));
         } catch (Exception e) {
@@ -122,8 +119,8 @@ public class UserController {
                     .body(Collections.singletonMap("error", "User not found"));
         }
         if (user.getLocation() == null) {
-            LocationData locationData = locationService.getLocation(request, lang);
-            user.setLocation(locationData.getCountry() + ", " + locationData.getCity());
+            Location location = locationService.getLocation(request);
+            user.setLocation(location);
             userService.update(user);
         }
         return ResponseEntity.ok(UserResponse.builder()
@@ -134,7 +131,7 @@ public class UserController {
     }
 
     private User getUser(Principal principal) {
-       return userService.findByEmail(principal.getName());
+        return userService.findByEmail(principal.getName());
     }
 
     private UserResponse buildGuestResponse(String lang) {

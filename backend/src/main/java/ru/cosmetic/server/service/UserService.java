@@ -10,8 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.cosmetic.server.dtos.UserDto;
-import ru.cosmetic.server.models.Role;
-import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.models.*;
 import ru.cosmetic.server.repo.UserRepository;
 
 import java.util.ArrayList;
@@ -33,31 +32,71 @@ public class UserService implements UserDetailsService {
 
     public User findByEmail(String email) {
         String sql = """
-        SELECT u.id AS user_id, u.username, u.password, u.email, u.oauth2_id, u.provider, u.location,
-               r.id AS role_id, r.name AS role_name
+        SELECT u.id AS user_id, u.username, u.password, u.email, u.oauth2_id, u.provider,
+               r.id AS role_id, r.name AS role_name,
+               l.id AS location_id,
+               c.id AS city_id, c.name_ru AS city_name_ru, c.name_en AS city_name_en,
+               co.id AS country_id, co.name_ru AS country_name_ru, co.name_en AS country_name_en
         FROM users u
         LEFT JOIN users_roles ur ON u.id = ur.user_id
         LEFT JOIN roles r ON ur.role_id = r.id
+        LEFT JOIN locations l ON u.location_id = l.id
+        LEFT JOIN cities c ON l.city_id = c.id
+        LEFT JOIN countries co ON l.country_id = co.id
         WHERE u.email = ?
-    """;
+        """;
 
         return jdbcTemplate.query(sql, rs -> {
             User user = null;
             List<Role> roles = new ArrayList<>();
+            Location location = null;
+            City city = null;
+            Country country = null;
 
             while (rs.next()) {
                 if (user == null) {
                     user = new User();
-                    user.setId(rs.getObject("user_id", Long.class)); // <-- здесь
+                    user.setId(rs.getObject("user_id", Long.class));
                     user.setUsername(rs.getObject("username", String.class));
                     user.setPassword(rs.getObject("password", String.class));
-                    user.setLocation(rs.getObject("location", String.class));
                     user.setEmail(rs.getString("email"));
                     user.setOauth2Id(rs.getObject("oauth2_id", String.class));
                     user.setProvider(rs.getObject("provider", String.class));
+
+                    // Создаем локацию, если есть данные
+                    Long locationId = rs.getObject("location_id", Long.class);
+                    if (locationId != null) {
+                        // Создаем страну
+                        Long countryId = rs.getObject("country_id", Long.class);
+                        if (countryId != null) {
+                            country = Country.builder()
+                                    .id(countryId)
+                                    .nameRU(rs.getString("country_name_ru"))
+                                    .nameEN(rs.getString("country_name_en"))
+                                    .build();
+                        }
+
+                        // Создаем город
+                        Long cityId = rs.getObject("city_id", Long.class);
+                        if (cityId != null) {
+                            city = City.builder()
+                                    .id(cityId)
+                                    .nameRU(rs.getString("city_name_ru"))
+                                    .nameEN(rs.getString("city_name_en"))
+                                    .country(country)
+                                    .build();
+                        }
+
+                        location = Location.builder()
+                                .id(locationId)
+                                .city(city)
+                                .country(country)
+                                .build();
+                        user.setLocation(location);
+                    }
                 }
 
-                Integer roleId = rs.getObject("role_id", Integer.class); // <-- и здесь
+                Integer roleId = rs.getObject("role_id", Integer.class);
                 if (roleId != null) {
                     Role role = new Role();
                     role.setId(Long.valueOf(roleId));

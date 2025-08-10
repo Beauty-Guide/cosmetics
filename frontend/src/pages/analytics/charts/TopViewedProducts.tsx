@@ -12,7 +12,8 @@ const TopViewedProducts: React.FC<TopViewedProductsProps> = ({ data }) => {
 
     if (data.length === 0) {
         return (
-            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-4 mb-6">
+            <div className="border border-gray-300 rounded-lg shadow-sm bg-white p-4 sm:p-6 mb-6">
+                <h3 className="text-lg font-medium mb-4">{t("analytics.all.views")}</h3>
                 <p>{t("analytics.brand.search.no.data")}</p>
             </div>
         );

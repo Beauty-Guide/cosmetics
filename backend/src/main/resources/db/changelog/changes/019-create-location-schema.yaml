@@ -1,0 +1,130 @@
+databaseChangeLog:
+  - changeSet:
+      id: 017-add-location-entity
+      author: yourname
+      comment: Добавление сущностей Country, City, Location и связей с User
+
+      changes:
+        # --- Таблица стран ---
+        - createTable:
+            tableName: countries
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name_ru
+                  type: VARCHAR(100)
+              - column:
+                  name: name_en
+                  type: VARCHAR(100)
+
+        # --- Таблица городов ---
+        - createTable:
+            tableName: cities
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name_ru
+                  type: VARCHAR(100)
+              - column:
+                  name: name_en
+                  type: VARCHAR(100)
+              - column:
+                  name: country_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_city_country
+
+        # --- Внешний ключ для связи cities.countries ---
+        - addForeignKeyConstraint:
+            baseTableName: cities
+            baseColumnNames: country_id
+            constraintName: fk_city_country
+            referencedTableName: countries
+            referencedColumnNames: id
+
+        # --- Таблица локаций ---
+        - createTable:
+            tableName: locations
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: city_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_location_city
+              - column:
+                  name: country_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_location_country
+
+        # --- Внешние ключи для таблицы locations ---
+        - addForeignKeyConstraint:
+            baseTableName: locations
+            baseColumnNames: city_id
+            constraintName: fk_location_city
+            referencedTableName: cities
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: locations
+            baseColumnNames: country_id
+            constraintName: fk_location_country
+            referencedTableName: countries
+            referencedColumnNames: id
+
+        # --- Добавляем колонку location_id в users ---
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_user_location
+
+        # --- Внешний ключ для связи users.locations ---
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: location_id
+            constraintName: fk_user_location
+            referencedTableName: locations
+            referencedColumnNames: id
+
+        # --- Обновляем таблицу cosmetic_analytics для использования location_id ---
+        - addColumn:
+            tableName: cosmetic_analytics
+            columns:
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_analytics_location
+
+        # --- Внешний ключ для связи cosmetic_analytics.locations ---
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_analytics
+            baseColumnNames: location_id
+            constraintName: fk_analytics_location
+            referencedTableName: locations
+            referencedColumnNames: id

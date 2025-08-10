@@ -56,7 +56,11 @@ public class FavoriteController {
         try {
             String email = principal.getName();
             User user = userService.findByEmail(principal.getName());
-            analyticsService.save(AnalyticsRequest.builder().cosmeticId(cosmeticId).action(ActionType.FAV).location(user.getLocation()).build(), user);
+            analyticsService.save(AnalyticsRequest.builder()
+                    .cosmeticId(cosmeticId)
+                    .action(ActionType.FAV)
+                    .location(user.getLocation() != null ? user.getLocation() : null)
+                    .build(), user);
             favoriteService.addToFavorites(email, cosmeticId);
             return ResponseEntity.ok("Косметика успешно добавлена в избранное");
         } catch (IllegalArgumentException e) {
