@@ -362,6 +362,8 @@ public class TestDataController {
             country = new Country();
             country.setNameRU(nameRu);
             country.setNameEN(nameEn);
+            // Сохраняем страну, чтобы получить ID
+            country = countryRepo.save(country);
         }
         return country;
     }
@@ -372,19 +374,18 @@ public class TestDataController {
             city = new City();
             city.setNameRU(nameRu);
             city.setNameEN(nameEn);
-            city.setCountry(country);
+            city.setCountry(country); // Country должен уже существовать в БД
+            // Сохраняем город, чтобы получить ID
+            city = cityRepo.save(city);
         }
         return city;
     }
-
     private Location createLocation(City city, Country country) {
         Location location = new Location();
         location.setCity(city);
         location.setCountry(country);
-        locationService.save(location);
-        return location;
+        return locationService.save(location);
     }
-
     @GetMapping("/generate-favorites")
     public ResponseEntity<String> generateUserFavorites(
             @RequestParam(defaultValue = "1") int minFavorites,
