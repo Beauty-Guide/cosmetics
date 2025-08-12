@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { useNavigate } from "react-router"
 
 const LoginSuccess = () => {
@@ -16,7 +16,7 @@ const LoginSuccess = () => {
     }
   }, [navigate])
 
-  // return <div></div>
+  return null
 }
 
 export default LoginSuccess
