@@ -118,10 +118,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Collections.singletonMap("error", "User not found"));
         }
-        if (user.getLocation() == null) {
-            Location location = locationService.getLocation(request);
-            user.setLocation(location);
-            userService.update(user);
+        if (!user.getEmail().equals("admin@gmail.com")) {
+            if (user.getLocation() == null) {
+                Location location = locationService.getLocation(request);
+                user.setLocation(location);
+                userService.update(user);
+            }
         }
         return ResponseEntity.ok(UserResponse.builder()
                 .name(user.getUsername())
