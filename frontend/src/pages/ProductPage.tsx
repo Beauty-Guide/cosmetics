@@ -1,6 +1,7 @@
 import { postAnalyticsOnMarketPlaceURLClick } from "@/api/analytics"
 import ProductOptions from "@/components/HomeComponents/ProductOptions"
 import { ImageCarousel } from "@/components/ImageCarousel"
+import SimilarProducts from "@/components/ProductPageComponents/SimilarProducts"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -185,6 +186,12 @@ const ProductPage = () => {
                     href={marketplaceLink.url}
                     target="_blank"
                     rel="noreferrer"
+                    onAuxClick={(e) => {
+                      if (e.button === 1) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                      }
+                    }}
                     onClick={() => handleAnalytics(marketplaceLink.id)}
                     key={marketplaceLink.id}
                   >
@@ -200,6 +207,7 @@ const ProductPage = () => {
           </div>
         ) : null}
       </div>
+      <SimilarProducts product={product} />
     </main>
   )
 }

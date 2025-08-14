@@ -56,7 +56,9 @@ const Product = ({ product }: ProductProps) => {
         onClick={navigateToItem}
       />
       <span className="flex flex-col items-start justify-center mt-2">
-        <h1 className="text-xl font-bold text-left">{product.name}</h1>
+        <a href={`/product/${product.id}`}>
+          <h1 className="text-xl font-bold text-left">{product.name}</h1>
+        </a>
         <p className="">{product.brand.name}</p>
       </span>
       {user?.isAuthenticated && (

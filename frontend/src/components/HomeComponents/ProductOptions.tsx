@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Button } from "../ui/button"
-import { EllipsisIcon, SquaresUniteIcon } from "lucide-react"
+import { EllipsisIcon } from "lucide-react"
 import FavoriteButton from "./FavoriteButton"
 import AddProductToCosmeticBagModal from "../cosmeticBagComponents/modals/AddProductToCosmeticBagModal"
 import { useTranslation } from "react-i18next"
@@ -40,14 +40,6 @@ const ProductOptions = ({
           cosmeticId={productId}
           label={t("cosmeticBag-add-product")}
         />
-        <Button
-          variant="ghost"
-          size="default"
-          className="w-full flex items-center justify-start rounded-full hover:bg-accent"
-        >
-          <SquaresUniteIcon className="w-5 h-5" />
-          <span>{t("product.find_similar")}</span>
-        </Button>
         {additionalOptions}
       </div>
     )
