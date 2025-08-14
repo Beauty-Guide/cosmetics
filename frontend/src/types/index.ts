@@ -46,7 +46,7 @@ type TIngredient = {
   name: string
 }
 
-export type TRole = "ROLE_ADMIN" | "ROLE_USER"  | "ROLE_SELLER" | "guest"
+export type TRole = "ROLE_ADMIN" | "ROLE_USER" | "ROLE_SELLER" | "guest"
 
 export type TUser = {
   name: string
@@ -73,7 +73,6 @@ export type TMarkerLink = {
 export type TCosmeticBag = {
   id: string
   name: string
-  ownerId: number
   likes: number
   createdAt: string
   cosmetics: TProduct[]
