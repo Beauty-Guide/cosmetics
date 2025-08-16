@@ -184,6 +184,10 @@ public class LocationService {
             System.out.println("INFO: ip: " + ip);
             LocationData location = getLocationByIp(ip);
 
+            if (location == null) {
+                return null;
+            }
+
             Location buildLocation = buildLocation(location);
             buildLocation = save(buildLocation);
             location.setLocationId(buildLocation.getId());
@@ -252,8 +256,7 @@ public class LocationService {
         Map<String, Object> responseEn = restTemplate.getForObject(urlEn, Map.class);
 
         if (!"success".equals(responseRu.get("status")) || !"success".equals(responseEn.get("status"))) {
-            throw new RuntimeException("Failed to get location data: " +
-                    responseRu.getOrDefault("message", responseEn.get("message")));
+            return null;
         }
 
         LocationData data = new LocationData();

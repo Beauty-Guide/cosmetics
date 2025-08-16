@@ -8,7 +8,8 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class AnalyticFavoriteCosmeticCount {
+public class AnalyticFavoriteCosmeticBagCount {
     private String name;
+    private String author;
     private int favoriteCount;
 }

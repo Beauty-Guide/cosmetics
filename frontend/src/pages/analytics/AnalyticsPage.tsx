@@ -4,7 +4,7 @@ import {
     getAnalyticViewsDayAllProducts,
     getBrandSearchAnalytics,
     getClickCounts,
-    getCountries, getTopFavoriteCosmetics,
+    getCountries, getTopFavoriteCosmeticBags, getTopFavoriteCosmetics,
     getTopViewedCosmetics,
     getViewedProducts
 } from '@/services/analyticsApi';
@@ -21,6 +21,7 @@ import {useTranslation} from "react-i18next";
 import CosmeticClicksChart from "@/pages/analytics/charts/CosmeticClicksChart.tsx";
 import FilterCombobox from '@/components/HomeComponents/FilterCombobox';
 import TopFavoriteCosmetics, {type FavoriteCosmetic} from "@/pages/analytics/charts/TopFavoriteCosmetics.tsx";
+import TopFavoriteCosmeticBags, {type FavoriteCosmeticBag} from "@/pages/analytics/charts/TopFavoriteCosmeticBags.tsx";
 
 interface CountItem {
     label: string;
@@ -51,6 +52,7 @@ export default function AnalyticsPage() {
     const [viewsData, setViewsData] = useState<Map<number, AnalyticViewedCosmetic[]>>(new Map());
     const [viewsData1, setViewsData1] = useState<Map<number, AnalyticViewedCosmetic[]>>(new Map());
     const [favoriteCosmetics, setFavoriteCosmetics] = useState<FavoriteCosmetic[]>([]);
+    const [favoriteCosmeticBags, setFavoriteCosmeticBags] = useState<FavoriteCosmeticBag[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const {t} = useTranslation();
     const {i18n} = useTranslation();
@@ -96,7 +98,8 @@ export default function AnalyticsPage() {
                 analyticViewsDayAllProductsData,
                 topViewedCosmeticsData,
                 allCosmetics,
-                topFavoriteCosmeticsData
+                topFavoriteCosmeticsData,
+                topFavoriteCosmeticBagsData
             ] = await Promise.all([
                 getAnalyticsStats(start, end, i18n.language, countryId),
                 getBrandSearchAnalytics(start, end, i18n.language, countryId),
@@ -104,6 +107,7 @@ export default function AnalyticsPage() {
                 getTopViewedCosmetics(start, end, countryId),
                 getAllCosmetics(),
                 getTopFavoriteCosmetics(start, end, countryId),
+                getTopFavoriteCosmeticBags(start, end, countryId),
             ]);
 
             setStats(statsData);
@@ -112,6 +116,7 @@ export default function AnalyticsPage() {
             setTopViewedCosmetics(topViewedCosmeticsData);
             setCosmetics(allCosmetics.cosmetics);
             setFavoriteCosmetics(topFavoriteCosmeticsData);
+            setFavoriteCosmeticBags(topFavoriteCosmeticBagsData);
 
             const viewedSelectedData = await getViewedProducts([], start, end, countryId);
             const dataMap = new Map(Object.entries(viewedSelectedData).map(([key, value]) => [
@@ -235,7 +240,12 @@ export default function AnalyticsPage() {
                                 data={favoriteCosmetics}
                                 startDate={startDate}
                                 endDate={endDate}
-                                />
+                            />
+                            <TopFavoriteCosmeticBags
+                                data={favoriteCosmeticBags}
+                                startDate={startDate}
+                                endDate={endDate}
+                            />
                             <SimpleBarChart description={t("analytics.views")} data={stats.brands}
                                             title={t("analytics.top.brands")}/>
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.cosmetic.server.models.User;
 import ru.cosmetic.server.requestDto.CosmeticBagRequest;
+import ru.cosmetic.server.responseDto.BrandResponse;
 import ru.cosmetic.server.responseDto.CosmeticBagResponse;
 import ru.cosmetic.server.responseDto.CosmeticResponse;
 
@@ -84,10 +85,13 @@ public class CosmeticBagService {
             b.likes,
             c.id AS cosmetic_id,
             c.name AS cosmetic_name,
+            br.id as brand_id,
+            br.name as brand_name,
             %s AS has_cosmetic
         FROM cosmetic_bag b
         LEFT JOIN cosmetic_bag_item cbi ON b.id = cbi.bag_id
         LEFT JOIN cosmetic c ON c.id = cbi.cosmetic_id
+        LEFT JOIN brand br ON br.id = c.brand_id
         WHERE %s
         ORDER BY b.id, c.id
         """.formatted(hasCosmeticExpression, whereClause);
@@ -124,6 +128,7 @@ public class CosmeticBagService {
                                 CosmeticResponse.builder()
                                         .id(cosmeticId)
                                         .name(rs.getString("cosmetic_name"))
+                                        .brand(BrandResponse.builder().id(rs.getLong("brand_id")).name(rs.getString("brand_name")).build())
                                         .build()
                         );
                     }

@@ -107,6 +107,21 @@ export const getTopFavoriteCosmetics = async (startDate?: string | null, endDate
     }
 };
 
+export const getTopFavoriteCosmeticBags = async (startDate?: string | null, endDate?: string | null, countryId?: string | null): Promise<FavoriteCosmeticCount[]> => {
+    const params = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    if (countryId) params.countryId = countryId[0];
+
+    try {
+        const response = await apiClient.get('/api/analytics/topFavoriteCosmeticBags', { params });
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+        throw error;
+    }
+};
+
 export const getAnalyticsStats = async (startDate?: string | null, endDate?: string | null, lang?: string | null, countryId?: string | null) => {
     const params = {};
     if (startDate) params.startDate = startDate;

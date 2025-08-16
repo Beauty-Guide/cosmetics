@@ -30,9 +30,9 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/015-create-cosmetic-marketplace-link-schema.yaml
   - include:
-      file: db/changelog/changes/016-create-analytics-schema.yaml
+      file: db/changelog/changes/016-create-cosmetic-bag-schema.yaml
   - include:
-      file: db/changelog/changes/017-create-cosmetic-bag-schema.yaml
+      file: db/changelog/changes/017-create-analytics-schema.yaml
   - include:
       file: db/changelog/changes/018-create-favorite-bags.yaml
   - include:

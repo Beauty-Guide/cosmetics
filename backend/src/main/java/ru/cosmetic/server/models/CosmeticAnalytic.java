@@ -25,6 +25,10 @@ public class CosmeticAnalytic {
     private Cosmetic cosmetic;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cosmetic_bag_id", nullable = false)
+    private CosmeticBag cosmeticBag;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

@@ -58,6 +58,11 @@ public class AnalyticsController {
         return analyticsService.getTopFavoriteCosmetics(startDate, endDate, countryId);
     }
 
+    @GetMapping("/topFavoriteCosmeticBags")
+    public List<AnalyticFavoriteCosmeticBagCount> getTopFavoriteCosmeticBags(@RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate, @RequestParam(required = false) String countryId) {
+        return analyticsService.getTopFavoriteCosmeticCosmeticBags(startDate, endDate, countryId);
+    }
+
     @GetMapping("/analyticViewsDayAllProducts")
     public List<AnalyticProductViewCount> getAnalyticViewsDayAllProducts(@RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate, @RequestParam(required = false) String countryId) {
         return analyticsService.getAnalyticViewsDayAllProducts(startDate, endDate, countryId);

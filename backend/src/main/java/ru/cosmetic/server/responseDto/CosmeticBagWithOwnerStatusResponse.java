@@ -9,5 +9,6 @@ public class CosmeticBagWithOwnerStatusResponse {
 
     private CosmeticBagResponse cosmeticBag;
     private boolean isOwner;
+    private Integer totalCosmetics;
 
 }

@@ -19,6 +19,9 @@ databaseChangeLog:
                   name: cosmetic_id
                   type: BIGINT
               - column:
+                  name: cosmetic_bag_id
+                  type: UUID
+              - column:
                   name: user_id
                   type: BIGINT
               - column:
@@ -48,6 +51,13 @@ databaseChangeLog:
             baseColumnNames: cosmetic_id
             constraintName: fk_cosmetic_analytics_cosmetic
             referencedTableName: cosmetic
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: cosmetic_analytics
+            baseColumnNames: cosmetic_bag_id
+            constraintName: fk_cosmetic_bag_analytics_cosmetic
+            referencedTableName: cosmetic_bag
             referencedColumnNames: id
 
         - addForeignKeyConstraint:

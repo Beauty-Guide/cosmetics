@@ -85,6 +85,7 @@ const Header: React.FC = () => {
           handleLogout={handleLogout}
           user={user}
           isAdmin={user?.isAdmin || false}
+          isSeller={user?.isSeller || false}
           isAuthenticated={user?.isAuthenticated || false}
           favorites={favorites || []}
         />

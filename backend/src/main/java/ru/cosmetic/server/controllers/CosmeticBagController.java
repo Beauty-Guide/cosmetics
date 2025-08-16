@@ -6,10 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.cosmetic.server.enums.ActionType;
 import ru.cosmetic.server.models.User;
+import ru.cosmetic.server.requestDto.AnalyticsRequest;
 import ru.cosmetic.server.requestDto.CosmeticBagRequest;
 import ru.cosmetic.server.responseDto.CosmeticBagResponse;
 import ru.cosmetic.server.responseDto.CosmeticBagWithOwnerStatusResponse;
+import ru.cosmetic.server.service.AnalyticsService;
 import ru.cosmetic.server.service.CosmeticBagService;
 import ru.cosmetic.server.service.FavoriteBagService;
 import ru.cosmetic.server.service.UserService;
@@ -17,6 +20,7 @@ import ru.cosmetic.server.service.UserService;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/bags")
@@ -28,6 +32,7 @@ public class CosmeticBagController {
     private final CosmeticBagService cosmeticBagService;
     private final FavoriteBagService favoriteBagService;
     private final UserService userService;
+    private final AnalyticsService analyticsService;
 
     @PostMapping("/createBug")
     @Operation(summary = "Создание косметички")
@@ -162,14 +167,25 @@ public class CosmeticBagController {
         try {
             boolean isOwner = false;
             UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
+            Integer totalCosmetics = cosmeticBag.getCosmetics().size();
             if (principal != null) {
                 User user = userService.findByEmail(principal.getName());
-                CosmeticBagResponse cosmeticBag = cosmeticBagService.findById(uuid);
                 if (user.getId().equals(cosmeticBag.getOwnerId())) {
                     isOwner = true;
                 }
+            } else {
+                cosmeticBag.setCosmetics(cosmeticBag.getCosmetics()
+                        .stream()
+                        .limit(2)
+                        .collect(Collectors.toList())
+                );
             }
-            return ResponseEntity.ok(CosmeticBagWithOwnerStatusResponse.builder().isOwner(isOwner).cosmeticBag(cosmeticBagService.findById(uuid)).build());
+            return ResponseEntity.ok(CosmeticBagWithOwnerStatusResponse.builder()
+                    .isOwner(isOwner)
+                    .cosmeticBag(cosmeticBag)
+                    .totalCosmetics(totalCosmetics)
+                    .build());
         } catch (Exception e) {
             return new ResponseEntity<>("Ошибка получения своих косметичек", HttpStatus.BAD_REQUEST);
         }
@@ -180,6 +196,12 @@ public class CosmeticBagController {
     public ResponseEntity<?> likeBag(@PathVariable String id, Principal principal) {
         try {
             UUID uuid = UUID.fromString(id.replace("cosmeticBag_", ""));
+            User user = userService.findByEmail(principal.getName());
+            analyticsService.save(AnalyticsRequest.builder()
+                    .cosmeticBagId(uuid)
+                    .action(ActionType.FAV_BAG)
+                    .location(user.getLocation() != null ? user.getLocation() : null)
+                    .build(), user);
             favoriteBagService.likeBag(uuid, principal);
             return new ResponseEntity<>("Косметичка добавлена в избранные", HttpStatus.OK);
         } catch (Exception e) {

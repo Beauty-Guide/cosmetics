@@ -152,7 +152,6 @@ public class FavoriteService {
                 sql,
                 params,
                 (rs, rowNum) -> new AnalyticFavoriteCosmeticCount(
-                        rs.getLong("id"),
                         rs.getString("name"),
                         rs.getInt("favorite_count")
                 )

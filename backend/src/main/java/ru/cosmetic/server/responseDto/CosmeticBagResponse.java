@@ -1,5 +1,6 @@
 package ru.cosmetic.server.responseDto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ public class CosmeticBagResponse {
 
     private String id;
     private String name;
+    @JsonIgnore
     private Long ownerId;
     private LocalDateTime createdAt;
     private Integer likes;

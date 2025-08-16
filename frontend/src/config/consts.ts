@@ -5,5 +5,6 @@ export const PAGE_SIZE = 10
 export const ROLES = {
   ADMIN: "ROLE_ADMIN",
   USER: "ROLE_USER",
+  SELLER: "ROLE_SELLER",
   GUEST: "guest",
 }

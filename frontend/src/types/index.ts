@@ -54,6 +54,7 @@ export type TUser = {
   history: TUserHistory[]
   refetch: () => void
   isAdmin: boolean
+  isSeller: boolean
   isUser: boolean
   isAuthenticated: boolean
 }

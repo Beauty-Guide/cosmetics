@@ -59,6 +59,7 @@ public class AnalyticsService {
     private CosmeticAnalytic buildAnalytic(AnalyticsRequest request, User user) {
         return CosmeticAnalytic.builder()
                 .cosmetic(request.getCosmeticId() != null ? new Cosmetic(request.getCosmeticId()) : null)
+                .cosmeticBag(request.getCosmeticBagId() != null ? CosmeticBag.builder().id(request.getCosmeticBagId()).build() : null)
                 .user(user).action(request.getAction())
                 .location(request.getLocation())
                 .device(request.getDevice())
@@ -666,8 +667,66 @@ public class AnalyticsService {
                 sql.toString(),
                 params,
                 (rs, rowNum) -> new AnalyticFavoriteCosmeticCount(
-                        rs.getLong("id"),
                         rs.getString("name"),
+                        rs.getInt("favorite_count")
+                )
+        );
+    }
+
+    public List<AnalyticFavoriteCosmeticBagCount> getTopFavoriteCosmeticCosmeticBags(LocalDate startDate,
+                                                                       LocalDate endDate,
+                                                                       String countryId) {
+        // Базовый SQL
+        StringBuilder sql = new StringBuilder("""
+        SELECT c.id, c.name, u.username, COUNT(ca.cosmetic_bag_id) AS favorite_count
+        FROM cosmetic_analytics ca
+        JOIN cosmetic_bag c ON ca.cosmetic_bag_id = c.id
+        JOIN users u on c.owner_id = u.id
+        """);
+
+        // Добавляем JOIN для фильтрации по стране при необходимости
+        if (countryId != null && !countryId.equals("all") && !countryId.equals("withoutLocation")) {
+            sql.append("""
+            JOIN locations l ON ca.location_id = l.id
+            JOIN countries co ON l.country_id = co.id
+            """);
+        }
+
+        // Начинаем WHERE условия
+        sql.append(" WHERE ca.action = 'FAV_BAG'");
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        // Фильтр по датам
+        if (startDate != null) {
+            sql.append(" AND ca.created_at >= :startDate");
+            params.addValue("startDate", startDate.atStartOfDay());
+        }
+        if (endDate != null) {
+            sql.append(" AND ca.created_at < :endDate");
+            params.addValue("endDate", endDate.plusDays(1).atStartOfDay());
+        }
+
+        // Фильтр по стране
+        if (countryId != null && !countryId.equals("all")) {
+            if (countryId.equals("withoutLocation")) {
+                sql.append(" AND ca.location_id IS NULL");
+            } else {
+                sql.append(" AND co.id = CAST(:countryId AS bigint)");
+                params.addValue("countryId", countryId);
+            }
+        }
+
+        // Завершаем запрос
+        sql.append(" GROUP BY c.id, c.name, u.username ORDER BY favorite_count DESC LIMIT 15");
+
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        return namedParameterJdbcTemplate.query(
+                sql.toString(),
+                params,
+                (rs, rowNum) -> new AnalyticFavoriteCosmeticBagCount(
+                        rs.getString("name"),
+                        rs.getString("username"),
                         rs.getInt("favorite_count")
                 )
         );

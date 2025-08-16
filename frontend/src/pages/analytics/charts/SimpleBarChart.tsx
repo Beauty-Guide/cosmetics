@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { COLORS } from './constants';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 interface CountItem {
     label: string;
     count: number;
+    author?: string;
     info?: string;
     link?: string;
 }
 
 interface SimpleBarChartProps {
     data: CountItem[];
-    description: string;
     title: string;
 }
 
-const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
+const SimpleBarChart = ({ data, title }: SimpleBarChartProps) => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
-    const { t } = useTranslation()
+    const { t } = useTranslation();
 
     const truncateLabel = (label: string, maxLength: number = isMobile ? 8 : 15) => {
         return label.length > maxLength ? `${label.substring(0, maxLength)}...` : label;
@@ -27,7 +27,6 @@ const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
 
     const enrichedData = data.map(item => ({
         ...item,
-        info: description,
         truncatedLabel: truncateLabel(item.label)
     }));
 
@@ -51,7 +50,6 @@ const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
         );
     }
 
-    // Рассчитываем максимальное значение для оси Y
     const maxCount = Math.max(...enrichedData.map(item => item.count), 1);
     const yDomain = [0, maxCount * 1.1];
     const yTicks = Array.from({ length: Math.min(maxCount + 2, 6) }, (_, i) =>
@@ -94,13 +92,8 @@ const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
                             />
 
                             <Tooltip
-                                content={({ active, payload, label }) => (
-                                    <CustomTooltip
-                                        active={active}
-                                        payload={payload}
-                                        label={label}
-                                        description={payload?.[0]?.payload.info}
-                                    />
+                                content={({ active, payload }) => (
+                                    <CustomTooltip active={active} payload={payload} />
                                 )}
                                 cursor={{ fill: '#f0f0f0' }}
                             />
@@ -140,8 +133,8 @@ const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
                                 style={{ backgroundColor: COLORS[index % COLORS.length] }}
                             />
                             <span className="text-xs sm:text-sm break-words max-w-[120px]">
-                {item.truncatedLabel}
-              </span>
+                                {item.truncatedLabel}
+                            </span>
                             <span className="ml-1 text-xs text-gray-500">({item.count})</span>
                         </div>
 
@@ -160,24 +153,26 @@ const SimpleBarChart = ({ data, description, title }: SimpleBarChartProps) => {
     );
 };
 
-const CustomTooltip = ({ active, payload, label, description }: {
+const CustomTooltip = ({ active, payload }: {
     active?: boolean;
     payload?: any[];
-    label?: string;
-    description?: string;
 }) => {
     if (active && payload && payload.length > 0) {
-        const count = payload[0]?.value;
+        const data = payload[0].payload;
         return (
             <div className="bg-white border border-gray-200 rounded shadow-lg p-3 text-sm max-w-[200px]">
-                <p className="font-semibold mb-1">{label}</p>
+                <p className="font-semibold mb-1">{data.label}</p>
                 <p className="text-gray-600">
-                    {description}: <strong>{count}</strong>
+                    {data.info || 'Количество'}: <strong>{data.count}</strong>
                 </p>
+                {data.author && (
+                    <p className="text-gray-600">
+                        Автор: <strong>{data.author}</strong>
+                    </p>
+                )}
             </div>
         );
     }
-
     return null;
 };
 

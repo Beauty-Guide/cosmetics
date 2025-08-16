@@ -23,6 +23,7 @@ type TDropDownMenuProps = {
   user: TUser | null
   favorites: TProduct[]
   isAdmin: boolean
+  isSeller: boolean
   isAuthenticated: boolean
   handleLogout: () => void
   handleLogin: () => void
@@ -32,6 +33,7 @@ const DropDownMenu = ({
   handleNagivate,
   user,
   isAdmin,
+  isSeller,
   isAuthenticated,
   handleLogout,
   handleLogin,
@@ -54,11 +56,14 @@ const DropDownMenu = ({
         <DropdownMenuLabel className="font-bold select-none">
           {t("my_account")} {`(${user?.name})`}
         </DropdownMenuLabel>
-        <DropdownMenuItem
-            className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
-            onClick={() => handleNagivate("/analytics")}>
-          {t("nav.analytics")}
-        </DropdownMenuItem>
+        {isAdmin || isSeller ? (
+            <DropdownMenuItem
+                className="text-black hover:text-blue-900 text-sm transition-colors px-2 py-1.5 outline-hidden"
+                onClick={() => handleNagivate("/analytics")}
+            >
+              {t("nav.analytics")}
+            </DropdownMenuItem>
+        ) : null}
         {isAdmin && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>{t("ADMIN")}</DropdownMenuSubTrigger>
