@@ -731,4 +731,52 @@ public class AnalyticsService {
                 )
         );
     }
+
+    public List<AnalyticCosmeticUsageInBagsCount> getCosmeticsUsageInBags(LocalDate startDate,
+                                                                          LocalDate endDate,
+                                                                          String countryId) {
+        StringBuilder sql = new StringBuilder("""
+                SELECT c.id, c.name, COUNT(cbi.cosmetic_id) AS usage_count
+                FROM cosmetic_bag_item cbi
+                JOIN cosmetic c ON cbi.cosmetic_id = c.id
+                JOIN cosmetic_bag cb ON cbi.bag_id = cb.id
+                """);
+        if (countryId != null && !countryId.equals("all") && !countryId.equals("withoutLocation")) {
+            sql.append("""
+                    JOIN users u ON cb.owner_id = u.id
+                    LEFT JOIN locations l ON u.location_id = l.id
+                    LEFT JOIN countries co ON l.country_id = co.id
+                    """);
+        }
+        sql.append(" WHERE 1=1");
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        if (startDate != null) {
+            sql.append(" AND cb.created_at >= :startDate");
+            params.addValue("startDate", startDate.atStartOfDay());
+        }
+        if (endDate != null) {
+            sql.append(" AND cb.created_at < :endDate");
+            params.addValue("endDate", endDate.plusDays(1).atStartOfDay());
+        }
+        if (countryId != null && !countryId.equals("all")) {
+            if (countryId.equals("withoutLocation")) {
+                sql.append(" AND u.location_id IS NULL");
+            } else {
+                sql.append(" AND co.id = CAST(:countryId AS bigint)");
+                params.addValue("countryId", countryId);
+            }
+        }
+        sql.append(" GROUP BY c.id, c.name ORDER BY usage_count DESC LIMIT 15");
+
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        return namedParameterJdbcTemplate.query(
+                sql.toString(),
+                params,
+                (rs, rowNum) -> new AnalyticCosmeticUsageInBagsCount(
+                        rs.getString("name"),
+                        rs.getInt("usage_count")
+                )
+        );
+    }
 }

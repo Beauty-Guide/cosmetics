@@ -1,4 +1,6 @@
 import apiClient from "@/api/apiClient.ts";
+import type {CosmeticUsageInBugs} from "@/pages/analytics/charts/TopCosmeticUsageInBags.tsx";
+import type {FavoriteCosmeticBag} from "@/pages/analytics/charts/TopFavoriteCosmeticBags.tsx";
 
 
 export interface CountItem {
@@ -107,7 +109,7 @@ export const getTopFavoriteCosmetics = async (startDate?: string | null, endDate
     }
 };
 
-export const getTopFavoriteCosmeticBags = async (startDate?: string | null, endDate?: string | null, countryId?: string | null): Promise<FavoriteCosmeticCount[]> => {
+export const getTopFavoriteCosmeticBags = async (startDate?: string | null, endDate?: string | null, countryId?: string | null): Promise<FavoriteCosmeticBag[]> => {
     const params = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
@@ -115,6 +117,21 @@ export const getTopFavoriteCosmeticBags = async (startDate?: string | null, endD
 
     try {
         const response = await apiClient.get('/api/analytics/topFavoriteCosmeticBags', { params });
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+        throw error;
+    }
+};
+
+export const getTopCosmeticUsageInBags = async (startDate?: string | null, endDate?: string | null, countryId?: string | null): Promise<CosmeticUsageInBugs[]> => {
+    const params = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    if (countryId) params.countryId = countryId[0];
+
+    try {
+        const response = await apiClient.get('/api/analytics/topCosmeticsUsageInBags', { params });
         return response.data;
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);

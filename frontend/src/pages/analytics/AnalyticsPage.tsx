@@ -4,7 +4,7 @@ import {
     getAnalyticViewsDayAllProducts,
     getBrandSearchAnalytics,
     getClickCounts,
-    getCountries, getTopFavoriteCosmeticBags, getTopFavoriteCosmetics,
+    getCountries, getTopCosmeticUsageInBags, getTopFavoriteCosmeticBags, getTopFavoriteCosmetics,
     getTopViewedCosmetics,
     getViewedProducts
 } from '@/services/analyticsApi';
@@ -22,6 +22,7 @@ import CosmeticClicksChart from "@/pages/analytics/charts/CosmeticClicksChart.ts
 import FilterCombobox from '@/components/HomeComponents/FilterCombobox';
 import TopFavoriteCosmetics, {type FavoriteCosmetic} from "@/pages/analytics/charts/TopFavoriteCosmetics.tsx";
 import TopFavoriteCosmeticBags, {type FavoriteCosmeticBag} from "@/pages/analytics/charts/TopFavoriteCosmeticBags.tsx";
+import TopCosmeticUsageInBags, {type CosmeticUsageInBugs} from "@/pages/analytics/charts/TopCosmeticUsageInBags.tsx";
 
 interface CountItem {
     label: string;
@@ -53,6 +54,7 @@ export default function AnalyticsPage() {
     const [viewsData1, setViewsData1] = useState<Map<number, AnalyticViewedCosmetic[]>>(new Map());
     const [favoriteCosmetics, setFavoriteCosmetics] = useState<FavoriteCosmetic[]>([]);
     const [favoriteCosmeticBags, setFavoriteCosmeticBags] = useState<FavoriteCosmeticBag[]>([]);
+    const [cosmeticUsageInBags, setCosmeticUsageInBags] = useState<CosmeticUsageInBugs[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const {t} = useTranslation();
     const {i18n} = useTranslation();
@@ -99,7 +101,8 @@ export default function AnalyticsPage() {
                 topViewedCosmeticsData,
                 allCosmetics,
                 topFavoriteCosmeticsData,
-                topFavoriteCosmeticBagsData
+                topFavoriteCosmeticBagsData,
+                topCosmeticUsageInBagsData
             ] = await Promise.all([
                 getAnalyticsStats(start, end, i18n.language, countryId),
                 getBrandSearchAnalytics(start, end, i18n.language, countryId),
@@ -108,15 +111,17 @@ export default function AnalyticsPage() {
                 getAllCosmetics(),
                 getTopFavoriteCosmetics(start, end, countryId),
                 getTopFavoriteCosmeticBags(start, end, countryId),
+                getTopCosmeticUsageInBags(start, end, countryId),
             ]);
 
-            setStats(statsData);
+            setStats(transformDataToChartFormat(statsData, t));
             setBrandSearchData(brandSearchData);
             setAnalyticViewsDayAllProducts(analyticViewsDayAllProductsData);
             setTopViewedCosmetics(topViewedCosmeticsData);
             setCosmetics(allCosmetics.cosmetics);
             setFavoriteCosmetics(topFavoriteCosmeticsData);
             setFavoriteCosmeticBags(topFavoriteCosmeticBagsData);
+            setCosmeticUsageInBags(topCosmeticUsageInBagsData);
 
             const viewedSelectedData = await getViewedProducts([], start, end, countryId);
             const dataMap = new Map(Object.entries(viewedSelectedData).map(([key, value]) => [
@@ -149,6 +154,26 @@ export default function AnalyticsPage() {
         if (startDate && endDate) {
             fetchAnalytics(startDate, endDate, selectedCountry);
         }
+    };
+
+    const transformDataToChartFormat = (analyticsData: any, t: any) => {
+        return {
+            brands: analyticsData.brands.map((item: any) => ({
+                label: item.label,
+                count: item.count,
+                info: t("analytics.views")
+            })),
+            skinTypes: analyticsData.skinTypes.map((item: any) => ({
+                label: item.label,
+                count: item.count,
+                info: t("analytics.views")
+            })),
+            actions: analyticsData.actions.map((item: any) => ({
+                label: item.label,
+                count: item.count,
+                info: t("analytics.views")
+            }))
+        };
     };
 
 
@@ -243,6 +268,11 @@ export default function AnalyticsPage() {
                             />
                             <TopFavoriteCosmeticBags
                                 data={favoriteCosmeticBags}
+                                startDate={startDate}
+                                endDate={endDate}
+                            />
+                            <TopCosmeticUsageInBags
+                                data={cosmeticUsageInBags}
                                 startDate={startDate}
                                 endDate={endDate}
                             />

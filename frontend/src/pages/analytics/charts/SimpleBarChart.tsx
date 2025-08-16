@@ -162,9 +162,11 @@ const CustomTooltip = ({ active, payload }: {
         return (
             <div className="bg-white border border-gray-200 rounded shadow-lg p-3 text-sm max-w-[200px]">
                 <p className="font-semibold mb-1">{data.label}</p>
-                <p className="text-gray-600">
-                    {data.info || 'Количество'}: <strong>{data.count}</strong>
-                </p>
+                {data.info && (
+                    <p className="text-gray-600">
+                        {data.info}: <strong>{data.count}</strong>
+                    </p>
+                )}
                 {data.author && (
                     <p className="text-gray-600">
                         Автор: <strong>{data.author}</strong>

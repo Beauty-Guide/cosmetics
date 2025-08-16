@@ -1,6 +1,6 @@
 import React from 'react';
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
-import { COLORS } from './constants';
+import {Cell, Pie, PieChart, ResponsiveContainer, Tooltip} from 'recharts';
+import {COLORS} from './constants';
 import {useTranslation} from "react-i18next";
 
 interface CountItem {
@@ -14,11 +14,11 @@ interface SimplePieChartProps {
     title: string;
 }
 
-const SimplePieChart: React.FC<SimplePieChartProps> = ({ data, title }) => {
+const SimplePieChart: React.FC<SimplePieChartProps> = ({data, title}) => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     const chartRef = React.useRef<HTMLDivElement>(null);
-    const [chartSize, setChartSize] = React.useState({ width: 300, height: 300 });
-    const { t } = useTranslation()
+    const [chartSize, setChartSize] = React.useState({width: 300, height: 300});
+    const {t} = useTranslation()
 
 
     // Адаптация размера под контейнер
@@ -27,7 +27,7 @@ const SimplePieChart: React.FC<SimplePieChartProps> = ({ data, title }) => {
             if (chartRef.current) {
                 const width = chartRef.current.offsetWidth;
                 const height = isMobile ? Math.min(width, 300) : 300;
-                setChartSize({ width, height });
+                setChartSize({width, height});
             }
         };
 
@@ -81,7 +81,7 @@ const SimplePieChart: React.FC<SimplePieChartProps> = ({ data, title }) => {
             ref={chartRef}
         >
             <h3 className="text-lg font-medium mb-4">{title}</h3>
-            <div className="w-full" style={{ height: `${chartSize.height}px` }}>
+            <div className="w-full" style={{height: `${chartSize.height}px`}}>
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
@@ -106,8 +106,8 @@ const SimplePieChart: React.FC<SimplePieChartProps> = ({ data, title }) => {
                             ))}
                         </Pie>
                         <Tooltip
-                            content={({ active, payload }) => (
-                                <CustomTooltip active={active} payload={payload} />
+                            content={({active, payload}) => (
+                                <CustomTooltip active={active} payload={payload}/>
                             )}
                         />
                     </PieChart>
@@ -119,7 +119,7 @@ const SimplePieChart: React.FC<SimplePieChartProps> = ({ data, title }) => {
                     <div key={index} className="flex items-center">
                         <div
                             className="w-3 h-3 rounded-full mr-2"
-                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                            style={{backgroundColor: COLORS[index % COLORS.length]}}
                         />
                         <span className="text-xs sm:text-sm break-words max-w-[120px]">
               {item.label}
@@ -135,18 +135,16 @@ const SimplePieChart: React.FC<SimplePieChartProps> = ({ data, title }) => {
 const CustomTooltip: React.FC<{
     active?: boolean;
     payload?: any[];
-}> = ({ active, payload }) => {
-    const { t } = useTranslation()
+}> = ({active, payload}) => {
     if (active && payload && payload.length > 0) {
         const data = payload[0].payload;
         return (
             <div className="bg-white border border-gray-200 rounded shadow-lg p-3 text-sm max-w-[180px]">
                 <p className="font-semibold mb-1 break-words">{data.label}</p>
-                <p className="text-gray-600">
-                    {t("analytics.views")}: <strong>{data.count}</strong>
-                </p>
                 {data.info && (
-                    <p className="text-gray-500 text-xs mt-1 break-words">{data.info}</p>
+                    <p className="text-gray-600">
+                        {data.info}: <strong>{data.count}</strong>
+                    </p>
                 )}
             </div>
         );
